@@ -1,1 +1,1 @@
-# CC_9889_2022_2023
+This is team #9889's source code for the Power Play season of the First Tech Challenge Robotics competition.
