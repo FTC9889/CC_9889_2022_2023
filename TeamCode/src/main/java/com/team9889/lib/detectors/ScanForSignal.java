@@ -20,11 +20,11 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 @Config
 public class ScanForSignal extends OpenCvPipeline {
-    public static int height = 15, width = 15, x = 60, y = 160, tolerance = 10;
+    public static int height = 30, width = 40, x = 230, y = 65, tolerance = 30;
     public static boolean drawRect = true;
 
-    public static int oneR = 0, oneG = 0, oneB = 0;
-    public static int twoR = 0, twoG = 0, twoB = 0;
+    public static int oneR = 206, oneG = 218, oneB = 217;
+    public static int twoR = 66, twoG = 76, twoB = 70;
 
     Scalar rgb = new Scalar(0, 0, 0);
 

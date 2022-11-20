@@ -125,20 +125,22 @@ public class RightStack extends AutoModeBase {
         //Park
         Robot.getLift().wantedLiftPosition = Lift.LiftPositions.NULL;
         Robot.getLift().setLiftPosition(0);
-        path.add(new Pose(15, 12, 0, speed, 8));
-//        switch (signal) {
-//            case 2:
-//                path.add(new Pose(36, 12, 0, speed, 8));
-//                break;
-//
-//            case 3:
+        path.add(new Pose(10, 12, 0, speed, 8));
+        switch (signal) {
+            case 2:
+                path.add(new Pose(36, 12, 0, speed, 8));
+                break;
+
+            case 3:
                 path.add(new Pose(60, 12, 0, speed, 8));
-//                break;
-//        }
+                break;
+        }
         runAction(new PurePursuit(path));
         path.clear();
 
-//        runAction(new Turn(0));
+        if (signal == 1) {
+            runAction(new Turn(180));
+        }
     }
 
     @Override
