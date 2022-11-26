@@ -70,7 +70,7 @@ public abstract class Team9889Linear extends LinearOpMode {
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
 
 //        telemetry = dashboard.getTelemetry();
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+//        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         if(autonomous){
             // Autonomous Init Loop code

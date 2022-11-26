@@ -145,7 +145,7 @@ public class Robot {
         liftLimit = hardwareMap.get(TouchSensor.class, Constants.LiftConstants.kLiftLimit);
 
 
-        imu = new RevIMU("imu", hardwareMap);
+//        imu = new RevIMU("imu", hardwareMap);
 
         // Init all subsystems
         for (Subsystem subsystem : subsystems) {

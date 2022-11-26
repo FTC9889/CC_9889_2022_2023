@@ -61,7 +61,7 @@ public class Lift extends Subsystem{
 
     @Override
     public void outputToTelemetry(Telemetry telemetry) {
-//        telemetry.addData("V4B Pot", getV4BAngle());
+        telemetry.addData("V4B Pot", getV4BAngle());
 //        telemetry.addData("Lift Height", getLiftPosition());
         telemetry.addData("Lift Down", liftDown);
         telemetry.addData("Lift State", wantedLiftPosition);
@@ -305,12 +305,20 @@ public class Lift extends Subsystem{
         return adjustedAngle - 133;
     }
 
+    public void setGrabber(double pos) {
+//        if (getV4BAngle() > -30 && getV4BAngle() < 15) {
+//            Robot.getInstance().grabber.setPosition(0.37);
+//        } else {
+            Robot.getInstance().grabber.setPosition(pos);
+//        }
+    }
+
 
     public void closeGrabber() {
-        Robot.getInstance().grabber.setPosition(0.37);
+        setGrabber(0.37);
     }
 
     public void openGrabber() {
-        Robot.getInstance().grabber.setPosition(0.58);
+        setGrabber(0.58);
     }
 }
