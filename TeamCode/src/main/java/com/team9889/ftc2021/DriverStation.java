@@ -78,7 +78,17 @@ public class DriverStation {
         return grabberClosed;
     }
 
+    private boolean groundReleased = true;
+    int getGround() {
+        if (gamepad1.a && groundReleased) {
+            groundReleased = false;
+            return 1;
+        } else if (!gamepad1.a) {
+            groundReleased = true;
+        }
 
+        return 0;
+    }
 
     private boolean scoreReleased = true;
     int getScore() {

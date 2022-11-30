@@ -20,7 +20,7 @@ import java.util.Arrays;
 @Config
 public class Teleop extends Team9889Linear {
     ElapsedTime timer = new ElapsedTime();
-    boolean left = false;
+    boolean left = false, ground = false;
 
     @Override
     public void runOpMode() {
@@ -83,53 +83,70 @@ public class Teleop extends Team9889Linear {
                 Robot.getLift().openGrabber();
             }
 
-            int getScore = driverStation.getScore();
-            if (getScore > 0) {
-                left = false;
-            } else if (getScore < 0) {
-                left = true;
-            }
-
-            if (Robot.getLift().wantedLiftPosition == Lift.LiftPositions.DOWN) {
-                if (getScore != 0) {
-                    if (left) {
-                        if (Robot.getLift().wantedPickupStates == Lift.PickupStates.HOVER_LEFT) {
-                            Robot.getLift().wantedPickupStates = Lift.PickupStates.GRAB_LEFT;
-                        } else {
-                            Robot.getLift().wantedPickupStates = Lift.PickupStates.HOVER_LEFT;
-                            driverStation.grabberClosed = false;
-                        }
-                    } else {
-                        if (Robot.getLift().wantedPickupStates == Lift.PickupStates.HOVER_RIGHT) {
-                            Robot.getLift().wantedPickupStates = Lift.PickupStates.GRAB_RIGHT;
-                        } else {
-                            Robot.getLift().wantedPickupStates = Lift.PickupStates.HOVER_RIGHT;
-                            driverStation.grabberClosed = false;
-                        }
-                    }
+            int getGround = driverStation.getGround();
+            if (getGround == 1 || ground) {
+                if (Robot.getLift().wantedScoreState != Lift.ScoreStates.GROUND_LEFT && getGround == 1) {
+                    Robot.getLift().wantedScoreState = Lift.ScoreStates.GROUND_LEFT;
+                    ground = true;
+                } else if (getGround == 1){
+                    Robot.getLift().wantedScoreState = Lift.ScoreStates.DROP;
                 }
 
-                Robot.getLift().wantedScoreState = Lift.ScoreStates.NULL;
-            } else {
-                if (Robot.getLift().wantedScoreState != Lift.ScoreStates.NULL && getScore != 0) {
-                    if (left) {
-                        if (Robot.getLift().wantedScoreState == Lift.ScoreStates.HOLDING ||
-                                Robot.getLift().wantedScoreState == Lift.ScoreStates.HOVER_RIGHT) {
-                            Robot.getLift().wantedScoreState = Lift.ScoreStates.HOVER_LEFT;
-                        } else if (Robot.getLift().wantedScoreState == Lift.ScoreStates.HOVER_LEFT) {
-                            Robot.getLift().wantedScoreState = Lift.ScoreStates.PLACE_LEFT;
-                        }
-                    } else {
-                        if (Robot.getLift().wantedScoreState == Lift.ScoreStates.HOLDING ||
-                                Robot.getLift().wantedScoreState == Lift.ScoreStates.HOVER_LEFT) {
-                            Robot.getLift().wantedScoreState = Lift.ScoreStates.HOVER_RIGHT;
-                        } else if (Robot.getLift().wantedScoreState == Lift.ScoreStates.HOVER_RIGHT) {
-                            Robot.getLift().wantedScoreState = Lift.ScoreStates.PLACE_RIGHT;
-                        }
-                    }
+                if (Robot.getLift().wantedScoreState == Lift.ScoreStates.NULL ||
+                        Robot.getLift().wantedScoreState == Lift.ScoreStates.LOWER) {
+                    ground = false;
                 }
 
                 Robot.getLift().wantedPickupStates = Lift.PickupStates.NULL;
+            } else {
+                int getScore = driverStation.getScore();
+                if (getScore > 0) {
+                    left = false;
+                } else if (getScore < 0) {
+                    left = true;
+                }
+
+                if (Robot.getLift().wantedLiftPosition == Lift.LiftPositions.DOWN) {
+                    if (getScore != 0) {
+                        if (left) {
+                            if (Robot.getLift().wantedPickupStates == Lift.PickupStates.HOVER_LEFT) {
+                                Robot.getLift().wantedPickupStates = Lift.PickupStates.GRAB_LEFT;
+                            } else {
+                                Robot.getLift().wantedPickupStates = Lift.PickupStates.HOVER_LEFT;
+                                driverStation.grabberClosed = false;
+                            }
+                        } else {
+                            if (Robot.getLift().wantedPickupStates == Lift.PickupStates.HOVER_RIGHT) {
+                                Robot.getLift().wantedPickupStates = Lift.PickupStates.GRAB_RIGHT;
+                            } else {
+                                Robot.getLift().wantedPickupStates = Lift.PickupStates.HOVER_RIGHT;
+                                driverStation.grabberClosed = false;
+                            }
+                        }
+                    }
+
+                    Robot.getLift().wantedScoreState = Lift.ScoreStates.NULL;
+                } else {
+                    if (Robot.getLift().wantedScoreState != Lift.ScoreStates.NULL && getScore != 0) {
+                        if (left) {
+                            if (Robot.getLift().wantedScoreState == Lift.ScoreStates.HOLDING ||
+                                    Robot.getLift().wantedScoreState == Lift.ScoreStates.HOVER_RIGHT) {
+                                Robot.getLift().wantedScoreState = Lift.ScoreStates.HOVER_LEFT;
+                            } else if (Robot.getLift().wantedScoreState == Lift.ScoreStates.HOVER_LEFT) {
+                                Robot.getLift().wantedScoreState = Lift.ScoreStates.PLACE_LEFT;
+                            }
+                        } else {
+                            if (Robot.getLift().wantedScoreState == Lift.ScoreStates.HOLDING ||
+                                    Robot.getLift().wantedScoreState == Lift.ScoreStates.HOVER_LEFT) {
+                                Robot.getLift().wantedScoreState = Lift.ScoreStates.HOVER_RIGHT;
+                            } else if (Robot.getLift().wantedScoreState == Lift.ScoreStates.HOVER_RIGHT) {
+                                Robot.getLift().wantedScoreState = Lift.ScoreStates.PLACE_RIGHT;
+                            }
+                        }
+                    }
+
+                    Robot.getLift().wantedPickupStates = Lift.PickupStates.NULL;
+                }
             }
 
             /* Telemetry */

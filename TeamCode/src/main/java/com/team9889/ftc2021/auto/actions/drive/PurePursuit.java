@@ -8,7 +8,6 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.team9889.ftc2021.auto.actions.Action;
-import com.team9889.ftc2021.auto.actions.ActionVariables;
 import com.team9889.ftc2021.subsystems.Robot;
 import com.team9889.lib.CruiseLib;
 import com.team9889.lib.Pose;
@@ -28,11 +27,13 @@ import static java.lang.Math.toDegrees;
 
 @Config
 public class PurePursuit extends Action {
+    public static double divider = 10;
+
     double maxSpeed = 0, timeout = -1;
     ElapsedTime timer = new ElapsedTime();
 
     ArrayList<Pose> path;
-    Pose tolerance = new Pose(2, 2, 3);
+    Pose tolerance = new Pose(1, 1, 3);
     int step = 1;
 
     public PurePursuit(ArrayList<Pose> path) {
@@ -99,7 +100,7 @@ public class PurePursuit extends Action {
 
         speed *= Range.clip((abs(relativeDist) / path.get(step).radius),0,1);
 
-        speed *= Range.clip((abs(relativeDist) / 6.0),0,1);
+        speed *= Range.clip((abs(relativeDist) / divider),0,1);
 
         speed = CruiseLib.limitValue(speed, -0.1, -maxSpeed, 0.1, maxSpeed);
 
@@ -114,22 +115,7 @@ public class PurePursuit extends Action {
 
         Log.v("Angle", angleToPoint + ", " + toDegrees(pose.getHeading()));
 
-        double turnSpeed = CruiseLib.limitValue(relativePointAngle / 60.0, 0, -1, 0, 1);
-
-
-        //Error in Tolerance
-//        Pose error = Pose.getError(Pose.Pose2dToPose(Robot.getInstance().rr.getLocalizer().getPoseEstimate()), point);
-//        if (abs(error.x) < tolerance.x) {
-//            xSpeed = 0;
-//        }
-//        if (abs(error.y) < tolerance.y) {
-//            ySpeed = 0;
-//        }
-//        if (abs(error.theta) < tolerance.theta) {
-//            turnSpeed = 0;
-//        }
-
-
+        double turnSpeed = CruiseLib.limitValue(relativePointAngle / 50.0, 0, -1, 0, 1);
 
 //        Robot.getInstance().telemetry.addData("X Speed", xSpeed);
 //        Robot.getInstance().telemetry.addData("Y Speed", ySpeed);
@@ -139,34 +125,41 @@ public class PurePursuit extends Action {
                 speed * Math.cos(Math.toRadians(path.get(step).theta)), turnSpeed);
 
 
-        TelemetryPacket packet = new TelemetryPacket();
-        for (int i = 0; i < path.size() - 1; i++) {
-            packet.fieldOverlay()
-                    .setStroke("red")
-                    .strokeLine(path.get(i).x, path.get(i).y, path.get(i + 1).x, path.get(i + 1).y);
-        }
-
-        packet.fieldOverlay()
-                .setFill("green")
-                .fillRect(pose.getX() - 6.5, pose.getY() - 6.5, 13, 13);
-
-        packet.fieldOverlay()
-                .setStroke("blue")
-                .strokeCircle(pose.getX(), pose.getY(), path.get(step).radius);
-
-        packet.fieldOverlay()
-                .setStroke("black")
-                .strokeLine(pose.getX(), pose.getY(), point.x, point.y);
-        FtcDashboard.getInstance().sendTelemetryPacket(packet);
+//        TelemetryPacket packet = new TelemetryPacket();
+//        for (int i = 0; i < path.size() - 1; i++) {
+//            packet.fieldOverlay()
+//                    .setStroke("red")
+//                    .strokeLine(path.get(i).x, path.get(i).y, path.get(i + 1).x, path.get(i + 1).y);
+//        }
+//
+//        packet.fieldOverlay()
+//                .setFill("green")
+//                .fillRect(pose.getX() - 6.5, pose.getY() - 6.5, 13, 13);
+//
+//        packet.fieldOverlay()
+//                .setStroke("blue")
+//                .strokeCircle(pose.getX(), pose.getY(), path.get(step).radius);
+//
+//        packet.fieldOverlay()
+//                .setStroke("black")
+//                .strokeLine(pose.getX(), pose.getY(), point.x, point.y);
+//        FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
+    int count;
     @Override
     public boolean isFinished() {
         Pose error = Pose.getError(Pose.Pose2dToPose(Robot.getInstance().getMecanumDrive().position),
                 path.get(path.size() - 1));
 //        Pose error = new Pose(0, 0, 0);
-        return ((abs(error.x) < tolerance.x && abs(error.y) < tolerance.y)
-                && step == path.size() - 1) || (timeout != -1 && timer.milliseconds() > timeout);
+
+        if (((abs(error.x) < tolerance.x && abs(error.y) < tolerance.y)
+                && step == path.size() - 1) || (timeout != -1 && timer.milliseconds() > timeout)) {
+            count++;
+        } else {
+            count = 0;
+        }
+        return count > 3;
     }
 
     @Override

@@ -20,10 +20,10 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 @Config
 public class ScanForSignal extends OpenCvPipeline {
-    public static int height = 30, width = 40, x = 230, y = 65, tolerance = 30;
+    public static int height = 30, width = 40, x = 225, y = 55, tolerance = 30;
     public static boolean drawRect = true;
 
-    public static int oneR = 206, oneG = 218, oneB = 217;
+    public static int oneR = 119, oneG = 164, oneB = 90;
     public static int twoR = 66, twoG = 76, twoB = 70;
 
     Scalar rgb = new Scalar(0, 0, 0);
@@ -36,13 +36,13 @@ public class ScanForSignal extends OpenCvPipeline {
         if (Math.abs(rgb.val[0] - oneR) < tolerance
                 && Math.abs(rgb.val[1] - oneG) < tolerance
                 && Math.abs(rgb.val[2] - oneB) < tolerance) {
-            return 1;
+            return 3;
         } else if (Math.abs(rgb.val[0] - twoR) < tolerance
                 && Math.abs(rgb.val[1] - twoG) < tolerance
                 && Math.abs(rgb.val[2] - twoB) < tolerance) {
             return 2;
         } else {
-            return 3;
+            return 1;
         }
     }
 

@@ -32,7 +32,7 @@ public class RightStack extends AutoModeBase {
         ArrayList<Pose> path = new ArrayList<>();
         Robot.getMecanumDrive().position = new Pose2d(31, 65, Math.PI / 2);
 
-        double speed = 0.5;
+        double speed = 1;
 
         ThreadAction(new Score(Lift.LiftPositions.HIGH, false));
 
@@ -40,9 +40,9 @@ public class RightStack extends AutoModeBase {
 //        runAction(new PurePursuit(path));
 //        path.clear();
 
-        path.add(new Pose(10.1, 60, 0, speed, 8));
+        path.add(new Pose(18, 60, 0, speed, 8));
         path.add(new Pose(10, 35, 0, speed, 8));
-        path.add(new Pose(5, 28, 0, speed, 8));
+        path.add(new Pose(6, 29, 0, speed, 10));
         runAction(new PurePursuit(path));
         path.clear();
 
@@ -56,7 +56,7 @@ public class RightStack extends AutoModeBase {
         ThreadAction(new SetGrabber(true));
         runAction(new SetV4BPosition(Lift.V4BPositions.UP, 0, 100));
 
-        path.add(new Pose(12, 30, 180, .3, 4));
+        path.add(new Pose(12, 30, 180, .7, 4));
         runAction(new PurePursuit(path));
         path.clear();
 

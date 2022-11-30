@@ -20,7 +20,7 @@ public class Lift extends Subsystem{
     public boolean liftDown = true;
 
     public enum V4BPositions {
-        LEFT_DOWN, LEFT, LEFT_UP, UP, RIGHT_UP, RIGHT, RIGHT_DOWN, NULL
+        LEFT_DOWN, LEFT_GROUND, LEFT, LEFT_UP, UP, RIGHT_UP, RIGHT, RIGHT_DOWN, NULL
     }
     public V4BPositions wantedV4BPosition = V4BPositions.NULL;
     public V4BPositions currentV4BPosition = V4BPositions.NULL;
@@ -32,7 +32,7 @@ public class Lift extends Subsystem{
     public LiftPositions currentLiftPosition = LiftPositions.NULL;
 
     public enum ScoreStates {
-        HOLDING, HOVER_RIGHT, PLACE_RIGHT, HOVER_LEFT, PLACE_LEFT, DROP, RETRACT, LOWER, NULL
+        HOLDING, HOVER_RIGHT, PLACE_RIGHT, HOVER_LEFT, PLACE_LEFT, GROUND_LEFT, DROP, RETRACT, LOWER, NULL
     }
     public ScoreStates wantedScoreState = ScoreStates.NULL;
     public ScoreStates currentScoreState = ScoreStates.NULL;
@@ -81,6 +81,12 @@ public class Lift extends Subsystem{
         switch (wantedV4BPosition) {
             case LEFT_DOWN:
                 if (setV4BAngle(-117)) {
+                    currentV4BPosition = V4BPositions.LEFT_DOWN;
+                }
+                break;
+
+            case LEFT_GROUND:
+                if (setV4BAngle(100)) {
                     currentV4BPosition = V4BPositions.LEFT_DOWN;
                 }
                 break;
@@ -188,6 +194,11 @@ public class Lift extends Subsystem{
                     wantedScoreState = ScoreStates.DROP;
                     scoreTimer.reset();
                 }
+                break;
+
+            case GROUND_LEFT:
+                wantedV4BPosition = V4BPositions.LEFT_GROUND;
+                scoreTimer.reset();
                 break;
 
             case DROP:
