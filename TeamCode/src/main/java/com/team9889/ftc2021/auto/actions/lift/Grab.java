@@ -5,6 +5,7 @@ import com.team9889.ftc2021.auto.actions.Action;
 import com.team9889.ftc2021.auto.actions.ActionVariables;
 import com.team9889.ftc2021.subsystems.Lift;
 import com.team9889.ftc2021.subsystems.Robot;
+import com.team9889.lib.CruiseLib;
 
 /**
  * Created by edm11 on 11/12/2022.
@@ -34,7 +35,7 @@ public class Grab extends Action {
             Robot.getInstance().getLift().wantedPickupStates = Lift.PickupStates.GRAB_RIGHT;
         }
 
-        Robot.getInstance().getLift().setLiftPosition(liftHeight);
+        Robot.getInstance().getLift().setLiftPosition(CruiseLib.limitValue(liftHeight, 100, 0));
 
         Robot.getInstance().getLift().update();
     }

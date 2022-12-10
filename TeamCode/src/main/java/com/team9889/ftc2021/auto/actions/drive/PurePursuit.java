@@ -27,22 +27,28 @@ import static java.lang.Math.toDegrees;
 
 @Config
 public class PurePursuit extends Action {
-    public static double divider = 10;
+    public static double divider = 8;
 
-    double maxSpeed = 0, timeout = -1;
+    double maxSpeed = 0, timeout = -1, endTheta = 1000;
     ElapsedTime timer = new ElapsedTime();
 
     ArrayList<Pose> path;
-    Pose tolerance = new Pose(1, 1, 3);
+    Pose tolerance = new Pose(2, 2, 3);
     int step = 1;
 
     public PurePursuit(ArrayList<Pose> path) {
         this.path = path;
     }
 
-    public PurePursuit(ArrayList<Pose> path, double timeout) {
+    public PurePursuit(ArrayList<Pose> path, double endTheta) {
+        this.path = path;
+        this.endTheta = endTheta;
+    }
+
+    public PurePursuit(ArrayList<Pose> path, double endTheta, double timeout) {
         this.path = path;
         this.timeout = timeout;
+        this.endTheta = endTheta;
     }
 
     public PurePursuit(ArrayList<Pose> path, Pose tolerance) {
@@ -54,6 +60,13 @@ public class PurePursuit extends Action {
         this.path = path;
         this.timeout = timeout;
         this.tolerance = tolerance;
+    }
+
+    public PurePursuit(ArrayList<Pose> path, Pose tolerance, double timeout, double endTheta) {
+        this.path = path;
+        this.timeout = timeout;
+        this.tolerance = tolerance;
+        this.endTheta = endTheta;
     }
 
     @Override
@@ -90,39 +103,69 @@ public class PurePursuit extends Action {
 
         // Speed
         maxSpeed = path.get(step).maxSpeed;
+        double xSpeed = 1, ySpeed = 1;
 
-//        double xSpeed = CruiseLib.limitValue(xPID.update(pose.getX(), point.x), 0, -maxSpeed, 0, maxSpeed);
-//        double ySpeed = CruiseLib.limitValue(yPID.update(pose.getY(), point.y), 0, -maxSpeed, 0, maxSpeed);
+        Pose error = Pose.getError(Pose.Pose2dToPose(Robot.getInstance().getMecanumDrive().position),
+                path.get(path.size() - 1));
 
-        double relativeDist = Math.sqrt(Math.pow(point.x - pose.getX(), 2) + Math.pow(point.y - pose.getY(), 2));
+        if ((step == path.size() - 1) && Math.abs(Math.sqrt(Math.pow(error.x, 2) + Math.pow(error.y, 2))) < path.get(step).radius) {
+            double x = CruiseLib.limitValue(((point.x - pose.getX()) / path.get(step).radius), 0, -1, 0, 1);
+            x *= CruiseLib.limitValue((abs(point.x - pose.getX()) / divider), 0, -1, 0, 1);
+            x = CruiseLib.limitValue(-x, -0.1, -maxSpeed, 0.1, maxSpeed);
 
-        double speed = 1;
+            double y = CruiseLib.limitValue(((point.y - pose.getY()) / path.get(step).radius), 0, -1, 0, 1);
+            y *= CruiseLib.limitValue((abs(point.y - pose.getY()) / divider), 0, -1, 0, 1);
+            y = CruiseLib.limitValue(y, -0.1, -maxSpeed, 0.1, maxSpeed);
 
-        speed *= Range.clip((abs(relativeDist) / path.get(step).radius),0,1);
+            Log.v("Speed X", "" + x);
+            Log.v("Speed Y", "" + y);
 
-        speed *= Range.clip((abs(relativeDist) / divider),0,1);
+            xSpeed = x * Math.cos(pose.getHeading()) - y * Math.sin(pose.getHeading());
+            ySpeed = y * Math.cos(pose.getHeading()) + x * Math.sin(pose.getHeading());
+        } else {
+            double relativeDist = Math.sqrt(Math.pow(point.x - pose.getX(), 2) + Math.pow(point.y - pose.getY(), 2));
 
-        speed = CruiseLib.limitValue(speed, -0.1, -maxSpeed, 0.1, maxSpeed);
+            double speed = Range.clip((abs(relativeDist) / path.get(step).radius), 0, 1);
+            speed *= Range.clip((abs(relativeDist) / ((divider / 10) * path.get(step).radius)), 0, 1);
+            speed = CruiseLib.limitValue(speed, -0.1, -maxSpeed, 0.1, maxSpeed);
+
+            xSpeed = speed * Math.sin(Math.toRadians(path.get(step).theta));
+            ySpeed = speed * Math.cos(Math.toRadians(path.get(step).theta));
+        }
+
+        Log.v("xSpeed", "" + xSpeed);
+        Log.v("ySpeed", "" + ySpeed);
 
 
         //Turn
-        double angleToPoint = toDegrees(atan2(point.x-pose.getX(), point.y-pose.getY())) + (path.get(step).theta);
+        double relativePointAngle;
 
-        double relativePointAngle = -CruiseLib.angleWrap(angleToPoint + toDegrees(pose.getHeading()));
+        if ((step == path.size() - 1) && Math.abs(Math.sqrt(Math.pow(error.x, 2) + Math.pow(error.y, 2))) < path.get(step).radius) {
+            double angleToPoint;
+            if (endTheta == 1000) {
+                 angleToPoint = toDegrees(atan2(path.get(path.size() - 1).x - path.get(path.size() - 2).x,
+                        path.get(path.size() - 1).y - path.get(path.size() - 2).y)) + (path.get(step).theta);
+            } else {
+                angleToPoint = -endTheta;
+            }
+            relativePointAngle = -CruiseLib.angleWrap(angleToPoint + toDegrees(pose.getHeading()));
+        } else {
+            double angleToPoint = toDegrees(atan2(point.x-pose.getX(), point.y-pose.getY())) + (path.get(step).theta);
+            relativePointAngle = -CruiseLib.angleWrap(angleToPoint + toDegrees(pose.getHeading()));
+        }
 
         Log.v("Distance", (point.x - pose.getX()) + ", " + (point.y - pose.getY()) + ", "
-                + sqrt(pow(point.y-pose.getY(), 2) + pow(point.x-pose.getX(), 2)));
+                + sqrt(pow(point.y-pose.getY(), 2) + pow(point.x-pose.getX(), 2)) + ", " + pose.getHeading());
 
-        Log.v("Angle", angleToPoint + ", " + toDegrees(pose.getHeading()));
+        Log.v("Angle", relativePointAngle + "");
 
-        double turnSpeed = CruiseLib.limitValue(relativePointAngle / 50.0, 0, -1, 0, 1);
+        double turnSpeed = CruiseLib.limitValue(relativePointAngle / 70.0,
+                0, -path.get(step).turnSpeed, 0, path.get(step).turnSpeed);
 
-//        Robot.getInstance().telemetry.addData("X Speed", xSpeed);
-//        Robot.getInstance().telemetry.addData("Y Speed", ySpeed);
-//        Robot.getInstance().telemetry.addData("Turn Speed", turnSpeed);
+        xSpeed = CruiseLib.limitValue(xSpeed, 1 - Math.abs(turnSpeed * 1.5));
+        ySpeed = CruiseLib.limitValue(ySpeed, 1 - Math.abs(turnSpeed * 1.5));
 
-        Robot.getInstance().getMecanumDrive().setPower(speed * Math.sin(Math.toRadians(path.get(step).theta)),
-                speed * Math.cos(Math.toRadians(path.get(step).theta)), turnSpeed);
+        Robot.getInstance().getMecanumDrive().setPower(xSpeed, ySpeed, turnSpeed);
 
 
 //        TelemetryPacket packet = new TelemetryPacket();
@@ -151,9 +194,16 @@ public class PurePursuit extends Action {
     public boolean isFinished() {
         Pose error = Pose.getError(Pose.Pose2dToPose(Robot.getInstance().getMecanumDrive().position),
                 path.get(path.size() - 1));
-//        Pose error = new Pose(0, 0, 0);
 
-        if (((abs(error.x) < tolerance.x && abs(error.y) < tolerance.y)
+        boolean theta = false;
+        if (endTheta == 1000) {
+            theta = true;
+        } else if (Math.abs(Math.toDegrees(Robot.getInstance().getMecanumDrive().position.getHeading())
+                - endTheta) < tolerance.theta) {
+            theta = true;
+        }
+
+        if (((abs(error.x) < tolerance.x && abs(error.y) < tolerance.y) && theta
                 && step == path.size() - 1) || (timeout != -1 && timer.milliseconds() > timeout)) {
             count++;
         } else {

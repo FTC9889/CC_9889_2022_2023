@@ -205,19 +205,19 @@ public class Lift extends Subsystem{
                 Robot.getInstance().driverStation.grabberClosed = false;
                 openGrabber();
 
-                if (scoreTimer.milliseconds() > 200) {
+                if (scoreTimer.milliseconds() > 300) {
                     wantedScoreState = ScoreStates.RETRACT;
                     scoreTimer.reset();
                 }
                 break;
 
             case RETRACT:
-                Robot.getInstance().driverStation.grabberClosed = true;
-                closeGrabber();
                 wantedV4BPosition = V4BPositions.UP;
 
                 if (scoreTimer.milliseconds() > 400) {
                     wantedScoreState = ScoreStates.LOWER;
+                    Robot.getInstance().driverStation.grabberClosed = true;
+                    closeGrabber();
                     scoreTimer.reset();
                 }
                 break;
@@ -282,7 +282,7 @@ public class Lift extends Subsystem{
     }
 
     public boolean setLiftPosition(double position) {
-        setLiftPower(CruiseLib.limitValue(pid.update(getLiftPosition(), position), -0.1, 0, 0, 1));
+        setLiftPower(CruiseLib.limitValue(pid.update(getLiftPosition(), position), 0, -0.3, 0, 1));
         return Math.abs(getLiftPosition() - position) < 2;
     }
 

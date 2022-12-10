@@ -1,13 +1,10 @@
 package com.team9889.ftc2021.auto.modes;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.team9889.ftc2021.auto.AutoModeBase;
 import com.team9889.ftc2021.auto.actions.ActionVariables;
 import com.team9889.ftc2021.auto.actions.drive.PurePursuit;
-import com.team9889.ftc2021.auto.actions.drive.Turn;
 import com.team9889.ftc2021.auto.actions.lift.Grab;
 import com.team9889.ftc2021.auto.actions.lift.Score;
 import com.team9889.ftc2021.auto.actions.lift.SetGrabber;
@@ -24,7 +21,7 @@ import java.util.ArrayList;
  */
 
 @Autonomous(preselectTeleOp = "Teleop")
-public class RightStack extends AutoModeBase {
+public class ThreeCycle extends AutoModeBase {
     ElapsedTime timer = new ElapsedTime();
 
     @Override
@@ -37,7 +34,7 @@ public class RightStack extends AutoModeBase {
         ArrayList<Pose> path = new ArrayList<>();
         Robot.getMecanumDrive().position = new Pose2d(31, 65, Math.PI / 2);
 
-        double speed = 1;
+        double speed = 0.6;
 
         timer.reset();
         ThreadAction(new Score(Lift.LiftPositions.HIGH, false));
@@ -73,7 +70,7 @@ public class RightStack extends AutoModeBase {
 
         path.add(new Pose(12, 16, 0, speed, 4));
 
-        for (int i = 0; i < 5 && timer.milliseconds() < 24500; i++) {
+        for (int i = 0; i < 3 && timer.milliseconds() < 24500; i++) {
             path.add(new Pose(40, 10, 0, speed, 8));
             runAction(new PurePursuit(path));
             path.clear();
@@ -81,7 +78,7 @@ public class RightStack extends AutoModeBase {
             ThreadAction(new Grab(4 - i));
             path.add(new Pose(60, 11, 0, speed, 8));
             path.add(new Pose(63, 11, 0, 0.4, 8));
-            runAction(new PurePursuit(path, -90, 800));
+            runAction(new PurePursuit(path, -90, 1500));
             path.clear();
 
             ActionVariables.grab = true;
@@ -90,8 +87,8 @@ public class RightStack extends AutoModeBase {
 
             ThreadAction(new Score(Lift.LiftPositions.HIGH, true));
             path.add(new Pose(35, 10, 180, speed, 8));
-            path.add(new Pose(27 + (i / 4.0), 3, 180, 0.7, 8));
-            runAction(new PurePursuit(path, -50 + (i / 2.0), 1500));
+            path.add(new Pose(27 + (i / 4.0), 4, 180, 0.7, 8));
+            runAction(new PurePursuit(path, -50 + (i / 2.0), 2500));
             path.clear();
 
             ActionVariables.score = true;

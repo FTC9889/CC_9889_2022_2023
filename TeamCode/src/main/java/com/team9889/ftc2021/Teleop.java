@@ -4,6 +4,7 @@ package com.team9889.ftc2021;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.robocol.RobocolParsableBase;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.team9889.ftc2021.subsystems.Lift;
 import com.team9889.lib.CruiseLib;
@@ -20,7 +21,8 @@ import java.util.Arrays;
 @Config
 public class Teleop extends Team9889Linear {
     ElapsedTime timer = new ElapsedTime();
-    boolean left = false, ground = false;
+    ElapsedTime liftTimer = new ElapsedTime();
+    boolean left = false, ground = false, stack = false;
 
     @Override
     public void runOpMode() {
@@ -147,6 +149,36 @@ public class Teleop extends Team9889Linear {
 
                     Robot.getLift().wantedPickupStates = Lift.PickupStates.NULL;
                 }
+            }
+
+            if (gamepad1.x) {
+                Robot.getLift().wantedScoreState = Lift.ScoreStates.NULL;
+                Robot.getLift().wantedLiftPosition = Lift.LiftPositions.NULL;
+
+                Robot.getLift().setLiftPosition(4);
+                Robot.getLift().wantedPickupStates = Lift.PickupStates.HOVER_RIGHT;
+                driverStation.grabberClosed = false;
+            } else if ((gamepad1.b || stack) && liftTimer.milliseconds() < 200) {
+                Robot.getLift().wantedScoreState = Lift.ScoreStates.NULL;
+                Robot.getLift().wantedLiftPosition = Lift.LiftPositions.NULL;
+
+                Robot.getLift().setLiftPosition(4);
+                Robot.getLift().wantedPickupStates = Lift.PickupStates.GRAB_RIGHT;
+                driverStation.grabberClosed = false;
+
+                stack = true;
+            } else if ((gamepad1.b || stack) && liftTimer.milliseconds() >= 600 && liftTimer.milliseconds() < 750) {
+                Robot.getLift().setLiftPosition(12);
+            } else if ((gamepad1.b || stack) && liftTimer.milliseconds() >= 750 && liftTimer.milliseconds() < 1100) {
+                Robot.getLift().wantedPickupStates = Lift.PickupStates.UP;
+            } else if ((gamepad1.b || stack) && liftTimer.milliseconds() >= 1100) {
+                Robot.getLift().wantedPickupStates = Lift.PickupStates.UP;
+                Robot.getLift().wantedLiftPosition = Lift.LiftPositions.DOWN;
+                stack = false;
+            } else if ((gamepad1.b || stack) && liftTimer.milliseconds() >= 200) {
+                driverStation.grabberClosed = true;
+            } else {
+                liftTimer.reset();
             }
 
             /* Telemetry */

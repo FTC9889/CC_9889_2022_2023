@@ -2,6 +2,7 @@ package com.team9889.ftc2021.auto.actions.lift;
 
 import android.util.Log;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.team9889.ftc2021.auto.actions.Action;
 import com.team9889.ftc2021.auto.actions.ActionVariables;
 import com.team9889.ftc2021.subsystems.Lift;
@@ -14,6 +15,8 @@ import com.team9889.ftc2021.subsystems.Robot;
 public class Score extends Action {
     Lift.LiftPositions liftHeight;
     boolean left;
+
+    ElapsedTime timer = new ElapsedTime();
 
     public Score(Lift.LiftPositions liftHeight, boolean left) {
         this.liftHeight = liftHeight;
@@ -43,12 +46,16 @@ public class Score extends Action {
             }
         }
 
+        if (Robot.getInstance().getLift().wantedScoreState != Lift.ScoreStates.RETRACT) {
+            timer.reset();
+        }
+
         Robot.getInstance().getLift().update();
     }
 
     @Override
     public boolean isFinished() {
-        return Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.LOWER;
+        return timer.milliseconds() > 200;
     }
 
     @Override
