@@ -168,25 +168,25 @@ public class PurePursuit extends Action {
         Robot.getInstance().getMecanumDrive().setPower(xSpeed, ySpeed, turnSpeed);
 
 
-//        TelemetryPacket packet = new TelemetryPacket();
-//        for (int i = 0; i < path.size() - 1; i++) {
-//            packet.fieldOverlay()
-//                    .setStroke("red")
-//                    .strokeLine(path.get(i).x, path.get(i).y, path.get(i + 1).x, path.get(i + 1).y);
-//        }
-//
-//        packet.fieldOverlay()
-//                .setFill("green")
-//                .fillRect(pose.getX() - 6.5, pose.getY() - 6.5, 13, 13);
-//
-//        packet.fieldOverlay()
-//                .setStroke("blue")
-//                .strokeCircle(pose.getX(), pose.getY(), path.get(step).radius);
-//
-//        packet.fieldOverlay()
-//                .setStroke("black")
-//                .strokeLine(pose.getX(), pose.getY(), point.x, point.y);
-//        FtcDashboard.getInstance().sendTelemetryPacket(packet);
+        TelemetryPacket packet = new TelemetryPacket();
+        for (int i = 0; i < path.size() - 1; i++) {
+            packet.fieldOverlay()
+                    .setStroke("red")
+                    .strokeLine(path.get(i).x, path.get(i).y, path.get(i + 1).x, path.get(i + 1).y);
+        }
+
+        packet.fieldOverlay()
+                .setFill("green")
+                .fillRect(pose.getX() - 6.5, pose.getY() - 6.5, 13, 13);
+
+        packet.fieldOverlay()
+                .setStroke("blue")
+                .strokeCircle(pose.getX(), pose.getY(), path.get(step).radius);
+
+        packet.fieldOverlay()
+                .setStroke("black")
+                .strokeLine(pose.getX(), pose.getY(), point.x, point.y);
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
     int count;

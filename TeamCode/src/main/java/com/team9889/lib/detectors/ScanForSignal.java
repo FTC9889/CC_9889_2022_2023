@@ -23,7 +23,7 @@ public class ScanForSignal extends OpenCvPipeline {
     public static int height = 30, width = 40, x = 225, y = 55, tolerance = 30;
     public static boolean drawRect = true;
 
-    public static int oneR = 119, oneG = 164, oneB = 90;
+    public static int oneR = 119, oneG = 170, oneB = 116;
     public static int twoR = 66, twoG = 76, twoB = 70;
 
     Scalar rgb = new Scalar(0, 0, 0);

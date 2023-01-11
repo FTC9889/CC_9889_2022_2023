@@ -20,9 +20,12 @@ import java.util.Arrays;
 @TeleOp
 @Config
 public class Teleop extends Team9889Linear {
+    public static double lightValue = 0.5;
+
     ElapsedTime timer = new ElapsedTime();
     ElapsedTime liftTimer = new ElapsedTime();
-    boolean left = false, ground = false, stack = false;
+    boolean left = false, leftGround = false, rightGround = false, stack = false, first = true,
+            autoDone = false;
 
     @Override
     public void runOpMode() {
@@ -86,17 +89,33 @@ public class Teleop extends Team9889Linear {
             }
 
             int getGround = driverStation.getGround();
-            if (getGround == 1 || ground) {
+            int getRightGround = driverStation.getRightGround();
+            if (getGround == 1 || leftGround) {
                 if (Robot.getLift().wantedScoreState != Lift.ScoreStates.GROUND_LEFT && getGround == 1) {
                     Robot.getLift().wantedScoreState = Lift.ScoreStates.GROUND_LEFT;
-                    ground = true;
+                    leftGround = true;
                 } else if (getGround == 1){
                     Robot.getLift().wantedScoreState = Lift.ScoreStates.DROP;
                 }
 
                 if (Robot.getLift().wantedScoreState == Lift.ScoreStates.NULL ||
                         Robot.getLift().wantedScoreState == Lift.ScoreStates.LOWER) {
-                    ground = false;
+                    leftGround = false;
+                }
+
+                Robot.getLift().wantedPickupStates = Lift.PickupStates.NULL;
+            } else if (getRightGround == 1 || rightGround) {
+                if (Robot.getLift().wantedScoreState != Lift.ScoreStates.GROUND_RIGHT &&
+                        getRightGround == 1) {
+                    Robot.getLift().wantedScoreState = Lift.ScoreStates.GROUND_RIGHT;
+                    rightGround = true;
+                } else if (getRightGround == 1){
+                    Robot.getLift().wantedScoreState = Lift.ScoreStates.DROP;
+                }
+
+                if (Robot.getLift().wantedScoreState == Lift.ScoreStates.NULL ||
+                        Robot.getLift().wantedScoreState == Lift.ScoreStates.LOWER) {
+                    rightGround = false;
                 }
 
                 Robot.getLift().wantedPickupStates = Lift.PickupStates.NULL;
@@ -181,11 +200,28 @@ public class Teleop extends Team9889Linear {
                 liftTimer.reset();
             }
 
+            if (gamepad1.right_trigger > 0.3 && !autoDone) {
+                if (Robot.frontLight.getVoltage() > lightValue && first) {
+                    Robot.getLift().wantedPickupStates = Lift.PickupStates.GRAB_RIGHT;
+                    first = false;
+                    autoDone = true;
+                } else if (Robot.frontLight.getVoltage() < lightValue) {
+                    Robot.getLift().wantedPickupStates = Lift.PickupStates.HOVER_RIGHT;
+                    first = true;
+                }
+            } else if (first) {
+                Robot.getLift().wantedPickupStates = Lift.PickupStates.UP;
+                first = false;
+            } else if (autoDone && gamepad1.right_trigger < 0.15) {
+                autoDone = false;
+            }
+
             /* Telemetry */
             telemetry.addData("Position", Arrays.toString(Robot.getMecanumDrive().position.getArray()));
             telemetry.addData("Score State", Robot.getLift().wantedScoreState.toString());
             telemetry.addData("Pickup State", Robot.getLift().wantedPickupStates.toString());
             telemetry.addData("Left", left);
+            telemetry.addData("light", Robot.frontLight.getVoltage());
 
 //            TelemetryPacket packet = new TelemetryPacket();
 //            packet.fieldOverlay().setFill("black").fillRect(Robot.getMecanumDrive().position.getY(),

@@ -90,6 +90,18 @@ public class DriverStation {
         return 0;
     }
 
+    private boolean rightGroundReleased = true;
+    int getRightGround() {
+        if (gamepad1.y && rightGroundReleased) {
+            rightGroundReleased = false;
+            return 1;
+        } else if (!gamepad1.y) {
+            rightGroundReleased = true;
+        }
+
+        return 0;
+    }
+
     private boolean scoreReleased = true;
     int getScore() {
         if (gamepad1.right_bumper && scoreReleased) {

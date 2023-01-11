@@ -55,7 +55,7 @@ public class Robot {
     public Servo leftV4B, rightV4B;
     public Servo grabber;
 
-    public AnalogInput v4bPot;
+    public AnalogInput v4bPot, frontLight, backLight;
     public TouchSensor liftLimit;
 
     List<LynxModule> hubs;
@@ -137,11 +137,16 @@ public class Robot {
 
         leftV4B = hardwareMap.get(Servo.class, Constants.LiftConstants.kLeftV4B);
         leftV4B.setDirection(Servo.Direction.REVERSE);
+        leftV4B.getController().pwmEnable();
         rightV4B = hardwareMap.get(Servo.class, Constants.LiftConstants.kRightV4B);
+        rightV4B.getController().pwmEnable();
 
         grabber = hardwareMap.get(Servo.class, Constants.LiftConstants.kGrabber);
 
         v4bPot = hardwareMap.get(AnalogInput.class, Constants.LiftConstants.kV4BPot);
+        frontLight = hardwareMap.get(AnalogInput.class, Constants.LiftConstants.kFrontLight);
+        backLight = hardwareMap.get(AnalogInput.class, Constants.LiftConstants.kBackLight);
+
         liftLimit = hardwareMap.get(TouchSensor.class, Constants.LiftConstants.kLiftLimit);
 
 
