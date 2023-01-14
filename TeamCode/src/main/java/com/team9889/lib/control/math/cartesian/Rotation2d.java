@@ -1,5 +1,7 @@
 package com.team9889.lib.control.math.cartesian;
 
+import com.team9889.lib.CruiseLib;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
@@ -34,6 +36,8 @@ public class Rotation2d {
     }
 
     private void setThedaRadians(double theda){
+        theda = CruiseLib.angleWrapRad(theda);
+
         this.mTheda = theda;
         this.mUnit = AngleUnit.RADIANS;
 
@@ -42,6 +46,8 @@ public class Rotation2d {
     }
 
     private void setThedaDegrees(double theda){
+        theda = CruiseLib.angleWrap(theda);
+
         this.mTheda = theda;
         this.mUnit = AngleUnit.DEGREES;
 
