@@ -10,6 +10,8 @@ import com.team9889.ftc2021.subsystems.Lift;
 import com.team9889.lib.CruiseLib;
 import com.team9889.lib.Pose2d;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 import java.nio.channels.GatheringByteChannel;
 import java.util.Arrays;
 
@@ -75,17 +77,18 @@ public class Teleop extends Team9889Linear {
             } else if (driverStation.getV4BUp()) {
                 Robot.getLift().wantedV4BPosition = Lift.V4BPositions.UP;
                 Robot.getLift().wantedScoreState = Lift.ScoreStates.NULL;
-                Robot.getLift().wantedPickupStates = Lift.PickupStates.NULL;
                 driverStation.grabberClosed = true;
             } else if (driverStation.getV4BRight()) {
                 Robot.getLift().wantedV4BPosition = Lift.V4BPositions.RIGHT_DOWN;
                 Robot.getLift().wantedScoreState = Lift.ScoreStates.NULL;
             }
 
-            if (driverStation.getGrabber()) {
-                Robot.getLift().closeGrabber();
-            } else {
-                Robot.getLift().openGrabber();
+            if (gamepad1.right_trigger < 0.3 && gamepad1.left_trigger < 0.3) {
+                if (driverStation.getGrabber()) {
+                    Robot.getLift().closeGrabber();
+                } else {
+                    Robot.getLift().openGrabber();
+                }
             }
 
             int getGround = driverStation.getGround();
@@ -102,8 +105,6 @@ public class Teleop extends Team9889Linear {
                         Robot.getLift().wantedScoreState == Lift.ScoreStates.LOWER) {
                     leftGround = false;
                 }
-
-                Robot.getLift().wantedPickupStates = Lift.PickupStates.NULL;
             } else if (getRightGround == 1 || rightGround) {
                 if (Robot.getLift().wantedScoreState != Lift.ScoreStates.GROUND_RIGHT &&
                         getRightGround == 1) {
@@ -117,8 +118,6 @@ public class Teleop extends Team9889Linear {
                         Robot.getLift().wantedScoreState == Lift.ScoreStates.LOWER) {
                     rightGround = false;
                 }
-
-                Robot.getLift().wantedPickupStates = Lift.PickupStates.NULL;
             } else {
                 int getScore = driverStation.getScore();
                 if (getScore > 0) {
@@ -130,23 +129,21 @@ public class Teleop extends Team9889Linear {
                 if (Robot.getLift().wantedLiftPosition == Lift.LiftPositions.DOWN) {
                     if (getScore != 0) {
                         if (left) {
-                            if (Robot.getLift().wantedPickupStates == Lift.PickupStates.HOVER_LEFT) {
-                                Robot.getLift().wantedPickupStates = Lift.PickupStates.GRAB_LEFT;
+                            if (Robot.getLift().wantedScoreState == Lift.ScoreStates.P_HOVER_LEFT) {
+                                Robot.getLift().wantedScoreState = Lift.ScoreStates.GRAB_LEFT;
                             } else {
-                                Robot.getLift().wantedPickupStates = Lift.PickupStates.HOVER_LEFT;
+                                Robot.getLift().wantedScoreState = Lift.ScoreStates.P_HOVER_LEFT;
                                 driverStation.grabberClosed = false;
                             }
                         } else {
-                            if (Robot.getLift().wantedPickupStates == Lift.PickupStates.HOVER_RIGHT) {
-                                Robot.getLift().wantedPickupStates = Lift.PickupStates.GRAB_RIGHT;
+                            if (Robot.getLift().wantedScoreState == Lift.ScoreStates.P_HOVER_RIGHT) {
+                                Robot.getLift().wantedScoreState = Lift.ScoreStates.GRAB_RIGHT;
                             } else {
-                                Robot.getLift().wantedPickupStates = Lift.PickupStates.HOVER_RIGHT;
+                                Robot.getLift().wantedScoreState = Lift.ScoreStates.P_HOVER_RIGHT;
                                 driverStation.grabberClosed = false;
                             }
                         }
                     }
-
-                    Robot.getLift().wantedScoreState = Lift.ScoreStates.NULL;
                 } else {
                     if (Robot.getLift().wantedScoreState != Lift.ScoreStates.NULL && getScore != 0) {
                         if (left) {
@@ -165,8 +162,6 @@ public class Teleop extends Team9889Linear {
                             }
                         }
                     }
-
-                    Robot.getLift().wantedPickupStates = Lift.PickupStates.NULL;
                 }
             }
 
@@ -175,23 +170,23 @@ public class Teleop extends Team9889Linear {
                 Robot.getLift().wantedLiftPosition = Lift.LiftPositions.NULL;
 
                 Robot.getLift().setLiftPosition(4);
-                Robot.getLift().wantedPickupStates = Lift.PickupStates.HOVER_RIGHT;
+                Robot.getLift().wantedScoreState = Lift.ScoreStates.P_HOVER_RIGHT;
                 driverStation.grabberClosed = false;
             } else if ((gamepad1.b || stack) && liftTimer.milliseconds() < 200) {
                 Robot.getLift().wantedScoreState = Lift.ScoreStates.NULL;
                 Robot.getLift().wantedLiftPosition = Lift.LiftPositions.NULL;
 
                 Robot.getLift().setLiftPosition(4);
-                Robot.getLift().wantedPickupStates = Lift.PickupStates.GRAB_RIGHT;
+                Robot.getLift().wantedScoreState = Lift.ScoreStates.GRAB_RIGHT;
                 driverStation.grabberClosed = false;
 
                 stack = true;
             } else if ((gamepad1.b || stack) && liftTimer.milliseconds() >= 600 && liftTimer.milliseconds() < 750) {
                 Robot.getLift().setLiftPosition(12);
             } else if ((gamepad1.b || stack) && liftTimer.milliseconds() >= 750 && liftTimer.milliseconds() < 1100) {
-                Robot.getLift().wantedPickupStates = Lift.PickupStates.UP;
+                Robot.getLift().wantedScoreState = Lift.ScoreStates.HOLDING;
             } else if ((gamepad1.b || stack) && liftTimer.milliseconds() >= 1100) {
-                Robot.getLift().wantedPickupStates = Lift.PickupStates.UP;
+                Robot.getLift().wantedScoreState = Lift.ScoreStates.HOLDING;
                 Robot.getLift().wantedLiftPosition = Lift.LiftPositions.DOWN;
                 stack = false;
             } else if ((gamepad1.b || stack) && liftTimer.milliseconds() >= 200) {
@@ -201,27 +196,38 @@ public class Teleop extends Team9889Linear {
             }
 
             if (gamepad1.right_trigger > 0.3 && !autoDone) {
-                if (Robot.frontLight.getVoltage() > lightValue && first) {
-                    Robot.getLift().wantedPickupStates = Lift.PickupStates.GRAB_RIGHT;
+                if (Robot.frontColor.getDistance(DistanceUnit.INCH) < 1.4 && first) {
+                    Robot.getLift().wantedScoreState = Lift.ScoreStates.GRAB_RIGHT;
                     first = false;
                     autoDone = true;
-                } else if (Robot.frontLight.getVoltage() < lightValue) {
-                    Robot.getLift().wantedPickupStates = Lift.PickupStates.HOVER_RIGHT;
+                } else if (Robot.frontColor.getDistance(DistanceUnit.INCH) > 1.4) {
+                    Robot.getLift().wantedScoreState = Lift.ScoreStates.P_HOVER_RIGHT;
+                    first = true;
+                }
+            } else if (gamepad1.left_trigger > 0.3 && !autoDone) {
+                if (Robot.backColor.getDistance(DistanceUnit.INCH) < 1.4 && first) {
+                    Robot.getLift().wantedScoreState = Lift.ScoreStates.GRAB_LEFT;
+                    first = false;
+                    autoDone = true;
+                } else if (Robot.backColor.getDistance(DistanceUnit.INCH) > 1.4) {
+                    Robot.getLift().wantedScoreState = Lift.ScoreStates.P_HOVER_LEFT;
                     first = true;
                 }
             } else if (first) {
-                Robot.getLift().wantedPickupStates = Lift.PickupStates.UP;
+                Robot.getLift().wantedScoreState = Lift.ScoreStates.HOLDING;
                 first = false;
-            } else if (autoDone && gamepad1.right_trigger < 0.15) {
+            } else if (autoDone && gamepad1.right_trigger < 0.15 && gamepad1.left_trigger < 0.15) {
                 autoDone = false;
             }
 
             /* Telemetry */
             telemetry.addData("Position", Arrays.toString(Robot.getMecanumDrive().position.getArray()));
             telemetry.addData("Score State", Robot.getLift().wantedScoreState.toString());
-            telemetry.addData("Pickup State", Robot.getLift().wantedPickupStates.toString());
+            telemetry.addData("Grabber Open", Robot.getLift().grabberOpen);
             telemetry.addData("Left", left);
-            telemetry.addData("light", Robot.frontLight.getVoltage());
+            telemetry.addData("Distance", Robot.frontColor.getDistance(DistanceUnit.INCH));
+            telemetry.addData("Color", Robot.frontColor.getNormalizedColors());
+
 
 //            TelemetryPacket packet = new TelemetryPacket();
 //            packet.fieldOverlay().setFill("black").fillRect(Robot.getMecanumDrive().position.getY(),

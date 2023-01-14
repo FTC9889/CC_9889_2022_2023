@@ -57,8 +57,8 @@ public class Constants {
         public final static String kGrabber = "grabber";
 
         public final static String kV4BPot = "vb_pot";
-        public final static String kFrontLight = "front_light";
-        public final static String kBackLight = "back_light";
+        public final static String kFrontColor = "front_color";
+        public final static String kBackColor = "back_color";
         public final static String kLiftLimit = "lift_limit";
     }
 }

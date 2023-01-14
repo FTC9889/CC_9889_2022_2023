@@ -36,6 +36,7 @@ public class RightStack extends AutoModeBase {
     public void run(StartPosition startPosition) {
         ArrayList<Pose> path = new ArrayList<>();
         Robot.getMecanumDrive().position = new Pose2d(31, 65, Math.PI / 2);
+        Robot.getMecanumDrive().angleOffset = Math.PI / 2;
 
         double speed = 1;
 
@@ -52,7 +53,7 @@ public class RightStack extends AutoModeBase {
 
         runAction(new Wait(50));
 
-        path.add(new Pose(10, 35, 0, speed, 8, 0.4));
+        path.add(new Pose(16, 30, 0, speed, 8, 0.4));
         path.add(new Pose(6, 27, 0, speed, 10));
         runAction(new PurePursuit(path, 115));
         path.clear();
@@ -74,13 +75,13 @@ public class RightStack extends AutoModeBase {
         path.add(new Pose(12, 16, 0, speed, 4));
 
         for (int i = 0; i < 5 && timer.milliseconds() < 24500; i++) {
-            path.add(new Pose(40, 10, 0, speed, 8));
+            path.add(new Pose(40, 13, 0, speed, 8));
             runAction(new PurePursuit(path));
             path.clear();
 
             ThreadAction(new Grab(4 - i));
-            path.add(new Pose(60, 11, 0, speed, 8));
-            path.add(new Pose(63, 11, 0, 0.4, 8));
+            path.add(new Pose(50, 13, 0, speed, 10));
+            path.add(new Pose(63, 13, 0, 0.4, 8));
             runAction(new PurePursuit(path, -90, 800));
             path.clear();
 
@@ -90,8 +91,8 @@ public class RightStack extends AutoModeBase {
 
             ThreadAction(new Score(Lift.LiftPositions.HIGH, true));
             path.add(new Pose(35, 10, 180, speed, 8));
-            path.add(new Pose(27 + (i / 4.0), 3, 180, 0.7, 8));
-            runAction(new PurePursuit(path, -50 + (i / 2.0), 1500));
+            path.add(new Pose(30, 4, 180, 0.7, 8));
+            runAction(new PurePursuit(path, -50, 1500));
             path.clear();
 
             ActionVariables.score = true;

@@ -25,7 +25,6 @@ public class Score extends Action {
 
     @Override
     public void start() {
-        Robot.getInstance().getLift().wantedPickupStates = Lift.PickupStates.NULL;
         Robot.getInstance().getLift().wantedScoreState = (left ? Lift.ScoreStates.HOVER_LEFT : Lift.ScoreStates.HOVER_RIGHT);
 
         Robot.getInstance().getLift().wantedLiftPosition = liftHeight;

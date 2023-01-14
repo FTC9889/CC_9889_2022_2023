@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 import com.team9889.ftc2021.auto.actions.Action;
+import com.team9889.ftc2021.subsystems.Lift;
 import com.team9889.ftc2021.subsystems.Robot;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -43,6 +44,7 @@ public abstract class Team9889Linear extends LinearOpMode {
     public abstract void initialize();
 
     public void waitForStart(boolean autonomous) {
+//        Telemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
         Robot.init(hardwareMap, autonomous);
         Robot.telemetry = telemetry;
         Robot.update();
@@ -88,9 +90,19 @@ public abstract class Team9889Linear extends LinearOpMode {
                 }
 
                 if (gamepad1.right_bumper) {
+                    Robot.getLift().wantedV4BPosition = Lift.V4BPositions.LEFT;
                     Robot.getLift().openGrabber();
+                    matchTime.reset();
                 } else {
-                    Robot.getLift().closeGrabber();
+                    if (matchTime.milliseconds() < 1000) {
+                        Robot.getLift().wantedV4BPosition = Lift.V4BPositions.LEFT_DOWN;
+                    } else {
+                        Robot.getLift().wantedV4BPosition = Lift.V4BPositions.LEFT;
+                    }
+
+                    if (matchTime.milliseconds() > 100) {
+                        Robot.getLift().closeGrabber();
+                    }
                 }
 
                 Robot.outputToTelemetry(telemetry);

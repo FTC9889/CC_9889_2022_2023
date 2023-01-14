@@ -24,6 +24,7 @@ import static java.lang.Math.PI;
 @Config
 public class MecanumDrive extends Subsystem {
     public static double tolerance = 3;
+    public static double yMultiplier = 1.0175, xMultiplier = 1;
 
     public double xSpeed, ySpeed, turnSpeed;
 
@@ -33,6 +34,7 @@ public class MecanumDrive extends Subsystem {
     ElapsedTime timer = new ElapsedTime();
 
     public Pose2d position = new Pose2d(0, 0, 0);
+    public double angleOffset = 0;
 
     boolean auto;
 
@@ -48,7 +50,7 @@ public class MecanumDrive extends Subsystem {
     @Override
     public void init(boolean auto) {
         if(auto) {
-
+            angleOffset += getAngle().getTheda(AngleUnit.RADIANS);
         } else {
 
         }
@@ -62,7 +64,7 @@ public class MecanumDrive extends Subsystem {
     public void outputToTelemetry(Telemetry telemetry) {
 //        telemetry.addData("Gyro", -CruiseLib.angleWrap(Robot.getInstance().gyro.getVoltage() / 2.75 * 360));
         telemetry.addData("Odometry", Math.toDegrees(position.getHeading()));
-//        telemetry.addData("IMU", getAngle().getTheda(AngleUnit.DEGREES));
+        telemetry.addData("IMU", getAngle().getTheda(AngleUnit.DEGREES));
 
         telemetry.addData("Odometry 1", Robot.getInstance().bRDrive.getPosition());
         telemetry.addData("Odometry 2", Robot.getInstance().bLDrive.getPosition());
@@ -113,7 +115,7 @@ public class MecanumDrive extends Subsystem {
 
     public Rotation2d getAngle(){
         try {
-            gyroAngle.setTheda(-Robot.getInstance().imu.getNormalHeading(), AngleUnit.DEGREES);
+            gyroAngle.setTheda(-Robot.getInstance().imu.getNormalHeading() + Math.toDegrees(angleOffset), AngleUnit.DEGREES);
             return gyroAngle;
         } catch (Exception e){
             return new Rotation2d(0, AngleUnit.DEGREES);
@@ -253,12 +255,16 @@ public class MecanumDrive extends Subsystem {
         double rightPod = Robot.getInstance().bRDrive.getDeltaPosition() / 1440.0 * ((35 / 25.4) * PI) * (25.0 / 15.0);
         double middlePod = -Robot.getInstance().fRDrive.getDeltaPosition() / 1440.0 * ((35 / 25.4) * PI) * (25.0 / 15.0);
 
-
         double deltaAngle = ((leftPod - rightPod) / trackWidth);
-        double y = (leftPod + rightPod) / 2;
-        double x = middlePod - (deltaAngle * middleToCenter);
+        double y = ((leftPod + rightPod) / 2) * yMultiplier;
+        double x = (middlePod * xMultiplier) - (deltaAngle * middleToCenter);
 
-        position.setHeading(CruiseLib.angleWrapRad(position.getHeading() + deltaAngle));
+        if (timer.milliseconds() > 1000) {
+            position.setHeading(getAngle().getTheda(AngleUnit.RADIANS));
+            timer.reset();
+        } else {
+            position.setHeading(CruiseLib.angleWrapRad(position.getHeading() + deltaAngle));
+        }
         position.addX(((x * Math.cos(position.getHeading())) + (y * Math.sin(position.getHeading()))));
         position.addY(-(y * Math.cos(position.getHeading())) + (x * Math.sin(position.getHeading())));
     }

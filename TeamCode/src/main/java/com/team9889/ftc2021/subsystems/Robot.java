@@ -7,6 +7,7 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -55,7 +56,9 @@ public class Robot {
     public Servo leftV4B, rightV4B;
     public Servo grabber;
 
-    public AnalogInput v4bPot, frontLight, backLight;
+    public AnalogInput v4bPot;
+    public RevColorSensorV3 frontColor;
+    public ColorRangeSensor backColor;
     public TouchSensor liftLimit;
 
     List<LynxModule> hubs;
@@ -144,13 +147,13 @@ public class Robot {
         grabber = hardwareMap.get(Servo.class, Constants.LiftConstants.kGrabber);
 
         v4bPot = hardwareMap.get(AnalogInput.class, Constants.LiftConstants.kV4BPot);
-        frontLight = hardwareMap.get(AnalogInput.class, Constants.LiftConstants.kFrontLight);
-        backLight = hardwareMap.get(AnalogInput.class, Constants.LiftConstants.kBackLight);
+        frontColor = hardwareMap.get(RevColorSensorV3.class, Constants.LiftConstants.kFrontColor);
+        backColor = hardwareMap.get(ColorRangeSensor.class, Constants.LiftConstants.kBackColor);
 
         liftLimit = hardwareMap.get(TouchSensor.class, Constants.LiftConstants.kLiftLimit);
 
 
-//        imu = new RevIMU("imu", hardwareMap);
+        imu = new RevIMU("imu", hardwareMap);
 
         // Init all subsystems
         for (Subsystem subsystem : subsystems) {

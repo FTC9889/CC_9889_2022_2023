@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.team9889.ftc2021.auto.AutoModeBase;
 import com.team9889.ftc2021.auto.actions.utl.Wait;
 import com.team9889.ftc2021.subsystems.Robot;
+import com.team9889.lib.Pose2d;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
@@ -29,7 +30,7 @@ public class AngleTest extends AutoModeBase {
         waitForStart(true);
 
 
-        Robot.getMecanumDrive().setPower(0, 0, .3);
+        Robot.getMecanumDrive().setPower(0, 0, .6);
         Robot.update();
 
         while (count != 0) {
@@ -50,7 +51,12 @@ public class AngleTest extends AutoModeBase {
 
         Robot.getMecanumDrive().setPower(0, 0, 0);
         Robot.update();
-        runAction(new Wait(30000));
+
+        while (opModeIsActive()) {
+            Pose2d position = Robot.getMecanumDrive().position;
+            telemetry.addData("Position", position.getX() + ", " + position.getY() + ", " + position.getHeading());
+            telemetry.update();
+        }
     }
 
     @Override

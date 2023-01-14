@@ -36,6 +36,8 @@ public class PurePursuit extends Action {
     Pose tolerance = new Pose(2, 2, 3);
     int step = 1;
 
+    boolean overshot = false;
+
     public PurePursuit(ArrayList<Pose> path) {
         this.path = path;
     }
@@ -62,7 +64,7 @@ public class PurePursuit extends Action {
         this.tolerance = tolerance;
     }
 
-    public PurePursuit(ArrayList<Pose> path, Pose tolerance, double timeout, double endTheta) {
+    public PurePursuit(ArrayList<Pose> path, Pose tolerance, double endTheta, double timeout) {
         this.path = path;
         this.timeout = timeout;
         this.tolerance = tolerance;
@@ -108,20 +110,22 @@ public class PurePursuit extends Action {
         Pose error = Pose.getError(Pose.Pose2dToPose(Robot.getInstance().getMecanumDrive().position),
                 path.get(path.size() - 1));
 
-        if ((step == path.size() - 1) && Math.abs(Math.sqrt(Math.pow(error.x, 2) + Math.pow(error.y, 2))) < path.get(step).radius) {
+        if (((step == path.size() - 1) && Math.abs(Math.sqrt(Math.pow(error.x, 2) + Math.pow(error.y, 2))) < path.get(step).radius) || overshot) {
             double x = CruiseLib.limitValue(((point.x - pose.getX()) / path.get(step).radius), 0, -1, 0, 1);
             x *= CruiseLib.limitValue((abs(point.x - pose.getX()) / divider), 0, -1, 0, 1);
-            x = CruiseLib.limitValue(-x, -0.1, -maxSpeed, 0.1, maxSpeed);
+            x = CruiseLib.limitValue(-x, -0.15, -maxSpeed, 0.15, maxSpeed);
 
             double y = CruiseLib.limitValue(((point.y - pose.getY()) / path.get(step).radius), 0, -1, 0, 1);
             y *= CruiseLib.limitValue((abs(point.y - pose.getY()) / divider), 0, -1, 0, 1);
-            y = CruiseLib.limitValue(y, -0.1, -maxSpeed, 0.1, maxSpeed);
+            y = CruiseLib.limitValue(y, -0.15, -maxSpeed, 0.15, maxSpeed);
 
             Log.v("Speed X", "" + x);
             Log.v("Speed Y", "" + y);
 
             xSpeed = x * Math.cos(pose.getHeading()) - y * Math.sin(pose.getHeading());
             ySpeed = y * Math.cos(pose.getHeading()) + x * Math.sin(pose.getHeading());
+
+            overshot = true;
         } else {
             double relativeDist = Math.sqrt(Math.pow(point.x - pose.getX(), 2) + Math.pow(point.y - pose.getY(), 2));
 
@@ -140,7 +144,7 @@ public class PurePursuit extends Action {
         //Turn
         double relativePointAngle;
 
-        if ((step == path.size() - 1) && Math.abs(Math.sqrt(Math.pow(error.x, 2) + Math.pow(error.y, 2))) < path.get(step).radius) {
+        if (((step == path.size() - 1) && Math.abs(Math.sqrt(Math.pow(error.x, 2) + Math.pow(error.y, 2))) < path.get(step).radius) || overshot) {
             double angleToPoint;
             if (endTheta == 1000) {
                  angleToPoint = toDegrees(atan2(path.get(path.size() - 1).x - path.get(path.size() - 2).x,
@@ -149,6 +153,8 @@ public class PurePursuit extends Action {
                 angleToPoint = -endTheta;
             }
             relativePointAngle = -CruiseLib.angleWrap(angleToPoint + toDegrees(pose.getHeading()));
+
+            overshot = true;
         } else {
             double angleToPoint = toDegrees(atan2(point.x-pose.getX(), point.y-pose.getY())) + (path.get(step).theta);
             relativePointAngle = -CruiseLib.angleWrap(angleToPoint + toDegrees(pose.getHeading()));
@@ -220,8 +226,8 @@ public class PurePursuit extends Action {
 
     Pose RobotToLine (Pose point1, Pose point2, Pose2d pose, double radius) {
         double xDiff = point2.x - point1.x;
-        if (xDiff == 0)
-            xDiff += 0.1;
+        if (xDiff <= 0.1)
+            xDiff = 0.1;
 
         double slope = (point2.y - point1.y) / xDiff;
         double yIntercept = point2.y - (slope * point2.x);

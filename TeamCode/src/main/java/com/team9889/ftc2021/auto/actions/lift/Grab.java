@@ -20,10 +20,8 @@ public class Grab extends Action {
 
     @Override
     public void start() {
-        Robot.getInstance().getLift().wantedScoreState = Lift.ScoreStates.NULL;
-
-        Robot.getInstance().getLift().wantedPickupStates = Lift.PickupStates.HOVER_RIGHT;
         Robot.getInstance().getLift().wantedLiftPosition = Lift.LiftPositions.NULL;
+        Robot.getInstance().getLift().wantedScoreState = Lift.ScoreStates.P_HOVER_RIGHT;
 
         ActionVariables.doneGrab = false;
         ActionVariables.grab = false;
@@ -32,7 +30,7 @@ public class Grab extends Action {
     @Override
     public void update() {
         if (ActionVariables.grab) {
-            Robot.getInstance().getLift().wantedPickupStates = Lift.PickupStates.GRAB_RIGHT;
+            Robot.getInstance().getLift().wantedScoreState = Lift.ScoreStates.GRAB_RIGHT;
         }
 
         Robot.getInstance().getLift().setLiftPosition(CruiseLib.limitValue(liftHeight, 100, 0));
@@ -42,7 +40,7 @@ public class Grab extends Action {
 
     @Override
     public boolean isFinished() {
-        return Robot.getInstance().getLift().wantedPickupStates == Lift.PickupStates.UP;
+        return Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.HOLDING;
     }
 
     @Override
