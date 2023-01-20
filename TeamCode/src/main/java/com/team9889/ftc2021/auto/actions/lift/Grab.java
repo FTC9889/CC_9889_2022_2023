@@ -12,30 +12,42 @@ import com.team9889.lib.CruiseLib;
  */
 
 public class Grab extends Action {
-    double liftHeight;
+    double liftHeight, wait = 0;
+    ElapsedTime timer = new ElapsedTime();
+
+    int stage = 0;
 
     public Grab(double liftHeight) {
         this.liftHeight = liftHeight;
     }
 
+    public Grab(double liftHeight, double wait) {
+        this.liftHeight = liftHeight;
+        this.wait = wait;
+    }
+
     @Override
     public void start() {
-        Robot.getInstance().getLift().wantedLiftPosition = Lift.LiftPositions.NULL;
-        Robot.getInstance().getLift().wantedScoreState = Lift.ScoreStates.P_HOVER_RIGHT;
-
         ActionVariables.doneGrab = false;
         ActionVariables.grab = false;
     }
 
     @Override
     public void update() {
-        if (ActionVariables.grab) {
-            Robot.getInstance().getLift().wantedScoreState = Lift.ScoreStates.GRAB_RIGHT;
+        if (stage == 0 && timer.milliseconds() > wait) {
+            Robot.getInstance().getLift().wantedLiftPosition = Lift.LiftPositions.NULL;
+            Robot.getInstance().getLift().wantedScoreState = Lift.ScoreStates.P_HOVER_RIGHT;
+
+            stage = 1;
+        } else if (stage == 1) {
+            if (ActionVariables.grab) {
+                Robot.getInstance().getLift().wantedScoreState = Lift.ScoreStates.GRAB_RIGHT;
+            }
+
+            Robot.getInstance().getLift().setLiftPosition(CruiseLib.limitValue(liftHeight, 100, 0));
+
+            Robot.getInstance().getLift().update();
         }
-
-        Robot.getInstance().getLift().setLiftPosition(CruiseLib.limitValue(liftHeight, 100, 0));
-
-        Robot.getInstance().getLift().update();
     }
 
     @Override

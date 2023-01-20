@@ -47,7 +47,7 @@ public class Teleop extends Team9889Linear {
 //                Robot.getMecanumDrive().ySpeed = 0.0774 * Math.exp(2.5584 * driverStation.getY());
             Robot.getMecanumDrive().xSpeed = driverStation.getX();
             Robot.getMecanumDrive().ySpeed = driverStation.getY();
-            Robot.getMecanumDrive().turnSpeed = driverStation.getSteer();
+            Robot.getMecanumDrive().turnSpeed = driverStation.getSteer() * 0.85;
 
 
             /* Lift */

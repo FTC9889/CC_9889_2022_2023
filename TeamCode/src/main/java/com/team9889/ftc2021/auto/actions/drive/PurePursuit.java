@@ -36,7 +36,7 @@ public class PurePursuit extends Action {
     Pose tolerance = new Pose(2, 2, 3);
     int step = 1;
 
-    boolean overshot = false;
+    boolean overshot = false, error = false;
 
     public PurePursuit(ArrayList<Pose> path) {
         this.path = path;
@@ -100,6 +100,7 @@ public class PurePursuit extends Action {
 
         if (point.x == 10000) {
             point = path.get(step);
+            error = true;
         }
 
 
@@ -107,10 +108,7 @@ public class PurePursuit extends Action {
         maxSpeed = path.get(step).maxSpeed;
         double xSpeed = 1, ySpeed = 1;
 
-        Pose error = Pose.getError(Pose.Pose2dToPose(Robot.getInstance().getMecanumDrive().position),
-                path.get(path.size() - 1));
-
-        if (((step == path.size() - 1) && Math.abs(Math.sqrt(Math.pow(error.x, 2) + Math.pow(error.y, 2))) < path.get(step).radius) || overshot) {
+        if ((point.x == path.get(path.size() - 1).x && point.y == path.get(path.size() - 1).y && !error) || overshot) {
             double x = CruiseLib.limitValue(((point.x - pose.getX()) / path.get(step).radius), 0, -1, 0, 1);
             x *= CruiseLib.limitValue((abs(point.x - pose.getX()) / divider), 0, -1, 0, 1);
             x = CruiseLib.limitValue(-x, -0.15, -maxSpeed, 0.15, maxSpeed);
@@ -144,7 +142,7 @@ public class PurePursuit extends Action {
         //Turn
         double relativePointAngle;
 
-        if (((step == path.size() - 1) && Math.abs(Math.sqrt(Math.pow(error.x, 2) + Math.pow(error.y, 2))) < path.get(step).radius) || overshot) {
+        if ((point.x == path.get(path.size() - 1).x && point.y == path.get(path.size() - 1).y && !error) || overshot) {
             double angleToPoint;
             if (endTheta == 1000) {
                  angleToPoint = toDegrees(atan2(path.get(path.size() - 1).x - path.get(path.size() - 2).x,
@@ -173,26 +171,26 @@ public class PurePursuit extends Action {
 
         Robot.getInstance().getMecanumDrive().setPower(xSpeed, ySpeed, turnSpeed);
 
-
-        TelemetryPacket packet = new TelemetryPacket();
-        for (int i = 0; i < path.size() - 1; i++) {
-            packet.fieldOverlay()
-                    .setStroke("red")
-                    .strokeLine(path.get(i).x, path.get(i).y, path.get(i + 1).x, path.get(i + 1).y);
-        }
-
-        packet.fieldOverlay()
-                .setFill("green")
-                .fillRect(pose.getX() - 6.5, pose.getY() - 6.5, 13, 13);
-
-        packet.fieldOverlay()
-                .setStroke("blue")
-                .strokeCircle(pose.getX(), pose.getY(), path.get(step).radius);
-
-        packet.fieldOverlay()
-                .setStroke("black")
-                .strokeLine(pose.getX(), pose.getY(), point.x, point.y);
-        FtcDashboard.getInstance().sendTelemetryPacket(packet);
+        error = false;
+//        TelemetryPacket packet = new TelemetryPacket();
+//        for (int i = 0; i < path.size() - 1; i++) {
+//            packet.fieldOverlay()
+//                    .setStroke("red")
+//                    .strokeLine(path.get(i).x, path.get(i).y, path.get(i + 1).x, path.get(i + 1).y);
+//        }
+//
+//        packet.fieldOverlay()
+//                .setFill("green")
+//                .fillRect(pose.getX() - 6.5, pose.getY() - 6.5, 13, 13);
+//
+//        packet.fieldOverlay()
+//                .setStroke("blue")
+//                .strokeCircle(pose.getX(), pose.getY(), path.get(step).radius);
+//
+//        packet.fieldOverlay()
+//                .setStroke("black")
+//                .strokeLine(pose.getX(), pose.getY(), point.x, point.y);
+//        FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
     int count;

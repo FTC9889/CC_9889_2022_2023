@@ -24,7 +24,8 @@ import static java.lang.Math.PI;
 @Config
 public class MecanumDrive extends Subsystem {
     public static double tolerance = 3;
-    public static double yMultiplier = 1.0175, xMultiplier = 1;
+    //1.0175
+    public static double yMultiplier = 1, xMultiplier = 1;
 
     public double xSpeed, ySpeed, turnSpeed;
 
@@ -49,12 +50,6 @@ public class MecanumDrive extends Subsystem {
 
     @Override
     public void init(boolean auto) {
-        if(auto) {
-            angleOffset += getAngle().getTheda(AngleUnit.RADIANS);
-        } else {
-
-        }
-
         this.auto = auto;
 
         timer.reset();

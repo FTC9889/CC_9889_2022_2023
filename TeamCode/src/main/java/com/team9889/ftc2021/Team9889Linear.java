@@ -100,7 +100,7 @@ public abstract class Team9889Linear extends LinearOpMode {
                         Robot.getLift().wantedV4BPosition = Lift.V4BPositions.LEFT;
                     }
 
-                    if (matchTime.milliseconds() > 100) {
+                    if (matchTime.milliseconds() > 300) {
                         Robot.getLift().closeGrabber();
                     }
                 }

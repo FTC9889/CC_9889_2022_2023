@@ -20,7 +20,7 @@ public class Lift extends Subsystem{
     public boolean liftDown = true, auto, grabberOpen = false;
 
     public enum V4BPositions {
-        LEFT_DOWN, LEFT_GROUND, LEFT, LEFT_UP, UP, RIGHT_UP, RIGHT, RIGHT_GROUND, RIGHT_DOWN, NULL
+        LEFT_DOWN, LEFT_GROUND, LEFT_DROP, LEFT, LEFT_UP, UP, RIGHT_UP, RIGHT, RIGHT_DROP, RIGHT_GROUND, RIGHT_DOWN, NULL
     }
     public V4BPositions wantedV4BPosition = V4BPositions.NULL;
     public V4BPositions currentV4BPosition = V4BPositions.NULL;
@@ -74,26 +74,32 @@ public class Lift extends Subsystem{
 
         switch (wantedV4BPosition) {
             case LEFT_DOWN:
-                if (setV4BAngle(-125)) {
+                if (setV4BAngle(-135)) {
                     currentV4BPosition = V4BPositions.LEFT_DOWN;
                 }
                 break;
 
             case LEFT_GROUND:
-                if (setV4BAngle(-107)) {
+                if (setV4BAngle(-120)) {
                     currentV4BPosition = V4BPositions.LEFT_DOWN;
                 }
                 break;
 
             case LEFT:
-                if (setV4BAngle(-80)) {
+                if (setV4BAngle(-75)) {
                     currentV4BPosition = V4BPositions.LEFT;
                 }
                 break;
 
+            case LEFT_DROP:
+                if (setV4BAngle(-90)) {
+                    currentV4BPosition = V4BPositions.LEFT_DROP;
+                }
+                break;
+
             case LEFT_UP:
-                if (setV4BAngle(-60)) {
-                    currentV4BPosition = V4BPositions.LEFT;
+                if (setV4BAngle(-70)) {
+                    currentV4BPosition = V4BPositions.LEFT_UP;
                 }
                 break;
 
@@ -104,7 +110,7 @@ public class Lift extends Subsystem{
                 break;
 
             case RIGHT_UP:
-                if (setV4BAngle(60)) {
+                if (setV4BAngle(50)) {
                     currentV4BPosition = V4BPositions.RIGHT_UP;
                 }
                 break;
@@ -112,6 +118,12 @@ public class Lift extends Subsystem{
             case RIGHT:
                 if (setV4BAngle(80)) {
                     currentV4BPosition = V4BPositions.RIGHT;
+                }
+                break;
+
+            case RIGHT_DROP:
+                if (setV4BAngle(90)) {
+                    currentV4BPosition = V4BPositions.RIGHT_DROP;
                 }
                 break;
 
@@ -141,19 +153,19 @@ public class Lift extends Subsystem{
                 break;
 
             case LOW:
-                if (setLiftPosition(6)) {
+                if (setLiftPosition(8)) {
                     currentLiftPosition = LiftPositions.LOW;
                 }
                 break;
 
             case MEDIUM:
-                if (setLiftPosition(17)) {
+                if (setLiftPosition(18)) {
                     currentLiftPosition = LiftPositions.MEDIUM;
                 }
                 break;
 
             case HIGH:
-                if (setLiftPosition(28)) {
+                if (setLiftPosition(30)) {
                     currentLiftPosition = LiftPositions.HIGH;
                 }
                 break;
@@ -177,10 +189,10 @@ public class Lift extends Subsystem{
             case GRAB_RIGHT:
                 wantedV4BPosition = V4BPositions.RIGHT_DOWN;
 
-                if (grabTimer.milliseconds() > 50 && grabTimer.milliseconds() < 400) {
+                if (grabTimer.milliseconds() > 120 && grabTimer.milliseconds() < 300) {
                     Robot.getInstance().driverStation.grabberClosed = true;
                     closeGrabber();
-                } else if (grabTimer.milliseconds() > (auto ? 450 : 400)) {
+                } else if (grabTimer.milliseconds() > (auto ? 450 : 300)) {
                     wantedScoreState = ScoreStates.HOLDING;
                 }
                 break;
@@ -191,9 +203,9 @@ public class Lift extends Subsystem{
                 break;
 
             case PLACE_RIGHT:
-                wantedV4BPosition = V4BPositions.RIGHT;
+                wantedV4BPosition = V4BPositions.RIGHT_DROP;
 
-                if (scoreTimer.milliseconds() > 100) {
+                if (scoreTimer.milliseconds() > 200) {
                     wantedScoreState = ScoreStates.DROP;
                     scoreTimer.reset();
                 }
@@ -208,10 +220,10 @@ public class Lift extends Subsystem{
             case GRAB_LEFT:
                 wantedV4BPosition = V4BPositions.LEFT_DOWN;
 
-                if (grabTimer.milliseconds() > 50 && grabTimer.milliseconds() < 400) {
+                if (grabTimer.milliseconds() > 120 && grabTimer.milliseconds() < 300) {
                     Robot.getInstance().driverStation.grabberClosed = true;
                     closeGrabber();
-                } else if (grabTimer.milliseconds() > 400) {
+                } else if (grabTimer.milliseconds() > 300) {
                     wantedScoreState = ScoreStates.HOLDING;
                 }
                 break;
@@ -222,9 +234,9 @@ public class Lift extends Subsystem{
                 break;
 
             case PLACE_LEFT:
-                wantedV4BPosition = V4BPositions.LEFT;
+                wantedV4BPosition = V4BPositions.LEFT_DROP;
 
-                if (scoreTimer.milliseconds() > 100) {
+                if (scoreTimer.milliseconds() > 200) {
                     wantedScoreState = ScoreStates.DROP;
                     scoreTimer.reset();
                 }
@@ -242,9 +254,9 @@ public class Lift extends Subsystem{
 
             case DROP:
                 Robot.getInstance().driverStation.grabberClosed = false;
-                openGrabber();
+                depositGrabber();
 
-                if (scoreTimer.milliseconds() > 300) {
+                if (scoreTimer.milliseconds() > 250) {
                     wantedScoreState = ScoreStates.RETRACT;
                     scoreTimer.reset();
                 }
@@ -253,9 +265,12 @@ public class Lift extends Subsystem{
             case RETRACT:
                 wantedV4BPosition = V4BPositions.UP;
 
+                if (scoreTimer.milliseconds() > 100) {
+                    Robot.getInstance().driverStation.grabberClosed = true;
+                }
+
                 if (scoreTimer.milliseconds() > 400) {
                     wantedScoreState = ScoreStates.LOWER;
-                    Robot.getInstance().driverStation.grabberClosed = true;
                     closeGrabber();
                     scoreTimer.reset();
                 }
@@ -330,6 +345,12 @@ public class Lift extends Subsystem{
 
     public void openGrabber() {
         setGrabber(0.58);
+//        Log.v("Open Grabber", "false");
+        grabberOpen = true;
+    }
+
+    public void depositGrabber() {
+        setGrabber(0.5);
 //        Log.v("Open Grabber", "false");
         grabberOpen = true;
     }
