@@ -40,7 +40,7 @@ public class Grab extends Action {
 
             stage = 1;
         } else if (stage == 1) {
-            if (ActionVariables.grab) {
+            if (ActionVariables.doneDriving) {
                 Robot.getInstance().getLift().wantedScoreState = Lift.ScoreStates.GRAB_RIGHT;
             }
 

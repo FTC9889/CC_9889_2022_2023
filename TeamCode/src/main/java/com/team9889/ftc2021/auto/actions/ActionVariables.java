@@ -10,4 +10,6 @@ public class ActionVariables {
 
     public static boolean score = false;
     public static boolean doneScore = false;
+
+    public static boolean doneDriving = false;
 }

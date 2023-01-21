@@ -91,6 +91,7 @@ public class Camera extends Subsystem{
         if (auto) {
             telemetry.addData("Signal", scanForSignal.getSignal());
             telemetry.addData("RGB", scanForSignal.getRGB());
+            telemetry.addData("Average", scanForSignal.average);
         }
     }
 

@@ -23,26 +23,35 @@ public class ScanForSignal extends OpenCvPipeline {
     public static int height = 30, width = 40, x = 225, y = 55, tolerance = 30;
     public static boolean drawRect = true;
 
-    public static int oneR = 119, oneG = 170, oneB = 116;
-    public static int twoR = 66, twoG = 76, twoB = 70;
+    public static int white = 155, black = 85;
 
     Scalar rgb = new Scalar(0, 0, 0);
+    public double average = 0;
 
     public Scalar getRGB() {
         return rgb;
     }
 
     public int getSignal() {
-        if (Math.abs(rgb.val[0] - oneR) < tolerance
-                && Math.abs(rgb.val[1] - oneG) < tolerance
-                && Math.abs(rgb.val[2] - oneB) < tolerance) {
-            return 3;
-        } else if (Math.abs(rgb.val[0] - twoR) < tolerance
-                && Math.abs(rgb.val[1] - twoG) < tolerance
-                && Math.abs(rgb.val[2] - twoB) < tolerance) {
+//        if (Math.abs(rgb.val[0] - oneR) < tolerance
+//                && Math.abs(rgb.val[1] - oneG) < tolerance
+//                && Math.abs(rgb.val[2] - oneB) < tolerance) {
+//            return 3;
+//        } else if (Math.abs(rgb.val[0] - twoR) < tolerance
+//                && Math.abs(rgb.val[1] - twoG) < tolerance
+//                && Math.abs(rgb.val[2] - twoB) < tolerance) {
+//            return 2;
+//        } else {
+//            return 1;
+//        }
+
+        average = (rgb.val[0] + rgb.val[1] + rgb.val[2]) / 3;
+        if (average > white) {
+            return 1;
+        } else if (average < black) {
             return 2;
         } else {
-            return 1;
+            return 3;
         }
     }
 

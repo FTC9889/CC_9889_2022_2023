@@ -36,11 +36,11 @@ public class Score extends Action {
     @Override
     public void update() {
         if (left) {
-            if (ActionVariables.score && Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.HOVER_LEFT) {
+            if (ActionVariables.doneDriving && Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.HOVER_LEFT) {
                 Robot.getInstance().getLift().wantedScoreState = Lift.ScoreStates.PLACE_LEFT;
             }
         } else {
-            if (ActionVariables.score && Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.HOVER_RIGHT) {
+            if (ActionVariables.doneDriving && Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.HOVER_RIGHT) {
                 Robot.getInstance().getLift().wantedScoreState = Lift.ScoreStates.PLACE_RIGHT;
             }
         }

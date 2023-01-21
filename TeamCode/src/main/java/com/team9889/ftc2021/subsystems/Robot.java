@@ -56,7 +56,7 @@ public class Robot {
     public Servo leftV4B, rightV4B;
     public Servo grabber;
 
-    public AnalogInput v4bPot;
+    public AnalogInput v4bPot, distance;
     public RevColorSensorV3 frontColor;
     public ColorRangeSensor backColor;
     public TouchSensor liftLimit;
@@ -147,6 +147,7 @@ public class Robot {
         grabber = hardwareMap.get(Servo.class, Constants.LiftConstants.kGrabber);
 
         v4bPot = hardwareMap.get(AnalogInput.class, Constants.LiftConstants.kV4BPot);
+        distance = hardwareMap.get(AnalogInput.class, Constants.LiftConstants.kDistance);
         frontColor = hardwareMap.get(RevColorSensorV3.class, Constants.LiftConstants.kFrontColor);
         backColor = hardwareMap.get(ColorRangeSensor.class, Constants.LiftConstants.kBackColor);
 

@@ -1,0 +1,93 @@
+2023-01-20 22:26:10.274 3771-3912/com.qualcomm.ftcrobotcontroller V/ThreadPool: container(0x0d713013: default scheduler) added id=492 TID=0 count=16
+2023-01-20 22:26:10.286 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 21.005544
+2023-01-20 22:26:10.298 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 12.095709
+2023-01-20 22:26:10.312 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 13.836084999999999
+2023-01-20 22:26:10.324 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 12.111752
+2023-01-20 22:26:10.336 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 11.859751
+2023-01-20 22:26:10.350 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 13.112751000000001
+2023-01-20 22:26:10.363 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 13.653210000000001
+2023-01-20 22:26:10.375 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 11.840501
+2023-01-20 22:26:10.387 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 11.979918000000001
+2023-01-20 22:26:10.402 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 14.199501
+2023-01-20 22:26:10.414 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 12.015209
+2023-01-20 22:26:10.426 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 12.225793000000001
+2023-01-20 22:26:10.439 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 12.754876
+2023-01-20 22:26:10.452 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 12.817876
+2023-01-20 22:26:10.467 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 14.762126
+2023-01-20 22:26:10.480 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 12.633251
+2023-01-20 22:26:10.493 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 12.542834
+2023-01-20 22:26:10.553 3771-3888/com.qualcomm.ftcrobotcontroller V/RobotCore: nack rec'd mod=173 msg#=62 ref#=0 reason=I2C_TIMEOUT_UNKNOWN_CAUSE:46
+2023-01-20 22:26:10.555 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch: exception thrown during lynx communication
+2023-01-20 22:26:10.559 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch: com.qualcomm.hardware.lynx.LynxNackException: ((embedded) #173) LynxI2cReadStatusQueryCommand: nack received: I2C_TIMEOUT_UNKNOWN_CAUSE:46
+2023-01-20 22:26:10.561 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.qualcomm.hardware.lynx.commands.LynxRespondable.responseOrThrow(LynxRespondable.java:327)
+2023-01-20 22:26:10.562 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.qualcomm.hardware.lynx.commands.LynxRespondable.sendReceive(LynxRespondable.java:266)
+2023-01-20 22:26:10.562 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.qualcomm.hardware.lynx.LynxI2cDeviceSynch.pollForReadResult(LynxI2cDeviceSynch.java:613)
+2023-01-20 22:26:10.564 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.qualcomm.hardware.lynx.LynxI2cDeviceSynchV2$2.get(LynxI2cDeviceSynchV2.java:73)
+2023-01-20 22:26:10.565 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.qualcomm.hardware.lynx.LynxI2cDeviceSynchV2$2.get(LynxI2cDeviceSynchV2.java:67)
+2023-01-20 22:26:10.565 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.qualcomm.hardware.lynx.LynxModule.acquireI2cLockWhile(LynxModule.java:1855)
+2023-01-20 22:26:10.566 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.qualcomm.hardware.lynx.LynxI2cDeviceSynch.acquireI2cLockWhile(LynxI2cDeviceSynch.java:550)
+2023-01-20 22:26:10.567 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.qualcomm.hardware.lynx.LynxI2cDeviceSynchV2.readTimeStamped(LynxI2cDeviceSynchV2.java:66)
+2023-01-20 22:26:10.568 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.qualcomm.robotcore.hardware.I2cDeviceSynchImplOnSimple.readTimeStamped(I2cDeviceSynchImplOnSimple.java:524)
+2023-01-20 22:26:10.569 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.qualcomm.hardware.bosch.BNO055IMUImpl.getVector(BNO055IMUImpl.java:654)
+2023-01-20 22:26:10.570 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.qualcomm.hardware.bosch.BNO055IMUImpl.getAngularOrientation(BNO055IMUImpl.java:572)
+2023-01-20 22:26:10.571 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.qualcomm.hardware.bosch.BNO055IMUImpl.getAngularOrientation(BNO055IMUImpl.java:437)
+2023-01-20 22:26:10.571 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.team9889.lib.hardware.RevIMU.getNormalHeading(RevIMU.java:36)
+2023-01-20 22:26:10.572 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.team9889.ftc2021.subsystems.MecanumDrive.getAngle(MecanumDrive.java:113)
+2023-01-20 22:26:10.573 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.team9889.ftc2021.subsystems.MecanumDrive.updateOdometry(MecanumDrive.java:263)
+2023-01-20 22:26:10.574 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.team9889.ftc2021.subsystems.MecanumDrive.update(MecanumDrive.java:99)
+2023-01-20 22:26:10.575 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.team9889.ftc2021.subsystems.Robot.update(Robot.java:190)
+2023-01-20 22:26:10.576 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.team9889.ftc2021.auto.AutoModeBase.runAction(AutoModeBase.java:74)
+2023-01-20 22:26:10.577 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.team9889.ftc2021.auto.modes.RightStack.run(RightStack.java:100)
+2023-01-20 22:26:10.578 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.team9889.ftc2021.auto.AutoModeBase.runOpMode(AutoModeBase.java:52)
+2023-01-20 22:26:10.578 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.qualcomm.robotcore.eventloop.opmode.LinearOpMode.internalRunOpMode(LinearOpMode.java:169)
+2023-01-20 22:26:10.580 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.qualcomm.robotcore.eventloop.opmode.OpModeInternal.lambda$internalInit$1$com-qualcomm-robotcore-eventloop-opmode-OpModeInternal(OpModeInternal.java:180)
+2023-01-20 22:26:10.581 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.qualcomm.robotcore.eventloop.opmode.OpModeInternal$$ExternalSyntheticLambda1.run(D8$$SyntheticClass)
+2023-01-20 22:26:10.582 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.qualcomm.robotcore.util.ThreadPool.logThreadLifeCycle(ThreadPool.java:737)
+2023-01-20 22:26:10.583 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.qualcomm.robotcore.eventloop.opmode.OpModeInternal.lambda$internalInit$2$com-qualcomm-robotcore-eventloop-opmode-OpModeInternal(OpModeInternal.java:178)
+2023-01-20 22:26:10.584 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.qualcomm.robotcore.eventloop.opmode.OpModeInternal$$ExternalSyntheticLambda2.run(D8$$SyntheticClass)
+2023-01-20 22:26:10.584 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1133)
+2023-01-20 22:26:10.585 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:607)
+2023-01-20 22:26:10.586 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at com.qualcomm.robotcore.util.ThreadPool$ThreadFactoryImpl$1.run(ThreadPool.java:793)
+2023-01-20 22:26:10.587 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch:     at java.lang.Thread.run(Thread.java:761)
+2023-01-20 22:26:10.587 3771-3929/com.qualcomm.ftcrobotcontroller E/LynxI2cDeviceSynch: placeholder: readStatusQuery
+2023-01-20 22:26:10.591 3771-3895/com.qualcomm.ftcrobotcontroller D/RobotCore: system telemetry: key=$System$Warning$ msg="Error communicating with I2C device(s) 'imu'. Check your wiring and configuration."
+2023-01-20 22:26:10.594 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 100.890427
+2023-01-20 22:26:10.624 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 30.376503
+2023-01-20 22:26:10.640 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 15.724043
+2023-01-20 22:26:10.652 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 12.118751000000001
+2023-01-20 22:26:10.664 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 11.55496
+2023-01-20 22:26:10.677 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 13.342876
+2023-01-20 22:26:10.689 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 11.991000999999999
+2023-01-20 22:26:10.692 3771-3864/com.qualcomm.ftcrobotcontroller V/SoundInfo: construct(0x008a0ecf)
+2023-01-20 22:26:10.708 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 18.312294
+2023-01-20 22:26:10.714 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 6.441751
+2023-01-20 22:26:10.720 3771-3929/com.qualcomm.ftcrobotcontroller I/Power: -0.3
+2023-01-20 22:26:10.727 3771-3929/com.qualcomm.ftcrobotcontroller I/Power: -0.3
+2023-01-20 22:26:10.728 3771-3929/com.qualcomm.ftcrobotcontroller V/xSpeed: 0.0
+2023-01-20 22:26:10.728 3771-3929/com.qualcomm.ftcrobotcontroller V/ySpeed: 1.0
+2023-01-20 22:26:10.728 3771-3929/com.qualcomm.ftcrobotcontroller V/Distance: -16.34540077787422, 11.807139052140752, 20.163845347202958, 1.5702970439549304
+2023-01-20 22:26:10.728 3771-3929/com.qualcomm.ftcrobotcontroller V/Angle: -35.813946686835905
+2023-01-20 22:26:10.732 3771-3929/com.qualcomm.ftcrobotcontroller I/Power: -0.3471842692678615
+2023-01-20 22:26:10.737 3771-3929/com.qualcomm.ftcrobotcontroller I/Power: 0.6760713503560214
+2023-01-20 22:26:10.739 3771-3863/com.qualcomm.ftcrobotcontroller I/MediaCodec: callingProcessName:com.qualcomm.ftcrobotcontroller
+2023-01-20 22:26:10.742 3771-4350/com.qualcomm.ftcrobotcontroller I/OMXClient: MuxOMX ctor
+2023-01-20 22:26:10.742 3771-4350/com.qualcomm.ftcrobotcontroller I/ACodec: onAllocateComponent:6752 mSoftCodecPref:0 componentName:
+2023-01-20 22:26:10.743 3771-3929/com.qualcomm.ftcrobotcontroller I/Power: -0.3471842692678615
+2023-01-20 22:26:10.744 3771-4350/com.qualcomm.ftcrobotcontroller I/ACodec: onAllocateComponent:6783 mSoftCodecPref:0 componentName:OMX.google.raw.decoder
+2023-01-20 22:26:10.748 3771-3929/com.qualcomm.ftcrobotcontroller I/Power: 0.6760713503560214
+2023-01-20 22:26:10.754 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 39.35342
+2023-01-20 22:26:10.754 3771-3929/com.qualcomm.ftcrobotcontroller V/xSpeed: 0.0
+2023-01-20 22:26:10.754 3771-3929/com.qualcomm.ftcrobotcontroller V/ySpeed: 1.0
+2023-01-20 22:26:10.754 3771-3929/com.qualcomm.ftcrobotcontroller V/Distance: -16.34540077787422, 11.807139052140752, 20.163845347202958, 1.5702970439549304
+2023-01-20 22:26:10.754 3771-3929/com.qualcomm.ftcrobotcontroller V/Angle: -35.813946686835905
+2023-01-20 22:26:10.762 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 7.860417
+2023-01-20 22:26:10.762 3771-3929/com.qualcomm.ftcrobotcontroller V/xSpeed: 0.0
+2023-01-20 22:26:10.762 3771-3929/com.qualcomm.ftcrobotcontroller V/ySpeed: 1.0
+2023-01-20 22:26:10.762 3771-3929/com.qualcomm.ftcrobotcontroller V/Distance: -16.352929110208198, 11.800754437501586, 20.166211735913812, 1.5687991954350327
+2023-01-20 22:26:10.762 3771-3929/com.qualcomm.ftcrobotcontroller V/Angle: -35.70089688841495
+2023-01-20 22:26:10.770 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 7.516251
+2023-01-20 22:26:10.770 3771-3929/com.qualcomm.ftcrobotcontroller V/xSpeed: 0.0
+2023-01-20 22:26:10.770 3771-3929/com.qualcomm.ftcrobotcontroller V/ySpeed: 1.0
+2023-01-20 22:26:10.770 3771-3929/com.qualcomm.ftcrobotcontroller V/Distance: -16.352929110208198, 11.800754437501586, 20.166211735913812, 1.5687991954350327
+2023-01-20 22:26:10.770 3771-3929/com.qualcomm.ftcrobotcontroller V/Angle: -35.70089688841495
+2023-01-20 22:26:10.780 3771-3929/com.qualcomm.ftcrobotcontroller V/Loop Time: 10.703876
