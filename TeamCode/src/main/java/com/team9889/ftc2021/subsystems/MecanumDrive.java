@@ -151,6 +151,11 @@ public class MecanumDrive extends Subsystem {
         Robot.getInstance().bRDrive.setPower(v4);
     }
 
+    public double getDistance() {
+        return (Robot.getInstance().distance.getVoltage() * 63.202 + 0.0626 + 3.25)
+                * Math.sin(-position.getHeading());
+    }
+
 
 //  Constraints:
 //      Robot must be parallel to the field walls

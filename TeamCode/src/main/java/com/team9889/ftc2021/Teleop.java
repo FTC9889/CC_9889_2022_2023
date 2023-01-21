@@ -225,8 +225,10 @@ public class Teleop extends Team9889Linear {
             telemetry.addData("Score State", Robot.getLift().wantedScoreState.toString());
             telemetry.addData("Grabber Open", Robot.getLift().grabberOpen);
             telemetry.addData("Left", left);
-            telemetry.addData("Distance", Robot.frontColor.getDistance(DistanceUnit.INCH));
+//            telemetry.addData("Distance", Robot.frontColor.getDistance(DistanceUnit.INCH));
             telemetry.addData("Color", Robot.frontColor.getNormalizedColors());
+
+            telemetry.addData("Distance", Robot.getMecanumDrive().getDistance());
 
 
 //            TelemetryPacket packet = new TelemetryPacket();

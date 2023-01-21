@@ -86,7 +86,7 @@ public class Lift extends Subsystem{
                 break;
 
             case LEFT:
-                if (setV4BAngle(-75)) {
+                if (setV4BAngle((auto ? -65 : -75))) {
                     currentV4BPosition = V4BPositions.LEFT;
                 }
                 break;
@@ -116,7 +116,7 @@ public class Lift extends Subsystem{
                 break;
 
             case RIGHT:
-                if (setV4BAngle(80)) {
+                if (setV4BAngle((auto ? 70 : 80))) {
                     currentV4BPosition = V4BPositions.RIGHT;
                 }
                 break;
@@ -267,6 +267,7 @@ public class Lift extends Subsystem{
 
                 if (scoreTimer.milliseconds() > 100) {
                     Robot.getInstance().driverStation.grabberClosed = true;
+                    closeGrabber();
                 }
 
                 if (scoreTimer.milliseconds() > 400) {
@@ -288,8 +289,11 @@ public class Lift extends Subsystem{
 
     @Override
     public void stop() {
+        closeGrabber();
+
         Robot.getInstance().leftV4B.getController().pwmDisable();
         Robot.getInstance().rightV4B.getController().pwmDisable();
+        Robot.getInstance().grabber.getController().pwmDisable();
     }
 
     public boolean setLiftPosition(double position) {

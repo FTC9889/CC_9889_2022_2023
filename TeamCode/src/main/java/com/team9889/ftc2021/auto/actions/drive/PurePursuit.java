@@ -8,6 +8,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.team9889.ftc2021.auto.actions.Action;
+import com.team9889.ftc2021.auto.actions.ActionVariables;
 import com.team9889.ftc2021.subsystems.Robot;
 import com.team9889.lib.CruiseLib;
 import com.team9889.lib.Pose;
@@ -84,6 +85,11 @@ public class PurePursuit extends Action {
         path.add(0, new Pose(pose.getX(), pose.getY(), toDegrees(pose.getHeading())));
 
         timer.reset();
+        ActionVariables.doneDriving = false;
+
+//        for (int i = 0; i < path.size(); i++) {
+//            path.get(i).maxSpeed *= 0.8;
+//        }
     }
 
     @Override
@@ -91,8 +97,10 @@ public class PurePursuit extends Action {
         Pose2d pose = Robot.getInstance().getMecanumDrive().position;
 
         if (path.size() - 1 > step) {
-            if (RobotToLine(path.get(step), path.get(step + 1), pose, path.get(step).radius).x != 10000) {
-                step += 1;
+            Pose error = Pose.getError(Pose.Pose2dToPose(Robot.getInstance().getMecanumDrive().position),
+                    path.get(step));
+            if (abs(pow(error.x, 2) + pow(error.y, 2)) < path.get(step).radius) {
+                step++;
             }
         }
 
@@ -219,6 +227,7 @@ public class PurePursuit extends Action {
     @Override
     public void done() {
         Robot.getInstance().getMecanumDrive().setPower(0, 0, 0);
+        ActionVariables.doneDriving = true;
     }
 
 
@@ -229,6 +238,11 @@ public class PurePursuit extends Action {
 
         double slope = (point2.y - point1.y) / xDiff;
         double yIntercept = point2.y - (slope * point2.x);
+
+        double xOnLine = (-yIntercept*slope + pose.getX() + pose.getY()*slope) / (pow(slope, 2) + 1);
+        double yOnLine = (xOnLine-pose.getX()) * (-1/slope) + pose.getY();
+
+        pose = new Pose2d(xOnLine, yOnLine, 0);
 
         double a = 1 + pow(slope, 2);
         double b = ((slope * yIntercept) * 2) + (-pose.getX() * 2) + ((-pose.getY() * 2) * slope);
