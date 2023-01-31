@@ -45,7 +45,7 @@ public class RightStack extends AutoModeBase {
         double speed = 1;
 
         timer.reset();
-        ThreadAction(new Score(Lift.LiftPositions.HIGH, false));
+//        ThreadAction(new Score(Lift.LiftPositions.HIGH, false));
 
         path.add(new Pose(31, 60, 90, speed, 2));
 //        runAction(new PurePursuit(path));
@@ -56,17 +56,19 @@ public class RightStack extends AutoModeBase {
         path.clear();
 
         path.add(new Pose(14, 50, 0, speed, 8, 0.6));
-        runAction(new PurePursuit(path, new Pose(3, 3, 3), 180));
+        runAction(new PurePursuit(path, new Pose(3, 3, 3), 180, 2000));
         path.clear();
 
         path.add(new Pose(7, 26, 0, speed, 10));
-        runAction(new PurePursuit(path, new Pose(1, 1, 2), 115, 1800));
+//        runAction(new PurePursuit(path, new Pose(1, 1, 2), 115, 1800));
+        runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(1, 1, 2), 115, 1800),
+                new Score(Lift.LiftPositions.HIGH, false))));
         path.clear();
 
 //        runAction(new Turn(115));
 
-        ActionVariables.doneDriving = true;
-        while (!ActionVariables.doneScore) {}
+//        ActionVariables.doneDriving = true;
+//        while (!ActionVariables.doneScore) {}
 
 
         //Cycle 1
@@ -86,7 +88,7 @@ public class RightStack extends AutoModeBase {
 
             path.add(new Pose(55, Robot.getMecanumDrive().position.getY(), 0, speed, 8));
             path.add(new Pose(68, Robot.getMecanumDrive().position.getY(), 0, 0.3, 8));
-            runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, -90, 800),
+            runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, -90, 800, true),
                     new Grab(4 - i))));
 
             if (Robot.getMecanumDrive().getDistance() > 2) {
@@ -95,9 +97,9 @@ public class RightStack extends AutoModeBase {
 
             path.clear();
 
-            path.add(new Pose(40, 10, 180, speed, 12));
-            path.add(new Pose(31.5, 3 + (i / 2.0), 180, 0.6, 12));
-            runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(1, 1, 2), -65, 1500),
+            path.add(new Pose(40, 13 + i, 180, speed, 12));
+            path.add(new Pose(29, 4 + (i / 2.0), 180, 0.6, 12));
+            runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(1, 1, 2), -50, 1500),
                     new Score(Lift.LiftPositions.HIGH, true))));
             path.clear();
         }

@@ -20,10 +20,10 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 @Config
 public class ScanForSignal extends OpenCvPipeline {
-    public static int height = 30, width = 40, x = 225, y = 55, tolerance = 30;
+    public static int height = 15, width = 40, x = 225, y = 45, tolerance = 30;
     public static boolean drawRect = true;
 
-    public static int white = 155, black = 85;
+    public static int white = 165, black = 85;
 
     Scalar rgb = new Scalar(0, 0, 0);
     public double average = 0;
