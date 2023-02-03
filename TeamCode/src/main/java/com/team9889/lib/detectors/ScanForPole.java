@@ -1,5 +1,7 @@
 package com.team9889.lib.detectors;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.team9889.ftc2021.subsystems.Robot;
 import com.team9889.lib.detectors.util.HSV;
@@ -12,6 +14,8 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
+import org.opencv.core.Rect2d;
+import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -26,8 +30,10 @@ import java.util.List;
  */
 
 @Config
-public class ScanForDuck extends OpenCvPipeline {
-    public static int area = 300, maxArea = 5000;
+public class ScanForPole extends OpenCvPipeline {
+    public static int area = 50, maxArea = 100000;
+
+    public double width;
 
     //Outputs
     private Mat cvResizeOutput = new Mat();
@@ -36,8 +42,8 @@ public class ScanForDuck extends OpenCvPipeline {
     private ArrayList<MatOfPoint> findContoursOutput = new ArrayList<MatOfPoint>();
     private ArrayList<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 
-    public static HSV duckHSV = new HSV(90, 100,
-            60, 255, 100, 255);
+    public static HSV poleHSV = new HSV(90, 100,
+            100, 255, 100, 255);
 
     private Point point = new Point(1e10, 1e10);
 
@@ -45,7 +51,7 @@ public class ScanForDuck extends OpenCvPipeline {
         return point;
     }
 
-    public ScanForDuck() {
+    public ScanForPole() {
 
     }
 
@@ -60,16 +66,16 @@ public class ScanForDuck extends OpenCvPipeline {
         cvResize(cvResizeSrc, cvResizeDsize, cvResizeFx, cvResizeFy, cvResizeInterpolation, cvResizeOutput);
 
         // Step Blur0:
-        Mat blurInput = cvResizeOutput;
-        BlurType blurType = BlurType.get("Gaussian Blur");
-        double blurRadius = 2.702702702702703;
-        blur(blurInput, blurType, blurRadius, blurOutput);
+//        Mat blurInput = cvResizeOutput;
+//        BlurType blurType = BlurType.get("Gaussian Blur");
+//        double blurRadius = 2.702702702702703;
+//        blur(blurInput, blurType, blurRadius, blurOutput);
 
 //        Imgproc.rectangle(blurOutput, new Point(0, 0), new Point(320, 25), new Scalar(0, 0, 0), -1);
 
         // Step HSV_Threshold0:
-        Mat hsvThresholdInput = blurOutput;
-        hsvThreshold(hsvThresholdInput, duckHSV.getH(), duckHSV.getS(), duckHSV.getV(), hsvThresholdOutput);
+        Mat hsvThresholdInput = cvResizeOutput;
+        hsvThreshold(hsvThresholdInput, poleHSV.getH(), poleHSV.getS(), poleHSV.getV(), hsvThresholdOutput);
 
         // Step Find_Contours0:
         Mat findContoursInput = hsvThresholdOutput;
@@ -83,7 +89,7 @@ public class ScanForDuck extends OpenCvPipeline {
         double filterContoursMinPerimeter = 0;
         double filterContoursMinWidth = 0;
         double filterContoursMaxWidth = 1000;
-        double filterContoursMinHeight = 0;
+        double filterContoursMinHeight = 90;
         double filterContoursMaxHeight = 1000;
         double[] filterContoursSolidity = {0, 100};
         double filterContoursMaxVertices = 1000000;
@@ -104,35 +110,45 @@ public class ScanForDuck extends OpenCvPipeline {
             mc.add(new Point(mu.get(i).m10 / mu.get(i).m00 + 1e-5, mu.get(i).m01 / mu.get(i).m00 + 1e-5));
         }
 
+        int index = 0;
         for (int i = 0; i < contours.size(); i++) {
-            Imgproc.circle(cvResizeOutput, mc.get(i), 4, new Scalar(255, 0, 0), -1);
-        }
-
-        double maxDistance = 0;
-        Point minPoint = new Point(cvResizeOutput.width()/2, cvResizeOutput.height());
-        Imgproc.circle(cvResizeOutput, minPoint, 1, new Scalar(0, 0, 255), -1);
-        for (int i = 0; i < contours.size(); i++) {
-            double x = mc.get(i).x;
-            double y = mc.get(i).x;
-
-            double c_x = cvResizeOutput.width()/2;
-            double c_y = cvResizeOutput.height();
-
-            double dist = y;
-
-            if(dist > maxDistance) {
-                maxDistance = dist;
-                minPoint = mc.get(i);
-                minPoint.x += Robot.getInstance().isRed ? -10 : -20;
+            if (Imgproc.boundingRect(contours.get(i)).width > Imgproc.boundingRect(contours.get(index)).width) {
+                index = i;
             }
         }
 
-        point = minPoint;
-        Imgproc.circle(hsvThresholdOutput, minPoint, 1, new Scalar(0, 255, 0), -1);
+        if (contours.size() > 0) {
+            RotatedRect rect = Imgproc.minAreaRect(new MatOfPoint2f(contours.get(index).toArray()));
+            Point[] points = new Point[4];
+            rect.points(points);
+            for (int i = 0; i < 4; i++) {
+                Imgproc.line(cvResizeOutput, points[i], points[(i+1)%4], new Scalar(0, 255, 0));
+            }
 
-        cvResize(hsvThresholdOutput, cvResizeDsize, 3, 3, cvResizeInterpolation, hsvThresholdOutput);
+            double angle = Math.toRadians(rect.angle > 45 ? rect.angle - 90 : rect.angle);
+            width = Math.cos(angle) * rect.boundingRect().width
+            - Math.abs(Math.sin(angle) * rect.boundingRect().height);
+            Log.v("Angle", Math.toDegrees(angle) + ", " + rect.boundingRect().width + ", " + width);
 
-        return hsvThresholdOutput;
+
+            point = mc.get(index);
+            point.x = point.x + (Math.tan(angle) * point.y);
+            point.y = 0;
+            Imgproc.circle(cvResizeOutput, point, 4, new Scalar(255, 0, 0), -1);
+        }
+
+//        for (int i = 0; i < contours.size(); i++) {
+//            Imgproc.circle(cvResizeOutput, mc.get(i), 4, new Scalar(255, 0, 0), -1);
+//
+//            Imgproc.drawContours(cvResizeOutput, contours, i, new Scalar(0, 255, 0));
+//
+//            point = mc.get(0);
+//            width = Imgproc.boundingRect(contours.get(0)).width;
+//        }
+
+        cvResize(cvResizeOutput, cvResizeDsize, 3, 3, cvResizeInterpolation, cvResizeOutput);
+
+        return cvResizeOutput;
     }
 
     /**

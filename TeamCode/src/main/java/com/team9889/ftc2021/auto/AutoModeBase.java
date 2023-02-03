@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.team9889.ftc2021.DriverStation;
 import com.team9889.ftc2021.Team9889Linear;
 import com.team9889.ftc2021.auto.actions.Action;
+import com.team9889.ftc2021.subsystems.Robot;
 
 /**
  * Created by joshua9889 on 8/5/2017.
@@ -45,6 +46,13 @@ public abstract class AutoModeBase extends Team9889Linear {
         Robot.driverStation = new DriverStation(gamepad1, gamepad2);
 
         waitForStart(true);
+
+        try {
+            Robot.camera.stopStreaming();
+        } catch (Exception e) {
+
+        }
+
         autoTimer.reset();
 
         // If the opmode is still running, run auto

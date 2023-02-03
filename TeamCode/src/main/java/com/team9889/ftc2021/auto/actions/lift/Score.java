@@ -49,7 +49,7 @@ public class Score extends Action {
             timer.reset();
         }
 
-        Robot.getInstance().getLift().update();
+//        Robot.getInstance().getLift().update();
     }
 
     @Override

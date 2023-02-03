@@ -129,10 +129,10 @@ public abstract class Team9889Linear extends LinearOpMode {
                 Robot.update();
 
                 signal = Robot.getCamera().scanForSignal.getSignal();
-                FtcDashboard.getInstance().startCameraStream(Robot.camera, 0);
+                FtcDashboard.getInstance().startCameraStream(Robot.frontCVCam, 0);
             }
         } else {
-            FtcDashboard.getInstance().startCameraStream(Robot.camera, 0);
+            FtcDashboard.getInstance().startCameraStream(Robot.frontCVCam, 0);
 
             // Teleop Init Loop code
             while(isInInitLoop()){

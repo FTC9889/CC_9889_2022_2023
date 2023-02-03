@@ -15,6 +15,7 @@ public class Constants {
             "wrvffXGyU/xkmSaTJzrgiy8R+ZJx2T0JcEJ0m1UUEoF2BmW4ONAVv/TkG9ESGf6iAmx66vrVm3tk6+YY+1q1";
 
     public final static String kWebcam = "Webcam";
+    public final static String kFrontCam = "front_camera";
 
     /*---------------------
     |                     |

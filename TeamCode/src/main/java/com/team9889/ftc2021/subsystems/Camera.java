@@ -2,8 +2,7 @@ package com.team9889.ftc2021.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.team9889.lib.detectors.Blank;
-import com.team9889.lib.detectors.ScanForDuck;
-import com.team9889.lib.detectors.ScanForHub;
+import com.team9889.lib.detectors.ScanForPole;
 import com.team9889.lib.detectors.ScanForSignal;
 import com.team9889.lib.detectors.ScanForTSEObject;
 
@@ -20,7 +19,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 public class Camera extends Subsystem{
 //    ScanForTSE scanForTSE = new ScanForTSE();
     ScanForTSEObject scanForTSE = new ScanForTSEObject();
-    public ScanForDuck scanForDuck = new ScanForDuck();
+    public ScanForPole scanForPole = new ScanForPole();
     public ScanForSignal scanForSignal = new ScanForSignal();
 
     public Blank blank = new Blank();
@@ -48,12 +47,7 @@ public class Camera extends Subsystem{
             public void onOpened()
             {
                 Robot.getInstance().camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                if (auto) {
-//                    setScanForTSE();
-                    Robot.getInstance().camera.setPipeline(scanForSignal);
-                } else {
-                    Robot.getInstance().camera.setPipeline(scanForSignal);
-                }
+                Robot.getInstance().camera.setPipeline(scanForSignal);
             }
 
             @Override
@@ -62,28 +56,7 @@ public class Camera extends Subsystem{
             }
         });
 
-        /*
-        Robot.getInstance().frontCVCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                Robot.getInstance().frontCVCam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
-                if (auto) {
-//                    setScanForTSE();
-                    Robot.getInstance().frontCVCam.setPipeline(scanForDuck);
-                } else {
-                    Robot.getInstance().frontCVCam.setPipeline(scanForDuck);
-                }
-            }
-
-            @Override
-            public void onError(int errorCode) {
-
-            }
-        });
-
-         */
+        startFrontCam();
     }
 
     @Override
@@ -92,6 +65,9 @@ public class Camera extends Subsystem{
             telemetry.addData("Signal", scanForSignal.getSignal());
             telemetry.addData("RGB", scanForSignal.getRGB());
             telemetry.addData("Average", scanForSignal.average);
+        } else {
+            telemetry.addData("Width", scanForPole.width);
+            telemetry.addData("Point", scanForPole.getPoint());
         }
     }
 
@@ -101,8 +77,23 @@ public class Camera extends Subsystem{
 
     @Override
     public void stop() {
-//        Robot.getInstance().camera.stopStreaming();
-//        Robot.getInstance().frontCVCam.stopStreaming();
+        Robot.getInstance().frontCVCam.stopStreaming();
+    }
+
+    public void startFrontCam() {
+        Robot.getInstance().frontCVCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened() {
+                Robot.getInstance().frontCVCam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+                Robot.getInstance().frontCVCam.setPipeline(scanForPole);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+
+            }
+        });
     }
 
     public void setScanForTSE() {
