@@ -46,14 +46,15 @@ import static com.team9889.ftc2021.Team9889Linear.writeLastKnownPosition;
 
 public class Robot {
 
-    public WebcamName webcam;
-    public OpenCvCamera camera;
+    public WebcamName webcam, frontCam;
+    public OpenCvCamera camera, frontCVCam;
 
     public Motor fLDrive, fRDrive, bLDrive, bRDrive;
     public RevIMU imu = null;
 
     public Motor leftLift, rightLift;
-    public Servo leftV4B, rightV4B;
+//    public Servo leftV4B, rightV4B;
+    public CCServo leftV4B, rightV4B;
     public Servo grabber;
 
     public AnalogInput v4bPot, distance;
@@ -120,6 +121,8 @@ public class Robot {
         //Camera
         webcam = hardwareMap.get(WebcamName.class, Constants.kWebcam);
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcam);
+        frontCam = hardwareMap.get(WebcamName.class, Constants.kFrontCam);
+        frontCVCam = OpenCvCameraFactory.getInstance().createWebcam(frontCam);
 
         //Drive
         fLDrive = new Motor(hardwareMap, Constants.DriveConstants.kLeftDriveMasterId,
@@ -138,11 +141,14 @@ public class Robot {
         rightLift = new Motor(hardwareMap, Constants.LiftConstants.kRightLift,
                 DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE, true, true);
 
-        leftV4B = hardwareMap.get(Servo.class, Constants.LiftConstants.kLeftV4B);
-        leftV4B.setDirection(Servo.Direction.REVERSE);
-        leftV4B.getController().pwmEnable();
-        rightV4B = hardwareMap.get(Servo.class, Constants.LiftConstants.kRightV4B);
-        rightV4B.getController().pwmEnable();
+//        leftV4B = hardwareMap.get(Servo.class, Constants.LiftConstants.kLeftV4B);
+//        leftV4B.setDirection(Servo.Direction.REVERSE);
+//        leftV4B.getController().pwmEnable();
+//        rightV4B = hardwareMap.get(Servo.class, Constants.LiftConstants.kRightV4B);
+//        rightV4B.getController().pwmEnable();
+
+        leftV4B = new CCServo(hardwareMap, Constants.LiftConstants.kLeftV4B, 270, 500, Servo.Direction.REVERSE);
+        rightV4B = new CCServo(hardwareMap, Constants.LiftConstants.kRightV4B, 270, 500, Servo.Direction.FORWARD);
 
         grabber = hardwareMap.get(Servo.class, Constants.LiftConstants.kGrabber);
 
@@ -184,6 +190,9 @@ public class Robot {
 
             leftLift.update();
             rightLift.update();
+
+            leftV4B.update(loopTime.milliseconds());
+            rightV4B.update(loopTime.milliseconds());
 
             // Update Subsystems
             for (Subsystem subsystem : subsystems)

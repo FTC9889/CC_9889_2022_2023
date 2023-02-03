@@ -13,7 +13,7 @@ import com.team9889.lib.CruiseLib;
 public class CCServo {
     public Servo servo;
     ElapsedTime timer = new ElapsedTime();
-    double position = 0, setPosition = 0, wantedPosition = 0, moveAmount = 0, speed = 0;
+    double position = 0, setPosition = 1000, wantedPosition = 0, moveAmount = 0, speed = 0;
     private double range = 0, degreesPerSecond = 0;
 
     public CCServo(HardwareMap hardwareMap, String id, int range, int speed, Servo.Direction direction){
@@ -80,10 +80,17 @@ public class CCServo {
         if (setPosition != wantedPosition) {
             double seconds = loopTime / 1000;
             double amountToMove = seconds * (speed / range);
-            setPosition += CruiseLib.getSign(wantedPosition - setPosition) * (amountToMove * Math.abs(moveAmount));
+
+            if (Math.abs(amountToMove) > Math.abs(wantedPosition - position)) {
+                setPosition = wantedPosition;
+            } else {
+                setPosition += CruiseLib.getSign(wantedPosition - setPosition) * (amountToMove * Math.abs(moveAmount));
+            }
         }
 
-        servo.setPosition(setPosition);
+        if (setPosition != 1000) {
+            servo.setPosition(setPosition);
+        }
 
         Log.v("Set Position", "" + setPosition);
         Log.v("Wanted Position", "" + wantedPosition);

@@ -15,9 +15,13 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Config
 public class Lift extends Subsystem{
-    public static PID pid = new PID(0.4, 0, 0);
+    public static PID pid = new PID(0.4, 0, 6);
+
+    public static double high = 30;
 
     public boolean liftDown = true, auto, grabberOpen = false;
+
+    double lastAngle = 10000;
 
     public enum V4BPositions {
         LEFT_DOWN, LEFT_GROUND, LEFT_DROP, LEFT, LEFT_UP, UP, RIGHT_UP, RIGHT, RIGHT_DROP, RIGHT_GROUND, RIGHT_DOWN, NULL
@@ -98,7 +102,7 @@ public class Lift extends Subsystem{
                 break;
 
             case LEFT_UP:
-                if (setV4BAngle(-70)) {
+                if (setV4BAngle(-70, .15)) {
                     currentV4BPosition = V4BPositions.LEFT_UP;
                 }
                 break;
@@ -110,13 +114,13 @@ public class Lift extends Subsystem{
                 break;
 
             case RIGHT_UP:
-                if (setV4BAngle(50)) {
+                if (setV4BAngle(50, .15)) {
                     currentV4BPosition = V4BPositions.RIGHT_UP;
                 }
                 break;
 
             case RIGHT:
-                if (setV4BAngle((auto ? 70 : 80))) {
+                if (setV4BAngle((auto ? 80 : 80))) {
                     currentV4BPosition = V4BPositions.RIGHT;
                 }
                 break;
@@ -165,7 +169,7 @@ public class Lift extends Subsystem{
                 break;
 
             case HIGH:
-                if (setLiftPosition(30)) {
+                if (setLiftPosition(high)) {
                     currentLiftPosition = LiftPositions.HIGH;
                 }
                 break;
@@ -291,8 +295,8 @@ public class Lift extends Subsystem{
     public void stop() {
         closeGrabber();
 
-        Robot.getInstance().leftV4B.getController().pwmDisable();
-        Robot.getInstance().rightV4B.getController().pwmDisable();
+//        Robot.getInstance().leftV4B.getController().pwmDisable();
+//        Robot.getInstance().rightV4B.getController().pwmDisable();
         Robot.getInstance().grabber.getController().pwmDisable();
     }
 
@@ -321,7 +325,19 @@ public class Lift extends Subsystem{
         double adjustedAngle = (angle / 270) + 0.5;
         Robot.getInstance().leftV4B.setPosition(adjustedAngle);
         Robot.getInstance().rightV4B.setPosition(adjustedAngle);
+        lastAngle = angle;
 
+        return Math.abs(getV4BAngle() - angle) < 5;
+    }
+
+    public boolean setV4BAngle(double angle, double time) {
+//        angle -= 13;
+        if (lastAngle != angle) {
+            double adjustedAngle = (angle / 270) + 0.5;
+            Robot.getInstance().leftV4B.setPosition(adjustedAngle, time);
+            Robot.getInstance().rightV4B.setPosition(adjustedAngle, time);
+            lastAngle = angle;
+        }
         return Math.abs(getV4BAngle() - angle) < 5;
     }
 
