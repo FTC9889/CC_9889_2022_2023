@@ -47,12 +47,6 @@ public abstract class AutoModeBase extends Team9889Linear {
 
         waitForStart(true);
 
-        try {
-            Robot.camera.stopStreaming();
-        } catch (Exception e) {
-
-        }
-
         autoTimer.reset();
 
         // If the opmode is still running, run auto

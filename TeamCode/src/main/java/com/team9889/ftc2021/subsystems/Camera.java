@@ -1,12 +1,16 @@
 package com.team9889.ftc2021.subsystems;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
+import com.team9889.ftc2021.Constants;
 import com.team9889.lib.detectors.Blank;
 import com.team9889.lib.detectors.ScanForPole;
 import com.team9889.lib.detectors.ScanForSignal;
 import com.team9889.lib.detectors.ScanForTSEObject;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Point;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -30,6 +34,8 @@ public class Camera extends Subsystem{
     public CameraStates currentCamState = CameraStates.NULL;
     public CameraStates wantedCamState = CameraStates.NULL;
 
+    OpenCvCamera.AsyncCameraOpenListener cvCam = null;
+
     enum Pipelines {
         TSE, NULL
     }
@@ -41,33 +47,30 @@ public class Camera extends Subsystem{
     public void init(final boolean auto) {
         this.auto = auto;
 
-        Robot.getInstance().camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                Robot.getInstance().camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                Robot.getInstance().camera.setPipeline(scanForSignal);
-            }
+        if (auto) {
+            cvCam = new OpenCvCamera.AsyncCameraOpenListener() {
+                @Override
+                public void onOpened() {
+                    Robot.getInstance().camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                    Robot.getInstance().camera.setPipeline(scanForSignal);
+                }
 
-            @Override
-            public void onError(int errorCode) {
+                @Override
+                public void onError(int errorCode) {
 
-            }
-        });
+                }
+            };
 
-        startFrontCam();
+            Robot.getInstance().camera.openCameraDeviceAsync(cvCam);
+
+            startFrontCam();
+        }
     }
 
     @Override
     public void outputToTelemetry(Telemetry telemetry) {
         if (auto) {
-            telemetry.addData("Signal", scanForSignal.getSignal());
-            telemetry.addData("RGB", scanForSignal.getRGB());
-            telemetry.addData("Average", scanForSignal.average);
-        } else {
-            telemetry.addData("Width", scanForPole.width);
-            telemetry.addData("Point", scanForPole.getPoint());
+            telemetry.addData("Pole Camera", scanForPole.getPoint());
         }
     }
 
@@ -77,7 +80,14 @@ public class Camera extends Subsystem{
 
     @Override
     public void stop() {
+        if (cvCam != null) {
+//            Robot.getInstance().frontCVCam.closeCameraDeviceAsync(cvCam);
+        }
+
         Robot.getInstance().frontCVCam.stopStreaming();
+        if (Robot.getInstance().hardwareMap.tryGet(WebcamName.class, Constants.kFrontCam) != null) {
+            Robot.getInstance().hardwareMap.remove(Constants.kFrontCam, Robot.getInstance().frontCam);
+        }
     }
 
     public void startFrontCam() {
@@ -91,7 +101,7 @@ public class Camera extends Subsystem{
 
             @Override
             public void onError(int errorCode) {
-
+                Log.e("CamError", "Code: " + errorCode);
             }
         });
     }

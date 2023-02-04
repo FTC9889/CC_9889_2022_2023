@@ -57,7 +57,7 @@ public class Robot {
     public CCServo leftV4B, rightV4B;
     public Servo grabber;
 
-    public AnalogInput v4bPot, distance;
+    public AnalogInput v4bPot, distance, sideDistance;
     public RevColorSensorV3 frontColor;
     public ColorRangeSensor backColor;
     public TouchSensor liftLimit;
@@ -119,10 +119,26 @@ public class Robot {
         hubs = hardwareMap.getAll(LynxModule.class);
 
         //Camera
-        webcam = hardwareMap.get(WebcamName.class, Constants.kWebcam);
-        camera = OpenCvCameraFactory.getInstance().createWebcam(webcam);
-        frontCam = hardwareMap.get(WebcamName.class, Constants.kFrontCam);
-        frontCVCam = OpenCvCameraFactory.getInstance().createWebcam(frontCam);
+        if (auto) {
+            webcam = hardwareMap.get(WebcamName.class, Constants.kWebcam);
+            camera = OpenCvCameraFactory.getInstance().createWebcam(webcam);
+            frontCam = hardwareMap.get(WebcamName.class, Constants.kFrontCam);
+            frontCVCam = OpenCvCameraFactory.getInstance().createWebcam(frontCam);
+        } else {
+//            Log.v("Hardware", "" + hardwareMap.tryGet(WebcamName.class, Constants.kWebcam));
+//
+//            try {
+//                if (hardwareMap.tryGet(WebcamName.class, Constants.kWebcam) != null) {
+//                    hardwareMap.remove(Constants.kWebcam, webcam);
+//                }
+//
+//                if (hardwareMap.tryGet(WebcamName.class, Constants.kFrontCam) != null) {
+//                    hardwareMap.remove(Constants.kFrontCam, frontCam);
+//                }
+//            } catch (Exception e) {
+//
+//            }
+        }
 
         //Drive
         fLDrive = new Motor(hardwareMap, Constants.DriveConstants.kLeftDriveMasterId,
@@ -154,6 +170,7 @@ public class Robot {
 
         v4bPot = hardwareMap.get(AnalogInput.class, Constants.LiftConstants.kV4BPot);
         distance = hardwareMap.get(AnalogInput.class, Constants.LiftConstants.kDistance);
+        sideDistance = hardwareMap.get(AnalogInput.class, Constants.LiftConstants.kSideDistance);
         frontColor = hardwareMap.get(RevColorSensorV3.class, Constants.LiftConstants.kFrontColor);
         backColor = hardwareMap.get(ColorRangeSensor.class, Constants.LiftConstants.kBackColor);
 
@@ -191,15 +208,15 @@ public class Robot {
             leftLift.update();
             rightLift.update();
 
-            leftV4B.update(loopTime.milliseconds());
-            rightV4B.update(loopTime.milliseconds());
-
             // Update Subsystems
             for (Subsystem subsystem : subsystems)
                 subsystem.update();
         } catch (Exception e){
             Log.v("Exception@robot.update", "" + e);
         }
+
+        leftV4B.update(loopTime.milliseconds());
+        rightV4B.update(loopTime.milliseconds());
 
         Log.v("Loop Time", "" + loopTime.milliseconds());
         loopTime.reset();

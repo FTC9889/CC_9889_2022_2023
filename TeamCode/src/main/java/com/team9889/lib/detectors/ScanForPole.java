@@ -65,14 +65,6 @@ public class ScanForPole extends OpenCvPipeline {
         int cvResizeInterpolation = Imgproc.INTER_LINEAR;
         cvResize(cvResizeSrc, cvResizeDsize, cvResizeFx, cvResizeFy, cvResizeInterpolation, cvResizeOutput);
 
-        // Step Blur0:
-//        Mat blurInput = cvResizeOutput;
-//        BlurType blurType = BlurType.get("Gaussian Blur");
-//        double blurRadius = 2.702702702702703;
-//        blur(blurInput, blurType, blurRadius, blurOutput);
-
-//        Imgproc.rectangle(blurOutput, new Point(0, 0), new Point(320, 25), new Scalar(0, 0, 0), -1);
-
         // Step HSV_Threshold0:
         Mat hsvThresholdInput = cvResizeOutput;
         hsvThreshold(hsvThresholdInput, poleHSV.getH(), poleHSV.getS(), poleHSV.getV(), hsvThresholdOutput);

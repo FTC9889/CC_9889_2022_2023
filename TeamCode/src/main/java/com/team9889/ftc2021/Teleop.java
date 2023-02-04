@@ -36,6 +36,7 @@ public class Teleop extends Team9889Linear {
 
         waitForStart(false);
         Robot.getLift().wantedLiftPosition = Lift.LiftPositions.DOWN;
+        Robot.getLift().setV4BAngle(0);
 
         timer.reset();
 
@@ -228,7 +229,7 @@ public class Teleop extends Team9889Linear {
 //            telemetry.addData("Distance", Robot.frontColor.getDistance(DistanceUnit.INCH));
             telemetry.addData("Color", Robot.frontColor.getNormalizedColors());
 
-            telemetry.addData("Distance", Robot.getMecanumDrive().getDistance());
+            telemetry.addData("Distance", Robot.getMecanumDrive().getSideDistance());
 
 
 //            TelemetryPacket packet = new TelemetryPacket();

@@ -14,7 +14,7 @@ import static java.lang.Math.toDegrees;
  */
 
 public class DriveToPole extends Action {
-    double timeout, theta;
+    double timeout, theta, lastTime = 0;
     ElapsedTime timer = new ElapsedTime();
 
     double xSpeed = 0, ySpeed = 0, maxSpeed = 0;
@@ -32,13 +32,13 @@ public class DriveToPole extends Action {
     @Override
     public void update() {
         double x = (Robot.getInstance().getCamera().scanForPole.getPoint().x - 135);
-        xSpeed = ((-1E-07 * Math.pow(x, 3)) + (2E-19 * Math.pow(x, 2)) + (0.006 * x)) * 1.5;
-        ySpeed = 0.2 * Math.log(270 - Robot.getInstance().getCamera().scanForPole.width) - 0.3;
+        xSpeed = (-1E-07 * Math.pow(x, 3)) + (2E-19 * Math.pow(x, 2)) + (0.006 * x) * 1.5;
+        ySpeed = 0.2 * Math.log(270 - Robot.getInstance().getCamera().scanForPole.width) - 0.2;
 
 //        xSpeed = x / 50;
 //        ySpeed = (50 - Robot.getInstance().getCamera().scanForPole.width) / 10;
 
-        if (Robot.getInstance().getCamera().scanForPole.width > 45) {
+        if (Robot.getInstance().getCamera().scanForPole.width > 64) {
             ySpeed = 0;
         }
 
@@ -49,7 +49,8 @@ public class DriveToPole extends Action {
 
         xSpeed = CruiseLib.limitValue(xSpeed, maxSpeed);
         ySpeed = CruiseLib.limitValue(ySpeed, maxSpeed);
-        maxSpeed += timer.milliseconds() * (1.0 / 300.0);
+        maxSpeed += (timer.milliseconds() - lastTime) * (1.0 / 500.0);
+        lastTime = timer.milliseconds();
 
         Robot.getInstance().getMecanumDrive().setPower(-xSpeed, -ySpeed, relativePointAngle / 70);
     }

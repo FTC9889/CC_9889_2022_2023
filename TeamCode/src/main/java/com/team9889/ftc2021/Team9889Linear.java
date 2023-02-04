@@ -13,6 +13,7 @@ import com.team9889.ftc2021.subsystems.Robot;
 import com.team9889.lib.detectors.ScanForSignal;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;
@@ -124,15 +125,20 @@ public abstract class Team9889Linear extends LinearOpMode {
 
                 telemetry.addData("White", ScanForSignal.white);
                 telemetry.addData("Black", ScanForSignal.black);
+
+                telemetry.addData("Signal", Robot.getCamera().scanForSignal.getSignal());
+                telemetry.addData("RGB", Robot.getCamera().scanForSignal.getRGB());
+                telemetry.addData("Average", Robot.getCamera().scanForSignal.average);
+
                 Robot.outputToTelemetry(telemetry);
                 telemetry.update();
                 Robot.update();
 
                 signal = Robot.getCamera().scanForSignal.getSignal();
-                FtcDashboard.getInstance().startCameraStream(Robot.frontCVCam, 0);
+//                FtcDashboard.getInstance().startCameraStream(Robot.frontCVCam, 0);
             }
         } else {
-            FtcDashboard.getInstance().startCameraStream(Robot.frontCVCam, 0);
+//            FtcDashboard.getInstance().startCameraStream(Robot.frontCVCam, 0);
 
             // Teleop Init Loop code
             while(isInInitLoop()){
@@ -140,6 +146,16 @@ public abstract class Team9889Linear extends LinearOpMode {
                 Robot.getMecanumDrive().outputToTelemetry(telemetry);
                 telemetry.update();
             }
+        }
+
+        try {
+            Robot.camera.stopStreaming();
+
+            if (hardwareMap.tryGet(WebcamName.class, Constants.kWebcam) != null) {
+                hardwareMap.remove(Constants.kWebcam, Robot.webcam);
+            }
+        } catch (Exception e) {
+            Log.e("CamError", "" + e);
         }
 
         matchTime.reset();
