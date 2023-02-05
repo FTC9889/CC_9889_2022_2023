@@ -223,7 +223,7 @@ public class PurePursuit extends Action {
         }
 
         if (((abs(error.x) < tolerance.x && abs(error.y) < tolerance.y) && theta
-                && step == path.size() - 1) || (timeout != -1 && timer.milliseconds() > timeout + 700)) {
+                && step == path.size() - 1) || (timeout != -1 && timer.milliseconds() > timeout)) {
             count++;
         } else {
             count = 0;

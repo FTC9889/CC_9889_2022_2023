@@ -48,7 +48,7 @@ public class RightStack extends AutoModeBase {
         Robot.getMecanumDrive().position = new Pose2d(31, 65, Math.PI / 2);
         Robot.getMecanumDrive().angleOffset = Math.PI / 2;
 
-        double speed = 0.75;
+        double speed = 1;
 
         timer.reset();
 //        ThreadAction(new Score(Lift.LiftPositions.HIGH, false));
@@ -65,7 +65,7 @@ public class RightStack extends AutoModeBase {
         runAction(new PurePursuit(path, new Pose(4, 4, 5), 180, 800));
         path.clear();
 
-        path.add(new Pose(5, 26.5, 0, speed, 10));
+        path.add(new Pose(6, 26.5, 0, speed, 10));
 //        runAction(new PurePursuit(path, new Pose(1, 1, 2), 115, 1800));
         runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(1, 1, 2), 115, 1500),
                 new Score(Lift.LiftPositions.HIGH, false))));
@@ -101,15 +101,15 @@ public class RightStack extends AutoModeBase {
 //                    Log.v("Ultrasonic", "false: " + Robot.getMecanumDrive().position.getHeading());
 //                }
 //            } else {
-                path.add(new Pose(40, 13 + i, 0, speed, 8));
+                path.add(new Pose(40, 15 + i, 0, speed, 8));
                 runAction(new PurePursuit(path, new Pose(3, 1, 2), -90, (i == 0 ? 3000 : 1000)));
                 path.clear();
 //            }
 
-            path.add(new Pose(55, 13 + (i * 1.5), 0, speed, 8));
-            path.add(new Pose(67, 13 + (i * 1.5), 0, 0.3, 8));
+            path.add(new Pose(55, 15 + (i * 1.5), 0, speed, 8));
+            path.add(new Pose(67, 15 + (i * 1.5), 0, 0.3, 8));
             runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, -90, 800, true),
-                    new Grab(CruiseLib.limitValue((i == 0 ? 3 : 0), 10, 0)))));
+                    new Grab(CruiseLib.limitValue(5 - i, 10, 0)))));
 
             if (Robot.getMecanumDrive().getDistance() > 2) {
                 Robot.getMecanumDrive().position.setX(71 - Robot.getMecanumDrive().getDistance());
