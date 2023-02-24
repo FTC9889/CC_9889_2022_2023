@@ -13,9 +13,10 @@ import com.team9889.lib.CruiseLib;
 
 public class Grab extends Action {
     double liftHeight, wait = 0;
-    ElapsedTime timer = new ElapsedTime();
+    ElapsedTime timer = new ElapsedTime(), driveTimer = new ElapsedTime();
 
     int stage = 0;
+    double timerOffset = 0;
 
     public Grab(double liftHeight) {
         this.liftHeight = liftHeight;
@@ -40,19 +41,29 @@ public class Grab extends Action {
 
             stage = 1;
         } else if (stage == 1) {
-            if (ActionVariables.doneDriving) {
-                Robot.getInstance().getLift().wantedScoreState = Lift.ScoreStates.GRAB_RIGHT;
-            }
+            if (Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.HOLDING) {
+                Robot.getInstance().getLift().setLiftPosition(CruiseLib.limitValue(liftHeight + 5, 100, 0));
+            } else {
+                Robot.getInstance().getLift().setLiftPosition(CruiseLib.limitValue(liftHeight, 100, 0));
+                timerOffset = timer.milliseconds();
 
-            Robot.getInstance().getLift().setLiftPosition(CruiseLib.limitValue(liftHeight, 100, 0));
+                if (driveTimer.milliseconds() > 200) {
+                    Robot.getInstance().getLift().wantedScoreState = Lift.ScoreStates.GRAB_RIGHT;
+                }
+            }
+        }
+
+        if (!ActionVariables.doneDriving) {
+            driveTimer.reset();
+        }
 
             Robot.getInstance().getLift().update();
         }
-    }
 
     @Override
     public boolean isFinished() {
-        return Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.HOLDING;
+        return Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.HOLDING &&
+                timer.milliseconds() - timerOffset > 250;
     }
 
     @Override

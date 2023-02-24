@@ -102,7 +102,7 @@ public class Lift extends Subsystem{
                 break;
 
             case LEFT_UP:
-                if (setV4BAngle(-70, .15)) {
+                if (setV4BAngle(-50, .15)) {
                     currentV4BPosition = V4BPositions.LEFT_UP;
                 }
                 break;
@@ -120,7 +120,7 @@ public class Lift extends Subsystem{
                 break;
 
             case RIGHT:
-                if (setV4BAngle((auto ? 80 : 80))) {
+                if (setV4BAngle((auto ? 70 : 80))) {
                     currentV4BPosition = V4BPositions.RIGHT;
                 }
                 break;
@@ -138,7 +138,7 @@ public class Lift extends Subsystem{
                 break;
 
             case RIGHT_DOWN:
-                if (setV4BAngle(115)) {
+                if (setV4BAngle(130)) {
                     currentV4BPosition = V4BPositions.RIGHT_DOWN;
                 }
                 break;
@@ -193,10 +193,10 @@ public class Lift extends Subsystem{
             case GRAB_RIGHT:
                 wantedV4BPosition = V4BPositions.RIGHT_DOWN;
 
-                if (grabTimer.milliseconds() > 120 && grabTimer.milliseconds() < 300) {
+                if (grabTimer.milliseconds() > (auto ? 220 : 120) && grabTimer.milliseconds() < 300) {
                     Robot.getInstance().driverStation.grabberClosed = true;
                     closeGrabber();
-                } else if (grabTimer.milliseconds() > (auto ? 450 : 300)) {
+                } else if (grabTimer.milliseconds() > 300) {
                     wantedScoreState = ScoreStates.HOLDING;
                 }
                 break;
@@ -240,7 +240,7 @@ public class Lift extends Subsystem{
             case PLACE_LEFT:
                 wantedV4BPosition = V4BPositions.LEFT_DROP;
 
-                if (scoreTimer.milliseconds() > 200) {
+                if (scoreTimer.milliseconds() > 120) {
                     wantedScoreState = ScoreStates.DROP;
                     scoreTimer.reset();
                 }
@@ -358,7 +358,7 @@ public class Lift extends Subsystem{
 
 
     public void closeGrabber() {
-        setGrabber(0.37);
+        setGrabber(0.38);
 //        Log.v("Open Grabber", "true");
         grabberOpen = false;
     }

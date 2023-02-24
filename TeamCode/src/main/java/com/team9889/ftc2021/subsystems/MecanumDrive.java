@@ -52,6 +52,8 @@ public class MecanumDrive extends Subsystem {
     public void init(boolean auto) {
         this.auto = auto;
 
+        setBumpersUp();
+
         timer.reset();
     }
 
@@ -150,6 +152,18 @@ public class MecanumDrive extends Subsystem {
         Robot.getInstance().bLDrive.setPower(v3);
         Robot.getInstance().bRDrive.setPower(v4);
     }
+
+
+    public void setBumpersDown() {
+        Robot.getInstance().leftBumper.setPosition(0);
+        Robot.getInstance().rightBumper.setPosition(0 + 0.15);
+    }
+
+    public void setBumpersUp() {
+        Robot.getInstance().leftBumper.setPosition(0.33);
+        Robot.getInstance().rightBumper.setPosition(0.33 + 0.15);
+    }
+
 
     public double getDistance() {
         return (Robot.getInstance().distance.getVoltage() * 63.202 + 0.0626 + 3.25)
@@ -252,24 +266,28 @@ public class MecanumDrive extends Subsystem {
     }
 
 
+    double lastIMU = 0;
     void updateOdometry() {
         double trackWidth = 10.03514883514424;
-        double middleToCenter = 4.272552851725348;
+        double middleToCenter = 4.4499722;
 
         double leftPod = Robot.getInstance().bLDrive.getDeltaPosition() / 1440.0 * ((35 / 25.4) * PI) * (25.0 / 15.0);
         double rightPod = Robot.getInstance().bRDrive.getDeltaPosition() / 1440.0 * ((35 / 25.4) * PI) * (25.0 / 15.0);
         double middlePod = -Robot.getInstance().fRDrive.getDeltaPosition() / 1440.0 * ((35 / 25.4) * PI) * (25.0 / 15.0);
 
         double deltaAngle = ((leftPod - rightPod) / trackWidth);
+//        double deltaAngle = getAngle().getTheda(AngleUnit.RADIANS) - lastIMU;
         double y = ((leftPod + rightPod) / 2) * yMultiplier;
         double x = (middlePod * xMultiplier) - (deltaAngle * middleToCenter);
 
-        if (timer.milliseconds() > 1000) {
-            position.setHeading(getAngle().getTheda(AngleUnit.RADIANS));
-            timer.reset();
-        } else {
+//        if (timer.milliseconds() > 1000) {
+//        if (timer.milliseconds() > 1) {
+//            position.setHeading(getAngle().getTheda(AngleUnit.RADIANS));
+//            lastIMU = position.getHeading();
+//            timer.reset();
+//        } else {
             position.setHeading(CruiseLib.angleWrapRad(position.getHeading() + deltaAngle));
-        }
+//        }
         position.addX(((x * Math.cos(position.getHeading())) + (y * Math.sin(position.getHeading()))));
         position.addY(-(y * Math.cos(position.getHeading())) + (x * Math.sin(position.getHeading())));
     }

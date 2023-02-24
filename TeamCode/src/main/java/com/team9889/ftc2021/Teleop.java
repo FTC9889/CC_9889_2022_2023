@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.robocol.RobocolParsableBase;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.team9889.ftc2021.subsystems.Lift;
+import com.team9889.ftc2021.subsystems.Robot;
 import com.team9889.lib.CruiseLib;
 import com.team9889.lib.Pose2d;
 
@@ -22,7 +23,7 @@ import java.util.Arrays;
 @TeleOp
 @Config
 public class Teleop extends Team9889Linear {
-    public static double lightValue = 0.5;
+    public static double position = 0, led = 0.5;
 
     ElapsedTime timer = new ElapsedTime();
     ElapsedTime liftTimer = new ElapsedTime();
@@ -221,27 +222,23 @@ public class Teleop extends Team9889Linear {
                 autoDone = false;
             }
 
+
+
+            Robot.leftBumper.setPosition(position);
+            Robot.rightBumper.setPosition(position + 0.15);
+
+            Robot.leds.setPower(led);
+
             /* Telemetry */
+            telemetry.addData("Line 1", Robot.line1.getState());
+            telemetry.addData("Line 2", Robot.line2.getState());
+            telemetry.addData("Line 3", Robot.line3.getState());
+            telemetry.addData("Line 4", Robot.line4.getState());
+            telemetry.addData("Line 5", Robot.line5.getState());
+
             telemetry.addData("Position", Arrays.toString(Robot.getMecanumDrive().position.getArray()));
             telemetry.addData("Score State", Robot.getLift().wantedScoreState.toString());
             telemetry.addData("Grabber Open", Robot.getLift().grabberOpen);
-            telemetry.addData("Left", left);
-//            telemetry.addData("Distance", Robot.frontColor.getDistance(DistanceUnit.INCH));
-            telemetry.addData("Color", Robot.frontColor.getNormalizedColors());
-
-            telemetry.addData("Distance", Robot.getMecanumDrive().getSideDistance());
-
-
-//            TelemetryPacket packet = new TelemetryPacket();
-//            packet.fieldOverlay().setFill("black").fillRect(Robot.getMecanumDrive().position.getY(),
-//                    Robot.getMecanumDrive().position.getX(), 13, 13);
-
-//            Pose2d position = Robot.getMecanumDrive().position;
-//            double x = position.getX();
-//            double y = position.getY();
-//            packet.fieldOverlay().setFill("green").fillCircle(y + 7.5 + 5 * Math.cos(position.getHeading()),
-//                    x + 7.5 - 5 * Math.sin(position.getHeading()), 2);
-//            dashboard.sendTelemetryPacket(packet);
 
             Robot.outputToTelemetry(telemetry);
             telemetry.update();

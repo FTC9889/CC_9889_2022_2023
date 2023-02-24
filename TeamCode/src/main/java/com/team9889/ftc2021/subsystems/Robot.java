@@ -46,11 +46,14 @@ import static com.team9889.ftc2021.Team9889Linear.writeLastKnownPosition;
 
 public class Robot {
 
-    public WebcamName webcam, frontCam;
-    public OpenCvCamera camera, frontCVCam;
+    public WebcamName webcam;
+    public OpenCvCamera camera;
 
     public Motor fLDrive, fRDrive, bLDrive, bRDrive;
     public RevIMU imu = null;
+    public Servo leftBumper, rightBumper;
+    // 1: Right 3: Center 5: Left
+    public DigitalChannel line1, line2, line3, line4, line5;
 
     public Motor leftLift, rightLift;
 //    public Servo leftV4B, rightV4B;
@@ -61,6 +64,8 @@ public class Robot {
     public RevColorSensorV3 frontColor;
     public ColorRangeSensor backColor;
     public TouchSensor liftLimit;
+
+    public Motor leds;
 
     List<LynxModule> hubs;
     LynxModule.BulkData bulkData;
@@ -122,22 +127,6 @@ public class Robot {
         if (auto) {
             webcam = hardwareMap.get(WebcamName.class, Constants.kWebcam);
             camera = OpenCvCameraFactory.getInstance().createWebcam(webcam);
-            frontCam = hardwareMap.get(WebcamName.class, Constants.kFrontCam);
-            frontCVCam = OpenCvCameraFactory.getInstance().createWebcam(frontCam);
-        } else {
-//            Log.v("Hardware", "" + hardwareMap.tryGet(WebcamName.class, Constants.kWebcam));
-//
-//            try {
-//                if (hardwareMap.tryGet(WebcamName.class, Constants.kWebcam) != null) {
-//                    hardwareMap.remove(Constants.kWebcam, webcam);
-//                }
-//
-//                if (hardwareMap.tryGet(WebcamName.class, Constants.kFrontCam) != null) {
-//                    hardwareMap.remove(Constants.kFrontCam, frontCam);
-//                }
-//            } catch (Exception e) {
-//
-//            }
         }
 
         //Drive
@@ -150,6 +139,15 @@ public class Robot {
         bRDrive = new Motor(hardwareMap, Constants.DriveConstants.kRightDriveSlaveId,
                 DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE, true, true);
 
+        leftBumper = hardwareMap.get(Servo.class, Constants.DriveConstants.kLeftBumper);
+        leftBumper.setDirection(Servo.Direction.REVERSE);
+        rightBumper = hardwareMap.get(Servo.class, Constants.DriveConstants.kRightBumper);
+
+        line1 = hardwareMap.get(DigitalChannel.class, Constants.DriveConstants.kLine1);
+        line2 = hardwareMap.get(DigitalChannel.class, Constants.DriveConstants.kLine2);
+        line3 = hardwareMap.get(DigitalChannel.class, Constants.DriveConstants.kLine3);
+        line4 = hardwareMap.get(DigitalChannel.class, Constants.DriveConstants.kLine4);
+        line5 = hardwareMap.get(DigitalChannel.class, Constants.DriveConstants.kLine5);
 
         //Lift
         leftLift = new Motor(hardwareMap, Constants.LiftConstants.kLeftLift,
@@ -175,6 +173,9 @@ public class Robot {
         backColor = hardwareMap.get(ColorRangeSensor.class, Constants.LiftConstants.kBackColor);
 
         liftLimit = hardwareMap.get(TouchSensor.class, Constants.LiftConstants.kLiftLimit);
+
+
+        leds = new Motor(hardwareMap, "leds");
 
 
         imu = new RevIMU("imu", hardwareMap);
@@ -219,6 +220,11 @@ public class Robot {
         rightV4B.update(loopTime.milliseconds());
 
         Log.v("Loop Time", "" + loopTime.milliseconds());
+
+        if (loopTime.milliseconds() > 30) {
+            Log.v("LoopWarning", "" + loopTime.milliseconds());
+        }
+
         loopTime.reset();
     }
 

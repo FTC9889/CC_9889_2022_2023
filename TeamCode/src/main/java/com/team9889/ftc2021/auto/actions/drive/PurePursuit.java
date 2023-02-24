@@ -13,6 +13,7 @@ import com.team9889.ftc2021.subsystems.Robot;
 import com.team9889.lib.CruiseLib;
 import com.team9889.lib.Pose;
 import com.team9889.lib.Pose2d;
+import com.team9889.lib.control.controllers.PID;
 
 import java.util.ArrayList;
 
@@ -28,7 +29,10 @@ import static java.lang.Math.toDegrees;
 
 @Config
 public class PurePursuit extends Action {
-    public static double divider = 8;
+    public static double divider = 4;
+
+    public static PID xPID = new PID(0, 0, 0), yPID = new PID(0, 0, 0),
+            thetaPID = new PID(0, 0, 0);
 
     double maxSpeed = 0, timeout = -1, endTheta = 1000;
     ElapsedTime timer = new ElapsedTime();
@@ -77,6 +81,14 @@ public class PurePursuit extends Action {
         this.timeout = timeout;
         this.tolerance = tolerance;
         this.endTheta = endTheta;
+    }
+
+    public PurePursuit(ArrayList<Pose> path, Pose tolerance, double endTheta, double timeout, boolean fieldCentric) {
+        this.path = path;
+        this.timeout = timeout;
+        this.tolerance = tolerance;
+        this.endTheta = endTheta;
+        this.overshot = fieldCentric;
     }
 
     @Override
@@ -132,9 +144,6 @@ public class PurePursuit extends Action {
             y *= CruiseLib.limitValue((abs(point.y - pose.getY()) / divider), 0, -1, 0, 1);
             y = CruiseLib.limitValue(y, -0.15, -maxSpeed, 0.15, maxSpeed);
 
-            Log.v("Speed X", "" + x);
-            Log.v("Speed Y", "" + y);
-
             xSpeed = x * Math.cos(pose.getHeading()) - y * Math.sin(pose.getHeading());
             ySpeed = y * Math.cos(pose.getHeading()) + x * Math.sin(pose.getHeading());
 
@@ -150,9 +159,6 @@ public class PurePursuit extends Action {
             ySpeed = speed * Math.cos(Math.toRadians(path.get(step).theta));
         }
 
-        Log.v("xSpeed", "" + xSpeed);
-        Log.v("ySpeed", "" + ySpeed);
-
 
         //Turn
         double relativePointAngle;
@@ -167,16 +173,15 @@ public class PurePursuit extends Action {
             }
             relativePointAngle = -CruiseLib.angleWrap(angleToPoint + toDegrees(pose.getHeading()));
 
+            Log.v("Angle FC", angleToPoint + ", " + relativePointAngle + ", " + toDegrees(pose.getHeading()));
+
             overshot = true;
         } else {
             double angleToPoint = toDegrees(atan2(point.x-pose.getX(), point.y-pose.getY())) + (path.get(step).theta);
             relativePointAngle = -CruiseLib.angleWrap(angleToPoint + toDegrees(pose.getHeading()));
+
+            Log.v("Angle", angleToPoint + ", " + relativePointAngle + ", " + toDegrees(pose.getHeading()));
         }
-
-        Log.v("Distance", (point.x - pose.getX()) + ", " + (point.y - pose.getY()) + ", "
-                + sqrt(pow(point.y-pose.getY(), 2) + pow(point.x-pose.getX(), 2)) + ", " + pose.getHeading());
-
-        Log.v("Angle", relativePointAngle + "");
 
         double turnSpeed = CruiseLib.limitValue(relativePointAngle / 70.0,
                 0, -path.get(step).turnSpeed, 0, path.get(step).turnSpeed);
@@ -187,25 +192,29 @@ public class PurePursuit extends Action {
         Robot.getInstance().getMecanumDrive().setPower(xSpeed, ySpeed, turnSpeed);
 
         error = false;
-//        TelemetryPacket packet = new TelemetryPacket();
-//        for (int i = 0; i < path.size() - 1; i++) {
-//            packet.fieldOverlay()
-//                    .setStroke("red")
-//                    .strokeLine(path.get(i).x, path.get(i).y, path.get(i + 1).x, path.get(i + 1).y);
-//        }
-//
-//        packet.fieldOverlay()
-//                .setFill("green")
-//                .fillRect(pose.getX() - 6.5, pose.getY() - 6.5, 13, 13);
-//
-//        packet.fieldOverlay()
-//                .setStroke("blue")
-//                .strokeCircle(pose.getX(), pose.getY(), path.get(step).radius);
-//
-//        packet.fieldOverlay()
-//                .setStroke("black")
-//                .strokeLine(pose.getX(), pose.getY(), point.x, point.y);
-//        FtcDashboard.getInstance().sendTelemetryPacket(packet);
+        TelemetryPacket packet = new TelemetryPacket();
+        for (int i = 0; i < path.size() - 1; i++) {
+            packet.fieldOverlay()
+                    .setStroke("red")
+                    .strokeLine(path.get(i).x, path.get(i).y, path.get(i + 1).x, path.get(i + 1).y);
+        }
+
+        packet.fieldOverlay()
+                .setFill("green")
+                .fillRect(pose.getX() - 6.5, pose.getY() - 6.5, 13, 13);
+
+        packet.fieldOverlay()
+                .setStroke("blue")
+                .strokeCircle(pose.getX(), pose.getY(), path.get(step).radius);
+
+        packet.fieldOverlay()
+                .setStroke("black")
+                .strokeLine(pose.getX(), pose.getY(), point.x, point.y);
+
+        Pose error = Pose.getError(Pose.Pose2dToPose(Robot.getInstance().getMecanumDrive().position),
+                path.get(step));
+        packet.addLine("Error: " + error.x + ", " + error.y + ", " + error.theta);
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
     int count;
@@ -235,6 +244,8 @@ public class PurePursuit extends Action {
     public void done() {
         Robot.getInstance().getMecanumDrive().setPower(0, 0, 0);
         ActionVariables.doneDriving = true;
+
+        Log.v("Angle", "Done");
     }
 
 

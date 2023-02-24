@@ -47,23 +47,23 @@ public class Camera extends Subsystem{
     public void init(final boolean auto) {
         this.auto = auto;
 
-        if (auto) {
-            cvCam = new OpenCvCamera.AsyncCameraOpenListener() {
+        if (false) {
+            Robot.getInstance().camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+            {
                 @Override
-                public void onOpened() {
+                public void onOpened()
+                {
                     Robot.getInstance().camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                     Robot.getInstance().camera.setPipeline(scanForSignal);
                 }
-
                 @Override
-                public void onError(int errorCode) {
-
+                public void onError(int errorCode)
+                {
+                    /*
+                     * This will be called if the camera could not be opened
+                     */
                 }
-            };
-
-            Robot.getInstance().camera.openCameraDeviceAsync(cvCam);
-
-            startFrontCam();
+            });
         }
     }
 
@@ -80,30 +80,7 @@ public class Camera extends Subsystem{
 
     @Override
     public void stop() {
-        if (cvCam != null) {
-//            Robot.getInstance().frontCVCam.closeCameraDeviceAsync(cvCam);
-        }
 
-        Robot.getInstance().frontCVCam.stopStreaming();
-        if (Robot.getInstance().hardwareMap.tryGet(WebcamName.class, Constants.kFrontCam) != null) {
-            Robot.getInstance().hardwareMap.remove(Constants.kFrontCam, Robot.getInstance().frontCam);
-        }
-    }
-
-    public void startFrontCam() {
-        Robot.getInstance().frontCVCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened() {
-                Robot.getInstance().frontCVCam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
-                Robot.getInstance().frontCVCam.setPipeline(scanForPole);
-            }
-
-            @Override
-            public void onError(int errorCode) {
-                Log.e("CamError", "Code: " + errorCode);
-            }
-        });
     }
 
     public void setScanForTSE() {

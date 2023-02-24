@@ -5,6 +5,7 @@ import android.util.Log;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.team9889.ftc2021.subsystems.Robot;
 import com.team9889.lib.CruiseLib;
 
 /**
@@ -88,12 +89,12 @@ public class CCServo {
             }
         }
 
-        if (setPosition != 1000) {
+        if (setPosition != 1000 || Robot.getInstance().auto) {
             servo.setPosition(setPosition);
         }
 
-        Log.v("Set Position", "" + setPosition);
-        Log.v("Wanted Position", "" + wantedPosition);
-        Log.v("Position", "" + position);
+//        Log.v("Set Position", "" + setPosition);
+//        Log.v("Wanted Position", "" + wantedPosition);
+//        Log.v("Position", "" + position);
     }
 }

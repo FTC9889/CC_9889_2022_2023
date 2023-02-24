@@ -14,8 +14,7 @@ public class Constants {
             "w7VkFMqB+DQuNk8n1pvJP87FFo99kr653cjMwO4TYbztNmUYaQUXjHHNhOFxHufN42r7YcCErvX90n/gIvs4" +
             "wrvffXGyU/xkmSaTJzrgiy8R+ZJx2T0JcEJ0m1UUEoF2BmW4ONAVv/TkG9ESGf6iAmx66vrVm3tk6+YY+1q1";
 
-    public final static String kWebcam = "Webcam";
-    public final static String kFrontCam = "front_camera";
+    public final static String kWebcam = "webcam";
 
     /*---------------------
     |                     |
@@ -29,6 +28,15 @@ public class Constants {
         public final static String kRightDriveMasterId = "rf";
         public final static String kLeftDriveSlaveId = "lb";
         public final static String kRightDriveSlaveId = "rb";
+
+        public final static String kLeftBumper = "left_bumper";
+        public final static String kRightBumper = "right_bumper";
+
+        public final static String kLine1 = "line1";
+        public final static String kLine2 = "line2";
+        public final static String kLine3 = "line3";
+        public final static String kLine4 = "line4";
+        public final static String kLine5 = "line5";
 
         public final static double WheelbaseWidth = 14.5;
     }
