@@ -27,6 +27,8 @@ public class MecanumDrive extends Subsystem {
     //1.0175
     public static double yMultiplier = 1, xMultiplier = 1;
 
+    public double xVel = 0, yVel = 0, thetaVel = 0;
+
     public double xSpeed, ySpeed, turnSpeed;
 
     public Rotation2d gyroAngle = new Rotation2d();
@@ -52,7 +54,7 @@ public class MecanumDrive extends Subsystem {
     public void init(boolean auto) {
         this.auto = auto;
 
-        setBumpersUp();
+        setBumpersDown();
 
         timer.reset();
     }
@@ -279,6 +281,13 @@ public class MecanumDrive extends Subsystem {
 //        double deltaAngle = getAngle().getTheda(AngleUnit.RADIANS) - lastIMU;
         double y = ((leftPod + rightPod) / 2) * yMultiplier;
         double x = (middlePod * xMultiplier) - (deltaAngle * middleToCenter);
+
+
+        xVel = x * (1000 / timer.milliseconds());
+        yVel = -y * (1000 / timer.milliseconds());
+        thetaVel = Math.toDegrees(deltaAngle) * (1000 / timer.milliseconds());
+        timer.reset();
+
 
 //        if (timer.milliseconds() > 1000) {
 //        if (timer.milliseconds() > 1) {

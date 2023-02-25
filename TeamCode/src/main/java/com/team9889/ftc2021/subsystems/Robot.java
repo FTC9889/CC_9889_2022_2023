@@ -2,6 +2,7 @@ package com.team9889.ftc2021.subsystems;
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevTouchSensor;
@@ -124,10 +125,8 @@ public class Robot {
         hubs = hardwareMap.getAll(LynxModule.class);
 
         //Camera
-        if (auto) {
-            webcam = hardwareMap.get(WebcamName.class, Constants.kWebcam);
-            camera = OpenCvCameraFactory.getInstance().createWebcam(webcam);
-        }
+        webcam = hardwareMap.get(WebcamName.class, Constants.kWebcam);
+        camera = OpenCvCameraFactory.getInstance().createWebcam(webcam);
 
         //Drive
         fLDrive = new Motor(hardwareMap, Constants.DriveConstants.kLeftDriveMasterId,
@@ -215,6 +214,8 @@ public class Robot {
         } catch (Exception e){
             Log.v("Exception@robot.update", "" + e);
         }
+
+        FtcDashboard.getInstance().startCameraStream(Robot.getInstance().camera, 15);
 
         leftV4B.update(loopTime.milliseconds());
         rightV4B.update(loopTime.milliseconds());

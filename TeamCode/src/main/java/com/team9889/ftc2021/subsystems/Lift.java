@@ -84,7 +84,7 @@ public class Lift extends Subsystem{
                 break;
 
             case LEFT_GROUND:
-                if (setV4BAngle(-120)) {
+                if (setV4BAngle((auto ? -100 : -120))) {
                     currentV4BPosition = V4BPositions.LEFT_DOWN;
                 }
                 break;
@@ -102,7 +102,7 @@ public class Lift extends Subsystem{
                 break;
 
             case LEFT_UP:
-                if (setV4BAngle(-50, .15)) {
+                if (setV4BAngle((auto ? -35 : -50), .15)) {
                     currentV4BPosition = V4BPositions.LEFT_UP;
                 }
                 break;

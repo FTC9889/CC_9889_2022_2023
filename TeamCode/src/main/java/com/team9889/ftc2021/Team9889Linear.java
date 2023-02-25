@@ -135,27 +135,17 @@ public abstract class Team9889Linear extends LinearOpMode {
                 Robot.update();
 
                 signal = Robot.getCamera().scanForSignal.getSignal();
-//                FtcDashboard.getInstance().startCameraStream(Robot.frontCVCam, 0);
+//                FtcDashboard.getInstance().startCameraStream(Robot.camera, 15);
             }
         } else {
-//            FtcDashboard.getInstance().startCameraStream(Robot.frontCVCam, 0);
-
             // Teleop Init Loop code
             while(isInInitLoop()){
                 telemetry.addData("Waiting for Start","");
                 Robot.getMecanumDrive().outputToTelemetry(telemetry);
                 telemetry.update();
-            }
-        }
 
-        try {
-            Robot.camera.stopStreaming();
-
-            if (hardwareMap.tryGet(WebcamName.class, Constants.kWebcam) != null) {
-                hardwareMap.remove(Constants.kWebcam, Robot.webcam);
+                FtcDashboard.getInstance().startCameraStream(Robot.camera, 15);
             }
-        } catch (Exception e) {
-            Log.e("CamError", "" + e);
         }
 
         matchTime.reset();

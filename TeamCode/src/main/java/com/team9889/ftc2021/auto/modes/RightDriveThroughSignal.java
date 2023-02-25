@@ -14,6 +14,7 @@ import com.team9889.ftc2021.auto.actions.drive.Turn;
 import com.team9889.ftc2021.auto.actions.lift.Grab;
 import com.team9889.ftc2021.auto.actions.lift.Score;
 import com.team9889.ftc2021.auto.actions.lift.SetGrabber;
+import com.team9889.ftc2021.auto.actions.lift.SetLift;
 import com.team9889.ftc2021.auto.actions.lift.SetV4BPosition;
 import com.team9889.ftc2021.auto.actions.utl.ParallelAction;
 import com.team9889.ftc2021.auto.actions.utl.Wait;
@@ -44,40 +45,52 @@ public class RightDriveThroughSignal extends AutoModeBase {
     @Override
     public void run(StartPosition startPosition) {
         ArrayList<Pose> path = new ArrayList<>();
-        Robot.getMecanumDrive().position = new Pose2d(31, 64, 0);
+        Robot.getMecanumDrive().position = new Pose2d(35, 60, 0);
         Robot.getMecanumDrive().angleOffset = 0;
 
         timer.reset();
         Robot.getLift().wantedScoreState = Lift.ScoreStates.GROUND_RIGHT;
 
-        path.add(new Pose(35, 57, -150, 1, 6));
-        path.add(new Pose(36.1, 12, -180, 1, 8));
-        path.add(new Pose(26, 7, -180, .4, 8));
-        runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, -45, 2700),
-                new Score(Lift.LiftPositions.HIGH, true, 1000))));
+        path.add(new Pose(35, 22, -180, 1, 8));
+        path.add(new Pose(29, 7, -180, .5, 8));
+        runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, -30, 3000),
+                new SetLift(Lift.LiftPositions.HIGH, Lift.ScoreStates.HOVER_LEFT, 1000))));
+        path.clear();
+
+        runAction(new Wait(250));
+
+        runAction(new ParallelAction(Arrays.asList(new DriveToPole(3000),
+                new Score(Lift.LiftPositions.HIGH, true, 0))));
         path.clear();
 
         Robot.getMecanumDrive().setBumpersDown();
 
 
         for (int i = 0; i < 5 && timer.milliseconds() < 25000 && opModeIsActive(); i++) {
-            path.add(new Pose(36, 12, 0, 1, 4));
-            path.add(new Pose(44, 12, 0, 1, 4));
-            runAction(new PurePursuit(path, new Pose(3, 3, 4), -90, 2000, true));
-            path.clear();
+            path.add(new Pose(38, 12, 0, 1, 8));
+            path.add(new Pose(53, 12, 0, .7, 8));
+//            runAction(new PurePursuit(path, new Pose(3, 3, 4), 90, 2000));
+//            path.clear();
 
-            path.add(new Pose(63, 12, 0, 0.2, 4));
-            runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, -90, 1000, true),
+            path.add(new Pose(63, 12, 0, 0.25, 8));
+            runAction(new ParallelAction(Arrays.asList(
+                    new PurePursuit(path, 90, 2500, false, true),
                     new Grab(CruiseLib.limitValue(3.5 - (i * (13.0 / 8.0)), 10, 0)))));
             path.clear();
 
             Robot.getMecanumDrive().position.setX(60);
 
 
-            path.add(new Pose(45, 10, -180, 1, 8));
-            path.add(new Pose(28, 7, -180, .5, 6));
+            path.add(new Pose(40, 12, -180, 1, 8));
+            path.add(new Pose(28, 7, -180, .4, 4));
             runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, -45, 2100),
-                    new Score(Lift.LiftPositions.HIGH, true, 250))));
+                    new SetLift(Lift.LiftPositions.HIGH, Lift.ScoreStates.HOVER_LEFT, 1000))));
+            path.clear();
+
+            runAction(new Wait(250));
+
+            runAction(new ParallelAction(Arrays.asList(new DriveToPole(3000),
+                    new Score(Lift.LiftPositions.HIGH, true, 0))));
             path.clear();
         }
 

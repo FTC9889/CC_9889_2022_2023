@@ -46,32 +46,32 @@ public class Camera extends Subsystem{
     @Override
     public void init(final boolean auto) {
         this.auto = auto;
+        Robot.getInstance().camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                Robot.getInstance().camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 
-        if (false) {
-            Robot.getInstance().camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-            {
-                @Override
-                public void onOpened()
-                {
-                    Robot.getInstance().camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                    Robot.getInstance().camera.setPipeline(scanForSignal);
+                if (auto) {
+                    Robot.getInstance().camera.setPipeline(scanForPole);
+                } else {
+                    Robot.getInstance().camera.setPipeline(scanForPole);
                 }
-                @Override
-                public void onError(int errorCode)
-                {
-                    /*
-                     * This will be called if the camera could not be opened
-                     */
-                }
-            });
-        }
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                /*
+                 * This will be called if the camera could not be opened
+                 */
+            }
+        });
     }
 
     @Override
     public void outputToTelemetry(Telemetry telemetry) {
-        if (auto) {
+//        if (auto) {
             telemetry.addData("Pole Camera", scanForPole.getPoint());
-        }
+//        }
     }
 
     @Override
@@ -80,36 +80,6 @@ public class Camera extends Subsystem{
 
     @Override
     public void stop() {
-
-    }
-
-    public void setScanForTSE() {
-//        Robot.getInstance().camera.setPipeline(scanForTSE);
-        currentPipeline = Pipelines.TSE;
-    }
-
-    public void setTSECamPos() {
-        wantedCamState = CameraStates.TSE;
-    }
-
-    public void setCamPositions(double x, double y) {
-//        Robot.getInstance().camXAxis.setPosition(x);
-//        Robot.getInstance().camYAxis.setPosition(y);
-    }
-
-    public Point getPosOfTarget () {
-        Point posToReturn = new Point();
-        switch (currentPipeline) {
-            case TSE:
-//                if (scanForTSE.getPoint().size() > 0)
-//                    posToReturn = scanForTSE.getPoint().get(0);
-//                else
-//                    posToReturn = new Point(1e10, 1e10);
-//                break;
-
-                posToReturn = scanForTSE.getPoint();
-        }
-
-        return posToReturn;
+        Robot.getInstance().camera.stopStreaming();
     }
 }

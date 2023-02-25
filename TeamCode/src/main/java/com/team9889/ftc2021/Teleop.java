@@ -227,8 +227,6 @@ public class Teleop extends Team9889Linear {
             Robot.leftBumper.setPosition(position);
             Robot.rightBumper.setPosition(position + 0.15);
 
-            Robot.leds.setPower(led);
-
             /* Telemetry */
             telemetry.addData("Line 1", Robot.line1.getState());
             telemetry.addData("Line 2", Robot.line2.getState());

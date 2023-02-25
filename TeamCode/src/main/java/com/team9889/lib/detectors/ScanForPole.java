@@ -31,7 +31,7 @@ import java.util.List;
 
 @Config
 public class ScanForPole extends OpenCvPipeline {
-    public static int area = 50, maxArea = 100000;
+    public static int area = 0, maxArea = 10000000, minRation = 0, maxRation = 1;
 
     public double width;
 
@@ -60,10 +60,12 @@ public class ScanForPole extends OpenCvPipeline {
         // Step CV_resize0:
         Mat cvResizeSrc = input;
         Size cvResizeDsize = new Size(0, 0);
-        double cvResizeFx = .25;
-        double cvResizeFy = .25;
+        double cvResizeFx = 1;
+        double cvResizeFy = 1;
         int cvResizeInterpolation = Imgproc.INTER_LINEAR;
         cvResize(cvResizeSrc, cvResizeDsize, cvResizeFx, cvResizeFy, cvResizeInterpolation, cvResizeOutput);
+
+//        Imgproc.rectangle(cvResizeOutput, new Rect(0, 190, 320, 100), new Scalar(0, 0, 0), -1);
 
         // Step HSV_Threshold0:
         Mat hsvThresholdInput = cvResizeOutput;
@@ -80,14 +82,14 @@ public class ScanForPole extends OpenCvPipeline {
         double filterContoursMaxArea = maxArea;
         double filterContoursMinPerimeter = 0;
         double filterContoursMinWidth = 0;
-        double filterContoursMaxWidth = 1000;
-        double filterContoursMinHeight = 90;
-        double filterContoursMaxHeight = 1000;
+        double filterContoursMaxWidth = 10000;
+        double filterContoursMinHeight = 0;
+        double filterContoursMaxHeight = 10000;
         double[] filterContoursSolidity = {0, 100};
         double filterContoursMaxVertices = 1000000;
         double filterContoursMinVertices = 0;
-        double filterContoursMinRatio = 0;
-        double filterContoursMaxRatio = 1000;
+        double filterContoursMinRatio = minRation;
+        double filterContoursMaxRatio = maxRation;
         filterContours(filterContoursContours, filterContoursMinArea, filterContoursMaxArea, filterContoursMinPerimeter, filterContoursMinWidth, filterContoursMaxWidth, filterContoursMinHeight, filterContoursMaxHeight, filterContoursSolidity, filterContoursMaxVertices, filterContoursMinVertices, filterContoursMinRatio, filterContoursMaxRatio, contours);
 
 
@@ -113,9 +115,19 @@ public class ScanForPole extends OpenCvPipeline {
             RotatedRect rect = Imgproc.minAreaRect(new MatOfPoint2f(contours.get(index).toArray()));
             Point[] points = new Point[4];
             rect.points(points);
+
+            Point corner1 = new Point(1000, 1000), corner2 = new Point(1000, 1000);
             for (int i = 0; i < 4; i++) {
                 Imgproc.line(cvResizeOutput, points[i], points[(i+1)%4], new Scalar(0, 255, 0));
+                if (corner1.y > points[i].y) {
+                    corner2 = corner1;
+                    corner1 = points[i];
+                } else if (corner2.y > points[i].y) {
+                    corner2 = points[i];
+                }
             }
+
+            Imgproc.line(cvResizeOutput, corner1, corner2, new Scalar(255, 0, 0));
 
             double angle = Math.toRadians(rect.angle > 45 ? rect.angle - 90 : rect.angle);
             width = Math.cos(angle) * rect.boundingRect().width
@@ -125,20 +137,15 @@ public class ScanForPole extends OpenCvPipeline {
 
             point = mc.get(index);
             point.x = point.x + (Math.tan(angle) * point.y);
-            point.y = 0;
+            point.y = (corner1.y + corner2.y) / 2;
             Imgproc.circle(cvResizeOutput, point, 4, new Scalar(255, 0, 0), -1);
         }
 
-//        for (int i = 0; i < contours.size(); i++) {
-//            Imgproc.circle(cvResizeOutput, mc.get(i), 4, new Scalar(255, 0, 0), -1);
-//
-//            Imgproc.drawContours(cvResizeOutput, contours, i, new Scalar(0, 255, 0));
-//
-//            point = mc.get(0);
-//            width = Imgproc.boundingRect(contours.get(0)).width;
-//        }
 
-        cvResize(cvResizeOutput, cvResizeDsize, 3, 3, cvResizeInterpolation, cvResizeOutput);
+
+
+
+//        cvResize(cvResizeOutput, cvResizeDsize, 3, 3, cvResizeInterpolation, cvResizeOutput);
 
         return cvResizeOutput;
     }

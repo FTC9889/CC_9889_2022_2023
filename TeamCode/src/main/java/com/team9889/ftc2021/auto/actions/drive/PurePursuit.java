@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
+import static java.lang.Math.hypot;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toDegrees;
@@ -29,10 +30,13 @@ import static java.lang.Math.toDegrees;
 
 @Config
 public class PurePursuit extends Action {
-    public static double divider = 4;
+    public static double divider = 6;
 
-    public static PID xPID = new PID(0, 0, 0), yPID = new PID(0, 0, 0),
-            thetaPID = new PID(0, 0, 0);
+    public static PID xPID = new PID(0.0025, 0, 0.4, 0),
+            yPID = new PID(0.0025, 0, 0.4, 0),
+            thetaPID = new PID(0.0008, 0, 0.03);
+
+    double curXVel = 0, curYVel = 0, curThetaVel = 0;
 
     double maxSpeed = 0, timeout = -1, endTheta = 1000;
     ElapsedTime timer = new ElapsedTime();
@@ -41,7 +45,7 @@ public class PurePursuit extends Action {
     Pose tolerance = new Pose(2, 2, 3);
     int step = 1;
 
-    boolean overshot = false, error = false;
+    boolean overshot = false, error = false, stopWall = false;
 
     public PurePursuit(ArrayList<Pose> path) {
         this.path = path;
@@ -56,6 +60,14 @@ public class PurePursuit extends Action {
         this.path = path;
         this.timeout = timeout;
         this.endTheta = endTheta;
+    }
+
+    public PurePursuit(ArrayList<Pose> path, double endTheta, double timeout, boolean fieldCentric, boolean stopWall) {
+        this.path = path;
+        this.timeout = timeout;
+        this.endTheta = endTheta;
+        this.overshot = fieldCentric;
+        this.stopWall = stopWall;
     }
 
     public PurePursuit(ArrayList<Pose> path, double endTheta, double timeout, boolean fieldCentric) {
@@ -118,7 +130,7 @@ public class PurePursuit extends Action {
         if (path.size() - 1 > step) {
             Pose error = Pose.getError(Pose.Pose2dToPose(Robot.getInstance().getMecanumDrive().position),
                     path.get(step));
-            if (abs(pow(error.x, 2) + pow(error.y, 2)) < path.get(step).radius) {
+            if (hypot(error.x, error.y) < path.get(step).radius) {
                 step++;
             }
         }
@@ -189,7 +201,19 @@ public class PurePursuit extends Action {
         xSpeed = CruiseLib.limitValue(xSpeed, 1 - Math.abs(turnSpeed * 1.5));
         ySpeed = CruiseLib.limitValue(ySpeed, 1 - Math.abs(turnSpeed * 1.5));
 
-        Robot.getInstance().getMecanumDrive().setPower(xSpeed, ySpeed, turnSpeed);
+        xSpeed *= 24;
+        ySpeed *= 48;
+        turnSpeed *= 220;
+
+        curXVel += xPID.update(-Robot.getInstance().getMecanumDrive().xVel, xSpeed);
+        curYVel += yPID.update(Robot.getInstance().getMecanumDrive().yVel, ySpeed);
+        curThetaVel += thetaPID.update(Robot.getInstance().getMecanumDrive().thetaVel, turnSpeed);
+
+        curXVel = CruiseLib.limitValue(curXVel, 1);
+        curYVel = CruiseLib.limitValue(curYVel, 1);
+        curThetaVel = CruiseLib.limitValue(curThetaVel, 1);
+
+        Robot.getInstance().getMecanumDrive().setPower(curXVel, curYVel, curThetaVel);
 
         error = false;
         TelemetryPacket packet = new TelemetryPacket();
@@ -211,9 +235,10 @@ public class PurePursuit extends Action {
                 .setStroke("black")
                 .strokeLine(pose.getX(), pose.getY(), point.x, point.y);
 
-        Pose error = Pose.getError(Pose.Pose2dToPose(Robot.getInstance().getMecanumDrive().position),
-                path.get(step));
-        packet.addLine("Error: " + error.x + ", " + error.y + ", " + error.theta);
+        packet.put("Wanted Vel", xSpeed);
+        packet.put("Current Vel", -Robot.getInstance().getMecanumDrive().xVel);
+        packet.put("Power", curXVel * 100);
+
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
@@ -232,7 +257,9 @@ public class PurePursuit extends Action {
         }
 
         if (((abs(error.x) < tolerance.x && abs(error.y) < tolerance.y) && theta
-                && step == path.size() - 1) || (timeout != -1 && timer.milliseconds() > timeout)) {
+                && step == path.size() - 1) || (timeout != -1 && timer.milliseconds() > timeout) ||
+                (stopWall && hypot(Robot.getInstance().getMecanumDrive().xVel,
+                        Robot.getInstance().getMecanumDrive().yVel) < 4 && step == path.size() - 1)) {
             count++;
         } else {
             count = 0;
