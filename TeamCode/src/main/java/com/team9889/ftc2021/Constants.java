@@ -32,11 +32,9 @@ public class Constants {
         public final static String kLeftBumper = "left_bumper";
         public final static String kRightBumper = "right_bumper";
 
-        public final static String kLine1 = "line1";
-        public final static String kLine2 = "line2";
-        public final static String kLine3 = "line3";
-        public final static String kLine4 = "line4";
-        public final static String kLine5 = "line5";
+        public final static String kLeftLight = "left_light";
+        public final static String kCenterLight = "center_light";
+        public final static String kRightLight = "right_light";
 
         public final static double WheelbaseWidth = 14.5;
     }

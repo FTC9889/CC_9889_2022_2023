@@ -5,14 +5,10 @@ import android.util.Log;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
-import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
@@ -24,7 +20,6 @@ import com.team9889.ftc2021.auto.actions.ActionVariables;
 import com.team9889.lib.android.FileReader;
 import com.team9889.lib.android.FileWriter;
 import com.team9889.lib.hardware.CCServo;
-import com.team9889.lib.hardware.ModernRoboticsUltrasonic;
 import com.team9889.lib.hardware.Motor;
 import com.team9889.lib.hardware.RevIMU;
 
@@ -53,8 +48,8 @@ public class Robot {
     public Motor fLDrive, fRDrive, bLDrive, bRDrive;
     public RevIMU imu = null;
     public Servo leftBumper, rightBumper;
-    // 1: Right 3: Center 5: Left
-    public DigitalChannel line1, line2, line3, line4, line5;
+
+    public AnalogInput leftLight, centerLight, rightLight;
 
     public Motor leftLift, rightLift;
 //    public Servo leftV4B, rightV4B;
@@ -142,11 +137,9 @@ public class Robot {
         leftBumper.setDirection(Servo.Direction.REVERSE);
         rightBumper = hardwareMap.get(Servo.class, Constants.DriveConstants.kRightBumper);
 
-        line1 = hardwareMap.get(DigitalChannel.class, Constants.DriveConstants.kLine1);
-        line2 = hardwareMap.get(DigitalChannel.class, Constants.DriveConstants.kLine2);
-        line3 = hardwareMap.get(DigitalChannel.class, Constants.DriveConstants.kLine3);
-        line4 = hardwareMap.get(DigitalChannel.class, Constants.DriveConstants.kLine4);
-        line5 = hardwareMap.get(DigitalChannel.class, Constants.DriveConstants.kLine5);
+        leftLight = hardwareMap.get(AnalogInput.class, Constants.DriveConstants.kLeftLight);
+        centerLight = hardwareMap.get(AnalogInput.class, Constants.DriveConstants.kCenterLight);
+        rightLight = hardwareMap.get(AnalogInput.class, Constants.DriveConstants.kRightLight);
 
         //Lift
         leftLift = new Motor(hardwareMap, Constants.LiftConstants.kLeftLift,
@@ -165,7 +158,7 @@ public class Robot {
 
         grabber = hardwareMap.get(Servo.class, Constants.LiftConstants.kGrabber);
 
-        v4bPot = hardwareMap.get(AnalogInput.class, Constants.LiftConstants.kV4BPot);
+//        v4bPot = hardwareMap.get(AnalogInput.class, Constants.LiftConstants.kV4BPot);
         distance = hardwareMap.get(AnalogInput.class, Constants.LiftConstants.kDistance);
         sideDistance = hardwareMap.get(AnalogInput.class, Constants.LiftConstants.kSideDistance);
         frontColor = hardwareMap.get(RevColorSensorV3.class, Constants.LiftConstants.kFrontColor);

@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.team9889.ftc2021.auto.AutoModeBase;
 import com.team9889.ftc2021.auto.actions.Action;
 import com.team9889.ftc2021.auto.actions.ActionVariables;
+import com.team9889.ftc2021.auto.actions.drive.DetectLine;
 import com.team9889.ftc2021.auto.actions.drive.DriveToPole;
 import com.team9889.ftc2021.auto.actions.drive.PurePursuit;
 import com.team9889.ftc2021.auto.actions.drive.ResetPosition;
@@ -74,7 +75,8 @@ public class RightDriveThroughSignal extends AutoModeBase {
 
             path.add(new Pose(63, 12, 0, 0.25, 8));
             runAction(new ParallelAction(Arrays.asList(
-                    new PurePursuit(path, 90, 2500, false, true),
+                    new PurePursuit(path, -90, 3000, true, true),
+                    new DetectLine(true, false),
                     new Grab(CruiseLib.limitValue(3.5 - (i * (13.0 / 8.0)), 10, 0)))));
             path.clear();
 

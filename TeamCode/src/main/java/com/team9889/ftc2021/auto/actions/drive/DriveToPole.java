@@ -18,7 +18,7 @@ import com.team9889.lib.control.controllers.PID;
 public class DriveToPole extends Action {
     public static double wantedPoint = 128, wantedY = 76;
 
-    public PID yPID = new PID(0.012, 0, 0), thetaPID = new PID(0.003, 0, 0.002);
+    public PID yPID = new PID(0.008, 0, 0), thetaPID = new PID(0.003, 0, 0.002);
 
     double timeout, theta, lastTime = 0;
     ElapsedTime timer = new ElapsedTime();

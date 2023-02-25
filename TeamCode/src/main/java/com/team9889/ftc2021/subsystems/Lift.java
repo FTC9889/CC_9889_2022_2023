@@ -343,9 +343,10 @@ public class Lift extends Subsystem{
 
     public double getV4BAngle() {
         // Math from REV Robotics documents
-        double angle = Robot.getInstance().v4bPot.getVoltage() * 81.4;
-        double adjustedAngle = ((445.5 * (angle - 270)) / (Math.pow(angle, 2) - (270 * angle) - 36450)) * 81.1;
-        return adjustedAngle - 133;
+//        double angle = Robot.getInstance().v4bPot.getVoltage() * 81.4;
+//        double adjustedAngle = ((445.5 * (angle - 270)) / (Math.pow(angle, 2) - (270 * angle) - 36450)) * 81.1;
+//        return adjustedAngle - 133;
+        return 0;
     }
 
     public void setGrabber(double pos) {

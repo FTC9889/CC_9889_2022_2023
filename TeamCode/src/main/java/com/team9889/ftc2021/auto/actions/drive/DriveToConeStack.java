@@ -6,6 +6,7 @@ import com.team9889.ftc2021.auto.actions.ActionVariables;
 import com.team9889.ftc2021.subsystems.Robot;
 import com.team9889.lib.CruiseLib;
 
+import static java.lang.Math.hypot;
 import static java.lang.Math.toDegrees;
 
 /**
@@ -27,14 +28,10 @@ class DriveToConeStack extends Action {
     @Override
     public void update() {
         double ySpeed = 0;
-        if (Robot.getInstance().line1.getState()) {
-            ySpeed = 0.4;
-        } else if (Robot.getInstance().line2.getState()) {
+        if (Robot.getInstance().leftLight.getVoltage() > 1) {
             ySpeed = 0.2;
-        } else if (Robot.getInstance().line4.getState()) {
+        } else if (Robot.getInstance().rightLight.getVoltage() > 1) {
             ySpeed = -0.2;
-        } else if (Robot.getInstance().line5.getState()) {
-            ySpeed = -0.4;
         }
 
         double angleToPoint = -90;
@@ -46,7 +43,8 @@ class DriveToConeStack extends Action {
 
     @Override
     public boolean isFinished() {
-        return time.milliseconds() > timeout;
+        return time.milliseconds() > timeout || hypot(Robot.getInstance().getMecanumDrive().xVel,
+                Robot.getInstance().getMecanumDrive().yVel) < 4;
     }
 
     @Override
