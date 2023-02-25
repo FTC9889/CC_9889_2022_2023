@@ -16,9 +16,9 @@ import com.team9889.lib.control.controllers.PID;
 
 @Config
 public class DriveToPole extends Action {
-    public static double wantedPoint = 128, wantedY = 76;
+    public static double wantedPoint = 95, wantedY = 76;
 
-    public PID yPID = new PID(0.008, 0, 0), thetaPID = new PID(0.003, 0, 0.002);
+    public PID yPID = new PID(0.006, 0, 0), thetaPID = new PID(0.005, 0, 0.002);
 
     double timeout, theta, lastTime = 0;
     ElapsedTime timer = new ElapsedTime();
@@ -45,7 +45,8 @@ public class DriveToPole extends Action {
         ySpeed = yPID.update(Robot.getInstance().getCamera().scanForPole.getPoint().y, wantedY);
         thetaSpeed = thetaPID.update(Robot.getInstance().getCamera().scanForPole.getPoint().x, wantedPoint);
 
-        ySpeed = CruiseLib.limitValue(ySpeed, maxSpeed);
+        ySpeed = CruiseLib.limitValue(ySpeed, -0.1, -maxSpeed, 0.1, maxSpeed);
+        thetaSpeed = CruiseLib.limitValue(thetaSpeed, -0.1, -maxSpeed, 0.1, maxSpeed);
 //        maxSpeed += (timer.milliseconds() - lastTime) * (1.0 / 500.0);
         lastTime = timer.milliseconds();
 
@@ -62,7 +63,7 @@ public class DriveToPole extends Action {
     @Override
     public boolean isFinished() {
         return timer.milliseconds() > timeout ||
-                (Math.abs(yPID.getError()) < 6 && Math.abs(thetaPID.getError()) < 12);
+                (Math.abs(yPID.getError()) < 8 && Math.abs(thetaPID.getError()) < 16);
     }
 
     @Override

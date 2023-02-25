@@ -53,12 +53,12 @@ public class RightDriveThroughSignal extends AutoModeBase {
         Robot.getLift().wantedScoreState = Lift.ScoreStates.GROUND_RIGHT;
 
         path.add(new Pose(35, 22, -180, 1, 8));
-        path.add(new Pose(29, 7, -180, .5, 8));
+        path.add(new Pose(29, 7, -180, .7, 8));
         runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, -30, 3000),
                 new SetLift(Lift.LiftPositions.HIGH, Lift.ScoreStates.HOVER_LEFT, 1000))));
         path.clear();
 
-        runAction(new Wait(250));
+        runAction(new Wait(100));
 
         runAction(new ParallelAction(Arrays.asList(new DriveToPole(3000),
                 new Score(Lift.LiftPositions.HIGH, true, 0))));
@@ -68,12 +68,12 @@ public class RightDriveThroughSignal extends AutoModeBase {
 
 
         for (int i = 0; i < 5 && timer.milliseconds() < 25000 && opModeIsActive(); i++) {
-            path.add(new Pose(38, 12, 0, 1, 8));
-            path.add(new Pose(53, 12, 0, .7, 8));
+            path.add(new Pose(38, 12, 0, 1, 5));
+            path.add(new Pose(53, 12, 0, 1, 5));
 //            runAction(new PurePursuit(path, new Pose(3, 3, 4), 90, 2000));
 //            path.clear();
 
-            path.add(new Pose(63, 12, 0, 0.25, 8));
+            path.add(new Pose(63, 12, 0, 0.3, 8));
             runAction(new ParallelAction(Arrays.asList(
                     new PurePursuit(path, -90, 3000, true, true),
                     new DetectLine(true, false),
@@ -84,14 +84,14 @@ public class RightDriveThroughSignal extends AutoModeBase {
 
 
             path.add(new Pose(40, 12, -180, 1, 8));
-            path.add(new Pose(28, 7, -180, .4, 4));
+            path.add(new Pose(28, 7, -180, .6, 4));
             runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, -45, 2100),
                     new SetLift(Lift.LiftPositions.HIGH, Lift.ScoreStates.HOVER_LEFT, 1000))));
             path.clear();
 
-            runAction(new Wait(250));
+            runAction(new Wait(100));
 
-            runAction(new ParallelAction(Arrays.asList(new DriveToPole(3000),
+            runAction(new ParallelAction(Arrays.asList(new DriveToPole(1000),
                     new Score(Lift.LiftPositions.HIGH, true, 0))));
             path.clear();
         }
