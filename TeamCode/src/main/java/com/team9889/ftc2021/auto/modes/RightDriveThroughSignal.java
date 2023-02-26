@@ -60,7 +60,7 @@ public class RightDriveThroughSignal extends AutoModeBase {
 
         runAction(new Wait(100));
 
-        runAction(new ParallelAction(Arrays.asList(new DriveToPole(3000),
+        runAction(new ParallelAction(Arrays.asList(new DriveToPole(1000),
                 new Score(Lift.LiftPositions.HIGH, true, 0))));
         path.clear();
 
@@ -83,9 +83,9 @@ public class RightDriveThroughSignal extends AutoModeBase {
             Robot.getMecanumDrive().position.setX(60);
 
 
-            path.add(new Pose(40, 12, -180, 1, 8));
-            path.add(new Pose(28, 7, -180, .6, 4));
-            runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, -45, 2100),
+            path.add(new Pose(38, 14, -180, 1, 6));
+            path.add(new Pose(28, 9, -180, .8, 4));
+            runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, -35, 2100),
                     new SetLift(Lift.LiftPositions.HIGH, Lift.ScoreStates.HOVER_LEFT, 1000))));
             path.clear();
 

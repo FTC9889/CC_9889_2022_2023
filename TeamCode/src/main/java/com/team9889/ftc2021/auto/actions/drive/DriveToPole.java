@@ -18,12 +18,15 @@ import com.team9889.lib.control.controllers.PID;
 public class DriveToPole extends Action {
     public static double wantedPoint = 95, wantedY = 76;
 
-    public PID yPID = new PID(0.006, 0, 0), thetaPID = new PID(0.005, 0, 0.002);
+    public PID yPID = new PID(0.004, 0, 0), thetaPID = new PID(0.0025, 0, 0.002);
+    public PID yPIDVel = new PID(0.0025, 0, 0.4, 0), thetaPIDVel = new PID(0.0008, 0, 0.03);
+
+    double curYVel = 0, curThetaVel = 0;
 
     double timeout, theta, lastTime = 0;
     ElapsedTime timer = new ElapsedTime();
 
-    double xSpeed = 0, ySpeed = 0, maxSpeed = 1, thetaSpeed = 0;
+    double ySpeed = 0, maxSpeed = .5, thetaSpeed = 0;
 
     public DriveToPole(double timeout) {
         this.timeout = timeout;
@@ -42,15 +45,24 @@ public class DriveToPole extends Action {
 
     @Override
     public void update() {
-        ySpeed = yPID.update(Robot.getInstance().getCamera().scanForPole.getPoint().y, wantedY);
-        thetaSpeed = thetaPID.update(Robot.getInstance().getCamera().scanForPole.getPoint().x, wantedPoint);
+        ySpeed = -yPID.update(Robot.getInstance().getCamera().scanForPole.getPoint().y, wantedY);
+        thetaSpeed = -thetaPID.update(Robot.getInstance().getCamera().scanForPole.getPoint().x, wantedPoint);
 
-        ySpeed = CruiseLib.limitValue(ySpeed, -0.1, -maxSpeed, 0.1, maxSpeed);
+        ySpeed = CruiseLib.limitValue(ySpeed, -0.05, -maxSpeed, 0.05, maxSpeed);
         thetaSpeed = CruiseLib.limitValue(thetaSpeed, -0.1, -maxSpeed, 0.1, maxSpeed);
 //        maxSpeed += (timer.milliseconds() - lastTime) * (1.0 / 500.0);
         lastTime = timer.milliseconds();
 
-        Robot.getInstance().getMecanumDrive().setPower(-xSpeed, -ySpeed, -thetaSpeed);
+        ySpeed *= 48;
+        thetaSpeed *= 220;
+
+        curYVel += yPIDVel.update(Robot.getInstance().getMecanumDrive().yVel, ySpeed);
+        curThetaVel += thetaPIDVel.update(Robot.getInstance().getMecanumDrive().thetaVel, thetaSpeed);
+
+        curYVel = CruiseLib.limitValue(curYVel, 1);
+        curThetaVel = CruiseLib.limitValue(curThetaVel, 1);
+
+        Robot.getInstance().getMecanumDrive().setPower(0, curYVel, curThetaVel);
 
         TelemetryPacket packet = new TelemetryPacket();
         packet.put("Y Error", yPID.getError());
