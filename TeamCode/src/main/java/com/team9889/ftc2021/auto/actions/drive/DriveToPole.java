@@ -18,7 +18,7 @@ import com.team9889.lib.control.controllers.PID;
 public class DriveToPole extends Action {
     public static double wantedPoint = 160, wantedY = 50;
 
-    public PID yPID = new PID(0.016, 0, 0.007), thetaPID = new PID(0.0015, 0, 0.005);
+    public PID yPID = new PID(0.01, 0, 0.007), thetaPID = new PID(0.0018, 0, 0.005);
     public PID yPIDVel = new PID(0.0025, 0, 0.4, 0), thetaPIDVel = new PID(0.0008, 0, 0.03);
 
     double curYVel = 0, curThetaVel = 0;
@@ -48,7 +48,7 @@ public class DriveToPole extends Action {
         ySpeed = -yPID.update(Robot.getInstance().getCamera().scanForPole.getPoint().y, wantedY);
         thetaSpeed = -thetaPID.update(Robot.getInstance().getCamera().scanForPole.getPoint().x, wantedPoint);
 
-        ySpeed = CruiseLib.limitValue(ySpeed, 0, -.2, 0, maxSpeed);
+        ySpeed = CruiseLib.limitValue(ySpeed, 0, -0.2, 0, maxSpeed);
         thetaSpeed = CruiseLib.limitValue(thetaSpeed, 0, -maxSpeed, 0, maxSpeed);
 //        maxSpeed += (timer.milliseconds() - lastTime) * (1.0 / 500.0);
         lastTime = timer.milliseconds();
