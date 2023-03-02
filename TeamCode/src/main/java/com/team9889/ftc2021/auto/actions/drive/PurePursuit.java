@@ -259,7 +259,7 @@ public class PurePursuit extends Action {
         if (((abs(error.x) < tolerance.x && abs(error.y) < tolerance.y) && theta
                 && step == path.size() - 1) || (timeout != -1 && timer.milliseconds() > timeout) ||
                 (stopWall && hypot(Robot.getInstance().getMecanumDrive().xVel,
-                        Robot.getInstance().getMecanumDrive().yVel) < 4 && step == path.size() - 1)) {
+                        Robot.getInstance().getMecanumDrive().yVel) < 8 && step == path.size() - 1)) {
             count++;
         } else {
             count = 0;

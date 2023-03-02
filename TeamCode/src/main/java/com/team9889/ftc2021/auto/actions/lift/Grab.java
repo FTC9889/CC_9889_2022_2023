@@ -18,6 +18,8 @@ public class Grab extends Action {
     int stage = 0;
     double timerOffset = 0;
 
+    boolean done = false;
+
     public Grab(double liftHeight) {
         this.liftHeight = liftHeight;
     }
@@ -43,11 +45,13 @@ public class Grab extends Action {
         } else if (stage == 1) {
             if (Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.HOLDING) {
                 Robot.getInstance().getLift().setLiftPosition(CruiseLib.limitValue(liftHeight + 5, 100, 0));
+                done = true;
             } else {
                 Robot.getInstance().getLift().setLiftPosition(CruiseLib.limitValue(liftHeight, 100, 0));
                 timerOffset = timer.milliseconds();
 
-                if (driveTimer.milliseconds() > 200) {
+//                if (driveTimer.milliseconds() > 200) {
+                if (ActionVariables.doneDriving){
                     Robot.getInstance().getLift().wantedScoreState = Lift.ScoreStates.GRAB_RIGHT;
                 }
             }
@@ -58,12 +62,13 @@ public class Grab extends Action {
         }
 
             Robot.getInstance().getLift().update();
-        }
+    }
 
     @Override
     public boolean isFinished() {
         return Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.HOLDING &&
-                timer.milliseconds() - timerOffset > 250;
+//                timer.milliseconds() - timerOffset > 250;
+                done;
     }
 
     @Override

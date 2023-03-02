@@ -54,7 +54,11 @@ public class MecanumDrive extends Subsystem {
     public void init(boolean auto) {
         this.auto = auto;
 
-        setBumpersDown();
+        if (auto) {
+            setBumpersDown();
+        } else {
+            setBumpersUp();
+        }
 
         timer.reset();
     }

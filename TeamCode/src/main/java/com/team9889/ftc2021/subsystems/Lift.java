@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Lift extends Subsystem{
     public static PID pid = new PID(0.4, 0, 6);
 
-    public static double high = 30;
+    public static double high = 26;
 
     public boolean liftDown = true, auto, grabberOpen = false;
 
@@ -102,7 +102,7 @@ public class Lift extends Subsystem{
                 break;
 
             case LEFT_UP:
-                if (setV4BAngle((auto ? -35 : -50), .15)) {
+                if (setV4BAngle((auto ? -42 : -50), .15)) {
                     currentV4BPosition = V4BPositions.LEFT_UP;
                 }
                 break;
@@ -196,7 +196,7 @@ public class Lift extends Subsystem{
                 if (grabTimer.milliseconds() > (auto ? 220 : 120) && grabTimer.milliseconds() < 300) {
                     Robot.getInstance().driverStation.grabberClosed = true;
                     closeGrabber();
-                } else if (grabTimer.milliseconds() > 300) {
+                } else if (grabTimer.milliseconds() > (auto ? 350 : 300)) {
                     wantedScoreState = ScoreStates.HOLDING;
                 }
                 break;
@@ -322,6 +322,7 @@ public class Lift extends Subsystem{
 
     public boolean setV4BAngle(double angle) {
 //        angle -= 13;
+        angle = angle - 4;
         double adjustedAngle = (angle / 270) + 0.5;
         Robot.getInstance().leftV4B.setPosition(adjustedAngle);
         Robot.getInstance().rightV4B.setPosition(adjustedAngle);
@@ -333,6 +334,7 @@ public class Lift extends Subsystem{
     public boolean setV4BAngle(double angle, double time) {
 //        angle -= 13;
         if (lastAngle != angle) {
+            angle = angle - 4;
             double adjustedAngle = (angle / 270) + 0.5;
             Robot.getInstance().leftV4B.setPosition(adjustedAngle, time);
             Robot.getInstance().rightV4B.setPosition(adjustedAngle, time);
@@ -365,7 +367,7 @@ public class Lift extends Subsystem{
     }
 
     public void openGrabber() {
-        setGrabber(0.58);
+        setGrabber((auto ? 0.61 : 0.58));
 //        Log.v("Open Grabber", "false");
         grabberOpen = true;
     }
