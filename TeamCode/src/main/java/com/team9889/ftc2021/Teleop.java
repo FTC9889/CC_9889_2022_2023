@@ -202,7 +202,12 @@ public class Teleop extends Team9889Linear {
                 }
 
 
-                if (driverStation.getBumper()) {
+                Lift.ScoreStates state = Robot.getLift().wantedScoreState;
+                if ((state == Lift.ScoreStates.P_HOVER_RIGHT || state == Lift.ScoreStates.P_HOVER_LEFT ||
+                        state == Lift.ScoreStates.GRAB_RIGHT || state == Lift.ScoreStates.GRAB_LEFT)
+                        && Robot.getLift().beaconStage != 0) {
+                    Robot.getMecanumDrive().setBumpersDown();
+                } else if (driverStation.getBumper()) {
                     Robot.getMecanumDrive().setBumpersDown();
                 } else {
                     Robot.getMecanumDrive().setBumpersUp();
@@ -250,12 +255,18 @@ public class Teleop extends Team9889Linear {
                 autoDone = false;
             }
 
-            /* Telemetry */
-            telemetry.addData("Left Light", Robot.leftLight.getVoltage());
-            telemetry.addData("Center Light", Robot.centerLight.getVoltage());
-            telemetry.addData("Right Light", Robot.rightLight.getVoltage());
 
-            telemetry.addData("Position", Arrays.toString(Robot.getMecanumDrive().position.getArray()));
+            if (driverStation.getBeacon()) {
+                if (Robot.getLift().beaconStage == 0) {
+                    Robot.getLift().beaconStage = 1;
+                } else {
+                    Robot.getLift().beaconStage = 0;
+                }
+            }
+
+
+            /* Telemetry */
+            telemetry.addData("Beacon Active", Robot.getLift().beaconStage != 0);
             telemetry.addData("Score State", Robot.getLift().wantedScoreState.toString());
             telemetry.addData("Grabber Open", Robot.getLift().grabberOpen);
 

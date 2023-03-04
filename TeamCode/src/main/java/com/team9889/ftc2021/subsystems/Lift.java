@@ -20,6 +20,8 @@ public class Lift extends Subsystem{
     public static double high = 26;
 
     public boolean liftDown = true, auto, grabberOpen = false;
+    public int beaconStage = 0;
+    double beaconHeight = 0;
 
     double lastAngle = 10000;
 
@@ -144,7 +146,7 @@ public class Lift extends Subsystem{
                 break;
 
             case INIT:
-                if (setV4BAngle(-30)) {
+                if (setV4BAngle(-40)) {
                     currentV4BPosition = V4BPositions.INIT;
                 }
                 break;
@@ -208,7 +210,11 @@ public class Lift extends Subsystem{
                 break;
 
             case HOVER_RIGHT:
-                wantedV4BPosition = V4BPositions.RIGHT_UP;
+                if (beaconStage == 2) {
+                    wantedV4BPosition = V4BPositions.RIGHT;
+                } else {
+                    wantedV4BPosition = V4BPositions.RIGHT_UP;
+                }
                 scoreTimer.reset();
                 break;
 
@@ -217,6 +223,8 @@ public class Lift extends Subsystem{
 
                 if (scoreTimer.milliseconds() > 200) {
                     wantedScoreState = ScoreStates.DROP;
+                    beaconHeight = getLiftPosition();
+
                     scoreTimer.reset();
                 }
                 break;
@@ -239,7 +247,11 @@ public class Lift extends Subsystem{
                 break;
 
             case HOVER_LEFT:
-                wantedV4BPosition = V4BPositions.LEFT_UP;
+                if (beaconStage == 2) {
+                    wantedV4BPosition = V4BPositions.LEFT;
+                } else {
+                    wantedV4BPosition = V4BPositions.LEFT_UP;
+                }
                 scoreTimer.reset();
                 break;
 
@@ -248,6 +260,8 @@ public class Lift extends Subsystem{
 
                 if (scoreTimer.milliseconds() > 120) {
                     wantedScoreState = ScoreStates.DROP;
+                    beaconHeight = getLiftPosition();
+
                     scoreTimer.reset();
                 }
                 break;
@@ -263,13 +277,13 @@ public class Lift extends Subsystem{
                 break;
 
             case DROP:
-                Robot.getInstance().driverStation.grabberClosed = false;
-                depositGrabber();
+                    Robot.getInstance().driverStation.grabberClosed = false;
+                    depositGrabber();
 
-                if (scoreTimer.milliseconds() > 250) {
-                    wantedScoreState = ScoreStates.RETRACT;
-                    scoreTimer.reset();
-                }
+                    if (scoreTimer.milliseconds() > 250) {
+                        wantedScoreState = ScoreStates.RETRACT;
+                        scoreTimer.reset();
+                    }
                 break;
 
             case RETRACT:
@@ -281,7 +295,14 @@ public class Lift extends Subsystem{
                 }
 
                 if (scoreTimer.milliseconds() > 400) {
-                    wantedScoreState = ScoreStates.LOWER;
+                    if (beaconStage != 1) {
+                        wantedScoreState = ScoreStates.LOWER;
+                        beaconStage = 0;
+                    } else {
+                        wantedScoreState = ScoreStates.HOLDING;
+                        beaconStage = 2;
+                    }
+
                     closeGrabber();
                     scoreTimer.reset();
                 }
@@ -373,14 +394,31 @@ public class Lift extends Subsystem{
     }
 
     public void openGrabber() {
-        setGrabber((auto ? 0.61 : 0.58));
-//        Log.v("Open Grabber", "false");
+        double position = 0.58;
+        if (auto) {
+            position = 0.61;
+        } else if ((beaconStage == 1 && (wantedScoreState == Lift.ScoreStates.P_HOVER_RIGHT ||
+                wantedScoreState == Lift.ScoreStates.P_HOVER_LEFT ||
+                wantedScoreState == Lift.ScoreStates.GRAB_RIGHT ||
+                wantedScoreState == Lift.ScoreStates.GRAB_LEFT)) || beaconStage == 2) {
+            position = 0.67;
+        } else if (beaconStage == 1) {
+            position = 0.5;
+        }
+
+        setGrabber(position);
         grabberOpen = true;
     }
 
     public void depositGrabber() {
-        setGrabber(0.5);
-//        Log.v("Open Grabber", "false");
-        grabberOpen = true;
+        if (auto) {
+            double position = 0.5;
+            if (beaconStage == 2) {
+                position = 0.7;
+            }
+
+            setGrabber(position);
+            grabberOpen = true;
+        }
     }
 }

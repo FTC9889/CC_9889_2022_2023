@@ -66,8 +66,13 @@ public class MecanumDrive extends Subsystem {
     @Override
     public void outputToTelemetry(Telemetry telemetry) {
 //        telemetry.addData("Gyro", -CruiseLib.angleWrap(Robot.getInstance().gyro.getVoltage() / 2.75 * 360));
-        telemetry.addData("Odometry", Math.toDegrees(position.getHeading()));
-        telemetry.addData("IMU", getAngle().getTheda(AngleUnit.DEGREES));
+
+//        telemetry.addData("Left Light", Robot.getInstance().leftLight.getVoltage());
+//        telemetry.addData("Center Light", Robot.getInstance().centerLight.getVoltage());
+//        telemetry.addData("Right Light", Robot.getInstance().rightLight.getVoltage());
+
+//        telemetry.addData("Odometry", Math.toDegrees(position.getHeading()));
+//        telemetry.addData("IMU", getAngle().getTheda(AngleUnit.DEGREES));
 
         telemetry.addData("Odometry 1", Robot.getInstance().bRDrive.getPosition());
         telemetry.addData("Odometry 2", Robot.getInstance().bLDrive.getPosition());

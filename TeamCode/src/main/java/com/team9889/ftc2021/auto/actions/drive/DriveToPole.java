@@ -8,6 +8,7 @@ import com.team9889.ftc2021.auto.actions.Action;
 import com.team9889.ftc2021.auto.actions.ActionVariables;
 import com.team9889.ftc2021.subsystems.Robot;
 import com.team9889.lib.CruiseLib;
+import com.team9889.lib.Pose;
 import com.team9889.lib.control.controllers.PID;
 
 /**
@@ -16,14 +17,15 @@ import com.team9889.lib.control.controllers.PID;
 
 @Config
 public class DriveToPole extends Action {
-    public static double wantedPoint = 160, wantedY = 50;
+    public static double wantedPoint = 160, wantedY = 120;
 
-    public PID yPID = new PID(0.01, 0, 0.007), thetaPID = new PID(0.0018, 0, 0.005);
+    public PID yPID = new PID(0.01, 0, 0.007), thetaPID = new PID(0.0021, 0, 0.005);
     public PID yPIDVel = new PID(0.0025, 0, 0.4, 0), thetaPIDVel = new PID(0.0008, 0, 0.03);
 
     double curYVel = 0, curThetaVel = 0;
 
     double timeout, theta, lastTime = 0;
+    Pose polePos;
     ElapsedTime timer = new ElapsedTime();
 
     double ySpeed = 0, maxSpeed = .5, thetaSpeed = 0;
@@ -31,6 +33,12 @@ public class DriveToPole extends Action {
     public DriveToPole(double timeout) {
         this.timeout = timeout;
         this.theta = 0;
+    }
+
+    public DriveToPole(double timeout, Pose polePos) {
+        this.timeout = timeout;
+        this.theta = 0;
+        this.polePos = polePos;
     }
 
     public DriveToPole(double timeout, double theta) {
@@ -48,9 +56,9 @@ public class DriveToPole extends Action {
         ySpeed = -yPID.update(Robot.getInstance().getCamera().scanForPole.getPoint().y, wantedY);
         thetaSpeed = -thetaPID.update(Robot.getInstance().getCamera().scanForPole.getPoint().x, wantedPoint);
 
-        ySpeed = CruiseLib.limitValue(ySpeed, 0, -0.2, 0, maxSpeed);
+        ySpeed = CruiseLib.limitValue(ySpeed, 0, (isInRadius(7.5) ? 0 : -0.2), 0, maxSpeed);
         thetaSpeed = CruiseLib.limitValue(thetaSpeed, 0, -maxSpeed, 0, maxSpeed);
-//        maxSpeed += (timer.milliseconds() - lastTime) * (1.0 / 500.0);
+
         lastTime = timer.milliseconds();
 
         ySpeed *= 48;
@@ -72,10 +80,22 @@ public class DriveToPole extends Action {
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
+    public boolean isInRadius(double radius) {
+        if (polePos != null) {
+            double xError = polePos.x - Robot.getInstance().getMecanumDrive().position.getX();
+            double yError = polePos.y - Robot.getInstance().getMecanumDrive().position.getY();
+
+            return Math.hypot(xError, yError) < radius;
+        }
+
+        return false;
+    }
+
     @Override
     public boolean isFinished() {
         return timer.milliseconds() > timeout ||
-                (Math.abs(yPID.getError()) < 4 && Math.abs(thetaPID.getError()) < 16);
+                ((Math.abs(yPID.getError()) < 4 || isInRadius(7.5))
+                        && Math.abs(thetaPID.getError()) < 16);
     }
 
     @Override

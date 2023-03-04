@@ -129,4 +129,16 @@ public class DriverStation {
 
         return bumperActive;
     }
+
+    private boolean beaconReleased = true;
+    boolean getBeacon() {
+        if (gamepad2.left_stick_button && gamepad2.right_stick_button && beaconReleased) {
+            beaconReleased = false;
+            return true;
+        } else if (!gamepad2.left_stick_button && !gamepad2.right_stick_button) {
+            beaconReleased = true;
+        }
+
+        return false;
+    }
 }

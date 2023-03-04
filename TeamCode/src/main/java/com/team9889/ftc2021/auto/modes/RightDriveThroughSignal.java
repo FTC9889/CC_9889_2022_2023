@@ -56,21 +56,21 @@ public class RightDriveThroughSignal extends AutoModeBase {
 
         path.add(new Pose(35, 22, -180, 1, 8));
         path.add(new Pose(29, 6, -180, .5, 8));
-        runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, -30, 3000),
+        runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, -35, 3000),
                 new SetLift(Lift.LiftPositions.HIGH, Lift.ScoreStates.HOVER_LEFT, 1000))));
 //                new Score(Lift.LiftPositions.HIGH, true, 1000))));
         path.clear();
 
         runAction(new Wait(100));
 
-        runAction(new ParallelAction(Arrays.asList(new DriveToPole(1000),
+        runAction(new ParallelAction(Arrays.asList(new DriveToPole(1000, new Pose(24, 0, 0)),
                 new Score(Lift.LiftPositions.HIGH, true, 0))));
         path.clear();
 
         Robot.getMecanumDrive().setBumpersDown();
 
 
-        for (int i = 0; i < 5 && timer.milliseconds() < 25000 && opModeIsActive(); i++) {
+        for (int i = 0; i < 5 && timer.milliseconds() < 24300 && opModeIsActive(); i++) {
             path.add(new Pose(38, 12, 0, 1, 5));
             path.add(new Pose(53, 12, 0, 1, 5));
 //            runAction(new PurePursuit(path, new Pose(3, 3, 4), 90, 2000));
@@ -87,14 +87,14 @@ public class RightDriveThroughSignal extends AutoModeBase {
 
 
             path.add(new Pose(39, 12, -180, 1, 6));
-            path.add(new Pose(30.5, 5.5, -180, .4, 4));
+            path.add(new Pose(30, 7, -180, .4, 4));
             runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(3, 3, 4), -50, 2100),
                     new SetLift(Lift.LiftPositions.HIGH, Lift.ScoreStates.HOVER_LEFT, 200))));
             path.clear();
 
             runAction(new Wait(200));
 
-            runAction(new ParallelAction(Arrays.asList(new DriveToPole(2000),
+            runAction(new ParallelAction(Arrays.asList(new DriveToPole(2000, new Pose(24, 0, 0)),
                     new Score(Lift.LiftPositions.HIGH, true, 0))));
             path.clear();
         }
@@ -104,18 +104,18 @@ public class RightDriveThroughSignal extends AutoModeBase {
         Robot.getMecanumDrive().setBumpersUp();
         Robot.getLift().wantedLiftPosition = Lift.LiftPositions.NULL;
         Robot.getLift().setLiftPosition(0);
-        signal = 1;
+//        signal = 3;
         switch (signal) {
             case 1:
-                path.add(new Pose(15, 12, 0, 1, 8));
+                path.add(new Pose(12, 14, 0, 1, 8));
                 runAction(new PurePursuit(path, 90));
                 break;
             case 2:
-                path.add(new Pose(35, 12, 0, 1, 8));
-                runAction(new PurePursuit(path, -90));
+                path.add(new Pose(36, 14, 0, 1, 8));
+                runAction(new PurePursuit(path, 0));
                 break;
             case 3:
-                path.add(new Pose(60, 12, 0, 1, 8));
+                path.add(new Pose(60, 14, 0, 1, 8));
                 runAction(new PurePursuit(path));
                 break;
         }
