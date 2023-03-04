@@ -92,14 +92,14 @@ public abstract class Team9889Linear extends LinearOpMode {
 //                }
 
                 if (gamepad1.right_bumper) {
-                    Robot.getLift().wantedV4BPosition = Lift.V4BPositions.LEFT;
+                    Robot.getLift().wantedV4BPosition = Lift.V4BPositions.INIT;
                     Robot.getLift().openGrabber();
                     matchTime.reset();
                 } else {
                     if (matchTime.milliseconds() < 1000) {
                         Robot.getLift().wantedV4BPosition = Lift.V4BPositions.LEFT_DOWN;
                     } else {
-                        Robot.getLift().wantedV4BPosition = Lift.V4BPositions.LEFT;
+                        Robot.getLift().wantedV4BPosition = Lift.V4BPositions.INIT;
                     }
 
                     if (matchTime.milliseconds() > 300) {

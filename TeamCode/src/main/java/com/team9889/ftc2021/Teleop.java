@@ -200,6 +200,13 @@ public class Teleop extends Team9889Linear {
                         }
                     }
                 }
+
+
+                if (driverStation.getBumper()) {
+                    Robot.getMecanumDrive().setBumpersDown();
+                } else {
+                    Robot.getMecanumDrive().setBumpersUp();
+                }
             }
 
             if (releasedDpad) {

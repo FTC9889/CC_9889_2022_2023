@@ -52,7 +52,7 @@ public class Camera extends Subsystem{
                 Robot.getInstance().camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 
                 if (auto) {
-                    Robot.getInstance().camera.setPipeline(scanForPole);
+                    Robot.getInstance().camera.setPipeline(scanForSignal);
                 } else {
                     Robot.getInstance().camera.setPipeline(scanForPole);
                 }

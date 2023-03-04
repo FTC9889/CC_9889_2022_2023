@@ -166,8 +166,8 @@ public class MecanumDrive extends Subsystem {
     }
 
     public void setBumpersUp() {
-        Robot.getInstance().leftBumper.setPosition(0.33);
-        Robot.getInstance().rightBumper.setPosition(0.33 + 0.15);
+        Robot.getInstance().leftBumper.setPosition(0.3);
+        Robot.getInstance().rightBumper.setPosition(0.3 + 0.15);
     }
 
 

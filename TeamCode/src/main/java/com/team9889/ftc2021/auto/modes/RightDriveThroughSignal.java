@@ -49,6 +49,8 @@ public class RightDriveThroughSignal extends AutoModeBase {
         Robot.getMecanumDrive().position = new Pose2d(35, 60, 0);
         Robot.getMecanumDrive().angleOffset = 0;
 
+        Robot.camera.setPipeline(Robot.getCamera().scanForPole);
+
         timer.reset();
         Robot.getLift().wantedScoreState = Lift.ScoreStates.GROUND_RIGHT;
 

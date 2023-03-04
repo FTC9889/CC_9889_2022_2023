@@ -116,4 +116,17 @@ public class DriverStation {
 
         return 0;
     }
+
+    private boolean bumperReleased = true;
+    private boolean bumperActive = false;
+    boolean getBumper() {
+        if (gamepad1.dpad_left && bumperReleased) {
+            bumperReleased = false;
+            bumperActive = !bumperActive;
+        } else if (!gamepad1.dpad_left) {
+            bumperReleased = true;
+        }
+
+        return bumperActive;
+    }
 }

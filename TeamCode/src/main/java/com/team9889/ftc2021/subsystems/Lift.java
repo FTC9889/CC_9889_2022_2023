@@ -24,7 +24,7 @@ public class Lift extends Subsystem{
     double lastAngle = 10000;
 
     public enum V4BPositions {
-        LEFT_DOWN, LEFT_GROUND, LEFT_DROP, LEFT, LEFT_UP, UP, RIGHT_UP, RIGHT, RIGHT_DROP, RIGHT_GROUND, RIGHT_DOWN, NULL
+        LEFT_DOWN, LEFT_GROUND, LEFT_DROP, LEFT, LEFT_UP, UP, RIGHT_UP, RIGHT, RIGHT_DROP, RIGHT_GROUND, RIGHT_DOWN, INIT, NULL
     }
     public V4BPositions wantedV4BPosition = V4BPositions.NULL;
     public V4BPositions currentV4BPosition = V4BPositions.NULL;
@@ -143,6 +143,12 @@ public class Lift extends Subsystem{
                 }
                 break;
 
+            case INIT:
+                if (setV4BAngle(-30)) {
+                    currentV4BPosition = V4BPositions.INIT;
+                }
+                break;
+
             case NULL:
                 break;
         }
@@ -157,13 +163,13 @@ public class Lift extends Subsystem{
                 break;
 
             case LOW:
-                if (setLiftPosition(8)) {
+                if (setLiftPosition(7)) {
                     currentLiftPosition = LiftPositions.LOW;
                 }
                 break;
 
             case MEDIUM:
-                if (setLiftPosition(18)) {
+                if (setLiftPosition(17)) {
                     currentLiftPosition = LiftPositions.MEDIUM;
                 }
                 break;
