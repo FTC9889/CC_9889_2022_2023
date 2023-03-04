@@ -156,6 +156,7 @@ public class Lift extends Subsystem{
         }
 
 
+        // CHANGE ONLY TELEOP HEIGHTS
         switch (wantedLiftPosition) {
             case DOWN:
                 setLiftPower(-0.2);
@@ -171,7 +172,7 @@ public class Lift extends Subsystem{
                 break;
 
             case MEDIUM:
-                if (setLiftPosition(17)) {
+                if (setLiftPosition(16.5)) {
                     currentLiftPosition = LiftPositions.MEDIUM;
                 }
                 break;
