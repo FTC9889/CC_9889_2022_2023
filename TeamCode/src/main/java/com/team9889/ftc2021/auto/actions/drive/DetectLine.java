@@ -32,7 +32,24 @@ public class DetectLine extends Action {
         double heading = Robot.getInstance().getMecanumDrive().position.getHeading();
 
         if (red && left) {
+            heading *= -1;
 
+            if (rightDetect() && centerDetect()) {
+                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * (leftToRobot.getX() + centerToRobot.getX()) / 2))
+                        + (Math.cos(heading) * (leftToRobot.getY() + centerToRobot.getY()) / 2));
+            } else if (leftDetect() && centerDetect()) {
+                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * (rightToRobot.getX() + centerToRobot.getX()) / 2))
+                        + (Math.cos(heading) * (rightToRobot.getY() + centerToRobot.getY()) / 2));
+            } else if (rightDetect()) {
+                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * leftToRobot.getX()))
+                        + (Math.cos(heading) * leftToRobot.getY()));
+            } else if (centerDetect()) {
+                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * centerToRobot.getX()))
+                        + (Math.cos(heading) * centerToRobot.getY()));
+            } else if (leftDetect()) {
+                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * rightToRobot.getX()))
+                        + (Math.cos(heading) * rightToRobot.getY()));
+            }
         } else if (red && !left) {
             if (leftDetect() && centerDetect()) {
                 Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * (leftToRobot.getX() + centerToRobot.getX()) / 2))

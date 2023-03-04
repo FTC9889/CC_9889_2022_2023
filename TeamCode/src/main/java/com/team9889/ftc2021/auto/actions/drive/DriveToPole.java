@@ -56,7 +56,7 @@ public class DriveToPole extends Action {
         ySpeed = -yPID.update(Robot.getInstance().getCamera().scanForPole.getPoint().y, wantedY);
         thetaSpeed = -thetaPID.update(Robot.getInstance().getCamera().scanForPole.getPoint().x, wantedPoint);
 
-        ySpeed = CruiseLib.limitValue(ySpeed, 0, (isInRadius(7.5) ? 0 : -0.2), 0, maxSpeed);
+        ySpeed = CruiseLib.limitValue(ySpeed, 0, (isInRadius(8) ? 0 : -0.2), 0, maxSpeed);
         thetaSpeed = CruiseLib.limitValue(thetaSpeed, 0, -maxSpeed, 0, maxSpeed);
 
         lastTime = timer.milliseconds();
@@ -94,7 +94,7 @@ public class DriveToPole extends Action {
     @Override
     public boolean isFinished() {
         return timer.milliseconds() > timeout ||
-                ((Math.abs(yPID.getError()) < 4 || isInRadius(7.5))
+                ((Math.abs(yPID.getError()) < 4 || isInRadius(8))
                         && Math.abs(thetaPID.getError()) < 16);
     }
 
