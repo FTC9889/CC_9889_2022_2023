@@ -51,7 +51,7 @@ public abstract class AutoModeBase extends Team9889Linear {
 
         // If the opmode is still running, run auto
         if (opModeIsActive() && !isStopRequested()) {
-            signal = 1;
+            signal = 3;
             run(currentAutoRunning);
         }
 
