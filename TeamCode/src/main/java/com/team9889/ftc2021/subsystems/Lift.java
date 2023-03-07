@@ -364,8 +364,15 @@ public class Lift extends Subsystem{
         if (lastAngle != angle) {
             angle = angle - 4;
             double adjustedAngle = (angle / 270) + 0.5;
-            Robot.getInstance().leftV4B.setPosition(adjustedAngle, time);
-            Robot.getInstance().rightV4B.setPosition(adjustedAngle, time);
+
+            if (auto) {
+                Robot.getInstance().leftV4B.setPosition(adjustedAngle);
+                Robot.getInstance().rightV4B.setPosition(adjustedAngle);
+            } else {
+                Robot.getInstance().leftV4B.setPosition(adjustedAngle, time);
+                Robot.getInstance().rightV4B.setPosition(adjustedAngle, time);
+            }
+
             lastAngle = angle;
         }
         return Math.abs(getV4BAngle() - angle) < 5;

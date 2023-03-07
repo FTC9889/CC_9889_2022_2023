@@ -156,6 +156,8 @@ public class PurePursuit extends Action {
             error = true;
         }
 
+        Log.v("PointError", point.x + ", " + point.y);
+
 
         // Speed
         maxSpeed = path.get(step).maxSpeed;
