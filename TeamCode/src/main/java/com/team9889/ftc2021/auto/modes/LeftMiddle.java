@@ -44,8 +44,8 @@ public class LeftMiddle extends AutoModeBase {
         Robot.getLift().wantedScoreState = Lift.ScoreStates.GROUND_RIGHT;
 
         path.add(new Pose(-35, 22, -180, 1, 8));
-        path.add(new Pose(-29, 6, -180, .5, 8));
-        runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, 35, 3000),
+        path.add(new Pose(-29, 7, -180, .5, 8));
+        runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, 40, 3000),
                 new SetLift(Lift.LiftPositions.HIGH, Lift.ScoreStates.HOVER_LEFT, 1000))));
 //                new Score(Lift.LiftPositions.HIGH, true, 1000))));
         path.clear();
@@ -74,7 +74,7 @@ public class LeftMiddle extends AutoModeBase {
             Robot.getMecanumDrive().position.setX(-60);
 
             if (signal != 1 || i < 4) {
-                path.add(new Pose(-39, 12, -180, 1, 6));
+                path.add(new Pose(-39, 12, -180, 1, 10));
                 path.add(new Pose(-30, 17, -180, .4, 4));
                 runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(3, 3, 4), 130, 2100),
                         new SetLift(Lift.LiftPositions.MEDIUM, Lift.ScoreStates.HOVER_LEFT, 200))));
@@ -85,7 +85,7 @@ public class LeftMiddle extends AutoModeBase {
                 runAction(new ParallelAction(Arrays.asList(new DriveToPole(2000, new Pose(-24, 24, 0)),
                         new Score(Lift.LiftPositions.MEDIUM, true, 0))));
             } else {
-                path.add(new Pose(-15, 12, -180, 1, 6));
+                path.add(new Pose(-15, 12, -180, 1, 10));
                 path.add(new Pose(-6, 17, -180, .4, 4));
                 runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(3, 3, 4), 130, 3500),
                         new SetLift(Lift.LiftPositions.HIGH, Lift.ScoreStates.HOVER_LEFT, 200))));
@@ -107,7 +107,7 @@ public class LeftMiddle extends AutoModeBase {
         Robot.getLift().setLiftPosition(0);
         switch (signal) {
             case 1:
-                path.add(new Pose(-12, 10, 0, 1, 8));
+                path.add(new Pose(-10, 10, 0, 1, 8));
                 runAction(new PurePursuit(path, 90));
                 break;
             case 2:
