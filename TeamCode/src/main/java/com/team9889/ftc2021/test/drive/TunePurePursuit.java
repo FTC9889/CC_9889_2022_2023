@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 @Autonomous
 @Config
+@Disabled
 public class TunePurePursuit extends AutoModeBase{
     public static double speed = 1, radius = 8;
 

@@ -2,6 +2,7 @@ package com.team9889.ftc2021.test.drive;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.team9889.ftc2021.auto.AutoModeBase;
 import com.team9889.ftc2021.auto.actions.utl.Wait;
 import com.team9889.ftc2021.subsystems.Robot;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @Autonomous
 @Config
+@Disabled
 public class AngleTest extends AutoModeBase {
     public static int time = 5000, count = 10;
 

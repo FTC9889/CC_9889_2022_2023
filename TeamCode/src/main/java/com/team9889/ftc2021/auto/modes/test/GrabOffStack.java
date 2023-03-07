@@ -2,6 +2,7 @@ package com.team9889.ftc2021.auto.modes.test;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.team9889.ftc2021.auto.AutoModeBase;
 import com.team9889.ftc2021.auto.actions.ActionVariables;
 import com.team9889.ftc2021.auto.actions.drive.DriveToPole;
@@ -24,6 +25,7 @@ import java.util.Arrays;
 
 @Autonomous
 @Config
+@Disabled
 public class GrabOffStack extends AutoModeBase {
     public static int conesOnStack = 5;
 

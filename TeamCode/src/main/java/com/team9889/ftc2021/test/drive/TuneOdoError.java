@@ -1,6 +1,7 @@
 package com.team9889.ftc2021.test.drive;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.team9889.ftc2021.auto.AutoModeBase;
 import com.team9889.ftc2021.auto.actions.drive.PurePursuit;
 import com.team9889.ftc2021.subsystems.Lift;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
  */
 
 @Autonomous
+@Disabled
 public class TuneOdoError extends AutoModeBase {
     @Override
     public void initialize() {

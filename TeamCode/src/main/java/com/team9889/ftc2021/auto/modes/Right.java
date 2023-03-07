@@ -83,8 +83,9 @@ public class Right extends AutoModeBase {
                     new Grab(CruiseLib.limitValue(3.5 - (i * (13.0 / 8.0)), 10, 0)))));
             path.clear();
 
-            Robot.getMecanumDrive().position.setX(60);
-
+            if (Math.abs(Robot.getMecanumDrive().position.getX() - 60) < 15) {
+                Robot.getMecanumDrive().position.setX(60);
+            }
 
             path.add(new Pose(39, 12, -180, 1, 6));
             path.add(new Pose(30, 7, -180, .4, 4));

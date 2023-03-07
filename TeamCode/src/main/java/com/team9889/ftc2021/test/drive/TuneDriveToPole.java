@@ -2,6 +2,7 @@ package com.team9889.ftc2021.test.drive;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.team9889.ftc2021.auto.AutoModeBase;
 import com.team9889.ftc2021.auto.actions.drive.DriveToPole;
 import com.team9889.ftc2021.auto.actions.drive.PurePursuit;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 
 @Autonomous
 @Config
+@Disabled
 public class TuneDriveToPole extends AutoModeBase{
     public static double speed = 1, radius = 8;
 
