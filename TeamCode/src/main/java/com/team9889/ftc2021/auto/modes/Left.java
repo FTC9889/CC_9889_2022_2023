@@ -93,7 +93,6 @@ public class Left extends AutoModeBase {
         Robot.getMecanumDrive().setBumpersUp();
         Robot.getLift().wantedLiftPosition = Lift.LiftPositions.NULL;
         Robot.getLift().setLiftPosition(0);
-//        signal = 1;
         switch (signal) {
             case 1:
                 path.add(new Pose(-12, 14, 0, 1, 8));

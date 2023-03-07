@@ -17,14 +17,14 @@ import com.team9889.lib.control.controllers.PID;
 
 @Config
 public class DriveToPole extends Action {
-    public static double wantedPoint = 160, wantedY = 120;
+    public static double wantedPoint = 135, wantedY = 120;
 
-    public PID yPID = new PID(0.01, 0, 0.007), thetaPID = new PID(0.0021, 0, 0.005);
+    public PID yPID = new PID(0.008, 0, 0.025), thetaPID = new PID(0.0023, 0, 0.006);
     public PID yPIDVel = new PID(0.0025, 0, 0.4, 0), thetaPIDVel = new PID(0.0008, 0, 0.03);
 
     double curYVel = 0, curThetaVel = 0;
 
-    double timeout, theta, lastTime = 0;
+    double timeout, theta, lastTime = 0, radius = 8;
     Pose polePos;
     ElapsedTime timer = new ElapsedTime();
 
@@ -39,6 +39,13 @@ public class DriveToPole extends Action {
         this.timeout = timeout;
         this.theta = 0;
         this.polePos = polePos;
+    }
+
+    public DriveToPole(double timeout, Pose polePos, double radius) {
+        this.timeout = timeout;
+        this.theta = 0;
+        this.polePos = polePos;
+        this.radius = radius;
     }
 
     public DriveToPole(double timeout, double theta) {
@@ -56,7 +63,7 @@ public class DriveToPole extends Action {
         ySpeed = -yPID.update(Robot.getInstance().getCamera().scanForPole.getPoint().y, wantedY);
         thetaSpeed = -thetaPID.update(Robot.getInstance().getCamera().scanForPole.getPoint().x, wantedPoint);
 
-        ySpeed = CruiseLib.limitValue(ySpeed, 0, (isInRadius(8) ? 0 : -0.2), 0, maxSpeed);
+        ySpeed = CruiseLib.limitValue(ySpeed, 0, (isInRadius(radius) ? 0 : -0.3), 0, maxSpeed);
         thetaSpeed = CruiseLib.limitValue(thetaSpeed, 0, -maxSpeed, 0, maxSpeed);
 
         lastTime = timer.milliseconds();
@@ -94,8 +101,8 @@ public class DriveToPole extends Action {
     @Override
     public boolean isFinished() {
         return timer.milliseconds() > timeout ||
-                ((Math.abs(yPID.getError()) < 4 || isInRadius(8))
-                        && Math.abs(thetaPID.getError()) < 16);
+                ((Math.abs(yPID.getError()) < 4 || isInRadius(radius))
+                        && Math.abs(thetaPID.getError()) < 12);
     }
 
     @Override

@@ -38,7 +38,7 @@ public class PurePursuit extends Action {
 
     double curXVel = 0, curYVel = 0, curThetaVel = 0;
 
-    double maxSpeed = 0, timeout = -1, endTheta = 1000;
+    double maxSpeed = 0, timeout = -1, endTheta = 1000, maxStrafeVel = 24;
     ElapsedTime timer = new ElapsedTime();
 
     ArrayList<Pose> path;
@@ -54,6 +54,12 @@ public class PurePursuit extends Action {
     public PurePursuit(ArrayList<Pose> path, double endTheta) {
         this.path = path;
         this.endTheta = endTheta;
+    }
+
+    public PurePursuit(ArrayList<Pose> path, double endTheta, boolean higherMaxStrafeVel) {
+        this.path = path;
+        this.endTheta = endTheta;
+        maxStrafeVel = (higherMaxStrafeVel ? 40 : 24);
     }
 
     public PurePursuit(ArrayList<Pose> path, double endTheta, double timeout) {
@@ -75,6 +81,14 @@ public class PurePursuit extends Action {
         this.timeout = timeout;
         this.endTheta = endTheta;
         this.overshot = fieldCentric;
+    }
+
+    public PurePursuit(ArrayList<Pose> path, double endTheta, double timeout, boolean fieldCentric, double maxStrafeVel) {
+        this.path = path;
+        this.timeout = timeout;
+        this.endTheta = endTheta;
+        this.overshot = fieldCentric;
+        this.maxStrafeVel = maxStrafeVel;
     }
 
     public PurePursuit(ArrayList<Pose> path, Pose tolerance) {
@@ -201,7 +215,7 @@ public class PurePursuit extends Action {
         xSpeed = CruiseLib.limitValue(xSpeed, 1 - Math.abs(turnSpeed * 1.5));
         ySpeed = CruiseLib.limitValue(ySpeed, 1 - Math.abs(turnSpeed * 1.5));
 
-        xSpeed *= 24;
+        xSpeed *= maxStrafeVel;
         ySpeed *= 48;
         turnSpeed *= 220;
 
