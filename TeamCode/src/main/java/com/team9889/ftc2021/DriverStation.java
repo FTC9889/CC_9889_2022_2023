@@ -120,10 +120,10 @@ public class DriverStation {
     private boolean bumperReleased = true;
     private boolean bumperActive = false;
     boolean getBumper() {
-        if (gamepad1.dpad_left && bumperReleased) {
+        if ((gamepad1.dpad_left || gamepad2.left_bumper) && bumperReleased) {
             bumperReleased = false;
             bumperActive = !bumperActive;
-        } else if (!gamepad1.dpad_left) {
+        } else if (!gamepad1.dpad_left && !gamepad2.left_bumper) {
             bumperReleased = true;
         }
 

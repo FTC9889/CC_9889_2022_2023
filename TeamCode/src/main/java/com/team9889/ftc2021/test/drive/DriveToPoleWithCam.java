@@ -1,6 +1,7 @@
 package com.team9889.ftc2021.test.drive;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.team9889.ftc2021.Team9889Linear;
 import com.team9889.ftc2021.subsystems.Lift;
@@ -12,6 +13,7 @@ import com.team9889.ftc2021.subsystems.Robot;
 
 @TeleOp
 @Config
+@Disabled
 public class DriveToPoleWithCam extends Team9889Linear {
     public static double xDivider = 270, yDivider = 1000;
 

@@ -13,14 +13,14 @@ import com.team9889.ftc2021.subsystems.Robot;
 public abstract class AutoModeBase extends Team9889Linear {
 
     // Autonomous Settings
-    private StartPosition currentAutoRunning = StartPosition.RED;
+    private StartPosition currentAutoRunning = StartPosition.RIGHT;
 
 
     // Timer for autonomous
     protected ElapsedTime autoTimer = new ElapsedTime();
 
     public enum StartPosition {
-        RED, BLUE;
+        RIGHT, LEFT;
 
         private static String redString = "Red";
         private static String blueString = "Blue";

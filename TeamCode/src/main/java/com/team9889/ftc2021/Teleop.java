@@ -202,12 +202,7 @@ public class Teleop extends Team9889Linear {
                 }
 
 
-                Lift.ScoreStates state = Robot.getLift().wantedScoreState;
-                if ((state == Lift.ScoreStates.P_HOVER_RIGHT || state == Lift.ScoreStates.P_HOVER_LEFT ||
-                        state == Lift.ScoreStates.GRAB_RIGHT || state == Lift.ScoreStates.GRAB_LEFT)
-                        && Robot.getLift().beaconStage != 0) {
-                    Robot.getMecanumDrive().setBumpersDown();
-                } else if (driverStation.getBumper()) {
+                if (driverStation.getBumper()) {
                     Robot.getMecanumDrive().setBumpersDown();
                 } else {
                     Robot.getMecanumDrive().setBumpersUp();

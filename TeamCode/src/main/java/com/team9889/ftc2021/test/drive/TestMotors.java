@@ -1,5 +1,6 @@
 package com.team9889.ftc2021.test.drive;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.team9889.ftc2021.DriverStation;
 import com.team9889.ftc2021.Team9889Linear;
@@ -8,7 +9,7 @@ import com.team9889.ftc2021.Team9889Linear;
  * Created by Eric on 12/5/2020.
  */
 @TeleOp(group = "Test")
-//@Disabled
+@Disabled
 public class TestMotors extends Team9889Linear {
 
     @Override

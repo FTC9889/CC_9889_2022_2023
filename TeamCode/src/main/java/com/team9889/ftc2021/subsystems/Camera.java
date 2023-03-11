@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.team9889.ftc2021.Constants;
+import com.team9889.ftc2021.auto.AutoModeBase;
 import com.team9889.lib.detectors.Blank;
 import com.team9889.lib.detectors.ScanForPole;
 import com.team9889.lib.detectors.ScanForSignal;
@@ -56,6 +57,8 @@ public class Camera extends Subsystem{
                 } else {
                     Robot.getInstance().camera.setPipeline(scanForPole);
                 }
+
+                scanForSignal.left = false;
             }
 
             @Override

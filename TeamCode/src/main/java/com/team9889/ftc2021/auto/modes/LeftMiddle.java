@@ -29,7 +29,7 @@ public class LeftMiddle extends AutoModeBase {
 
     @Override
     public void initialize() {
-
+        Robot.getCamera().scanForSignal.left = true;
     }
 
     @Override
@@ -44,8 +44,8 @@ public class LeftMiddle extends AutoModeBase {
         Robot.getLift().wantedScoreState = Lift.ScoreStates.GROUND_RIGHT;
 
         path.add(new Pose(-35, 22, -180, 1, 8));
-        path.add(new Pose(-29, 7, -180, .5, 8));
-        runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, 40, 3000),
+        path.add(new Pose(-29, 8, -180, .5, 8));
+        runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, 35, 3000),
                 new SetLift(Lift.LiftPositions.HIGH, Lift.ScoreStates.HOVER_LEFT, 1000))));
 //                new Score(Lift.LiftPositions.HIGH, true, 1000))));
         path.clear();
@@ -64,7 +64,7 @@ public class LeftMiddle extends AutoModeBase {
 //            runAction(new PurePursuit(path, new Pose(3, 3, 4), 90, 2000));
 //            path.clear();
 
-            path.add(new Pose(-63, 12, 0, 0.25, 8));
+            path.add(new Pose(-65, 12, 0, 0.25, 8));
             runAction(new ParallelAction(Arrays.asList(
                     new PurePursuit(path, 90, 3000, true, true),
                     new DetectLine(true, true),
@@ -75,27 +75,27 @@ public class LeftMiddle extends AutoModeBase {
                 Robot.getMecanumDrive().position.setX(-60);
             }
 
-            if (signal != 1 || i < 4) {
+            if (signal != 3 || i < 4) {
                 path.add(new Pose(-39, 12, -180, 1, 10));
-                path.add(new Pose(-30, 17, -180, .4, 4));
-                runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(3, 3, 4), 130, 2100),
+                path.add(new Pose(-30, 17, -180, .7, 4));
+                runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(3, 3, 4), 140, 1700),
                         new SetLift(Lift.LiftPositions.MEDIUM, Lift.ScoreStates.HOVER_LEFT, 200))));
                 path.clear();
 
                 runAction(new Wait(200));
 
-                runAction(new ParallelAction(Arrays.asList(new DriveToPole(2000, new Pose(-24, 24, 0)),
+                runAction(new ParallelAction(Arrays.asList(new DriveToPole(2000, new Pose(-24, 24, 0), 7.5),
                         new Score(Lift.LiftPositions.MEDIUM, true, 0))));
             } else {
                 path.add(new Pose(-15, 12, -180, 1, 10));
-                path.add(new Pose(-6, 17, -180, .4, 4));
+                path.add(new Pose(-6, 17, -180, .7, 4));
                 runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(3, 3, 4), 130, 3500),
                         new SetLift(Lift.LiftPositions.HIGH, Lift.ScoreStates.HOVER_LEFT, 200))));
                 path.clear();
 
                 runAction(new Wait(200));
 
-                runAction(new ParallelAction(Arrays.asList(new DriveToPole(2000, new Pose(0, 24, 0)),
+                runAction(new ParallelAction(Arrays.asList(new DriveToPole(2000, new Pose(0, 24, 0), 7.5),
                         new Score(Lift.LiftPositions.HIGH, true, 0))));
             }
             path.clear();
@@ -108,15 +108,15 @@ public class LeftMiddle extends AutoModeBase {
         Robot.getLift().wantedLiftPosition = Lift.LiftPositions.NULL;
         Robot.getLift().setLiftPosition(0);
         switch (signal) {
-            case 1:
-                path.add(new Pose(-10, 10, 0, 1, 8));
-                runAction(new PurePursuit(path, 90));
+            case 3:
+                path.add(new Pose(-14, 16, 0, 1, 8));
+                runAction(new PurePursuit(path, 180));
                 break;
             case 2:
-                path.add(new Pose(-36, 10, 0, 1, 8));
+                path.add(new Pose(-33, 12, 0, 1, 8));
                 runAction(new PurePursuit(path, 0));
                 break;
-            case 3:
+            case 1:
                 path.add(new Pose(-60, 10, 0, 1, 8));
                 runAction(new PurePursuit(path));
                 break;

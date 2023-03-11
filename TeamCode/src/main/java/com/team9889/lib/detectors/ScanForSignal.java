@@ -20,57 +20,66 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 @Config
 public class ScanForSignal extends OpenCvPipeline {
-    public static int height = 15, width = 20, x = 155, y = 45, tolerance = 30;
+    public static int height = 15, width = 15, x = 148, y = 70, blackY = 96;
     public static boolean drawRect = true;
 
-    public static int white = 165, black = 85;
+    public boolean left = false;
 
-    Scalar rgb = new Scalar(0, 0, 0);
+    public static Scalar blue = new Scalar(35, 60, 140), red = new Scalar(182, 78, 92),
+            green = new Scalar(0, 0, 0), black = new Scalar(15, 23, 24);
+
+    Scalar rgb = new Scalar(0, 0, 0), blackRGB = new Scalar(0, 0, 0);
     public double average = 0;
 
     public Scalar getRGB() {
         return rgb;
     }
 
+    public Scalar getBlackRGB() {
+        return blackRGB;
+    }
+    public double getBlackAverage() {return (blackRGB.val[0] + blackRGB.val[1] + blackRGB.val[2]) / 3;}
+
     public int getSignal() {
-//        if (Math.abs(rgb.val[0] - oneR) < tolerance
-//                && Math.abs(rgb.val[1] - oneG) < tolerance
-//                && Math.abs(rgb.val[2] - oneB) < tolerance) {
-//            return 3;
-//        } else if (Math.abs(rgb.val[0] - twoR) < tolerance
-//                && Math.abs(rgb.val[1] - twoG) < tolerance
-//                && Math.abs(rgb.val[2] - twoB) < tolerance) {
+//        if (Math.abs(rgb.val[0] - (blue.val[0] - (black.val[0] - blackRGB.val[0]))) < 30
+//                && Math.abs(rgb.val[1] - (blue.val[1] - (black.val[1] - blackRGB.val[1]))) < 30
+//                && Math.abs(rgb.val[2] - (blue.val[2] - (black.val[2] - blackRGB.val[2]))) < 30) {
+//            return 1;
+//        } else if (Math.abs(rgb.val[0] - (red.val[0] - (black.val[0] - blackRGB.val[0]))) < 30
+//                && Math.abs(rgb.val[1] - (red.val[1] - (black.val[1] - blackRGB.val[1]))) < 30
+//                && Math.abs(rgb.val[2] - (red.val[2] - (black.val[2] - blackRGB.val[2]))) < 30) {
 //            return 2;
 //        } else {
-//            return 1;
+//            return 3;
 //        }
 
-        average = (rgb.val[0] + rgb.val[1] + rgb.val[2]) / 3;
-        if (average > white) {
-            return 1;
-        } else if (average < black) {
-            return 2;
-        } else {
+
+        if (rgb.val[1] > (rgb.val[0] + rgb.val[2]) / 2) {
             return 3;
+        } else if (rgb.val[2] > (rgb.val[0] + rgb.val[1]) / 2) {
+            return 1;
+        } else {
+            return 2;
         }
     }
 
     @Override
     public Mat processFrame(Mat input) {
-        Rect redLeft = new Rect(x, y, width, height);
+        int offset = (left ? -24 : 0);
 
-        rgb = calculateAverageRGBInRoi(input, redLeft);
+        Rect color = new Rect(x + offset, y, width, height);
+        rgb = calculateAverageRGBInRoi(input, color);
+        Imgproc.rectangle(input, new Rect(x + offset, y, width, height), new Scalar(255, 0, 0));
 
+        Rect blackRect = new Rect(x + offset, blackY, width, height);
+        blackRGB = calculateAverageRGBInRoi(input, blackRect);
 
         if (drawRect) {
-            Imgproc.rectangle(input, new Rect(x, y, width, height), new Scalar(255, 0, 0));
-//            Imgproc.rectangle(input, redLeft, leftRGB);
+            Imgproc.rectangle(input, new Point(0, 0), new Point(input.width(), y), rgb, -1);
+            Imgproc.rectangle(input, new Point(0, y + height), new Point(input.width(), input.height()), rgb, -1);
+            Imgproc.rectangle(input, new Point(0, 0), new Point(x + offset, input.height()), rgb, -1);
+            Imgproc.rectangle(input, new Point(x + offset + width, 0), new Point(input.width(), input.height()), rgb, -1);
         }
-
-        Imgproc.rectangle(input, new Point(0, 0), new Point(input.width(), y), rgb, -1);
-        Imgproc.rectangle(input, new Point(0, y + height), new Point(input.width(), input.height()), rgb, -1);
-        Imgproc.rectangle(input, new Point(0, 0), new Point(x, input.height()), rgb, -1);
-        Imgproc.rectangle(input, new Point(x + width, 0), new Point(input.width(), input.height()), rgb, -1);
 
         return input;
     }
@@ -80,6 +89,10 @@ public class ScanForSignal extends OpenCvPipeline {
         Mat image = new Mat(mat, roi);
 
         Scalar avgRGB = Core.mean(image);
+
+        for (int i = 0; i < 3; i++) {
+            avgRGB.val[i] = Math.round(avgRGB.val[i]);
+        }
 
         return avgRGB;
     }

@@ -67,7 +67,7 @@ public class RightSafe extends AutoModeBase {
 
             path.add(new Pose(63, 12, 0, 0.25, 8));
             runAction(new ParallelAction(Arrays.asList(
-                    new PurePursuit(path, -90, 3000, true, true),
+                    new PurePursuit(path, -90, 4000, true, true),
                     new DetectLine(true, false),
                     new Grab(CruiseLib.limitValue(3.5 - (i * (13.0 / 8.0)), 10, 0)))));
             path.clear();

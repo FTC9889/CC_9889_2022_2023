@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
@@ -70,7 +71,7 @@ public abstract class Team9889Linear extends LinearOpMode {
             }
         }
 
-        telemetry.setMsTransmissionInterval(autonomous ? 2000:250);
+        telemetry.setMsTransmissionInterval(autonomous ? 1000:250);
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
 
 //        telemetry = dashboard.getTelemetry();
@@ -107,30 +108,22 @@ public abstract class Team9889Linear extends LinearOpMode {
                     }
                 }
 
-                if (gamepad1.dpad_up && buttonReleased) {
-                    ScanForSignal.white += 2;
-                    buttonReleased = false;
-                } else if (gamepad1.dpad_down && buttonReleased) {
-                    ScanForSignal.white -= 2;
-                    buttonReleased = false;
-                } else if (gamepad1.y && buttonReleased) {
-                    ScanForSignal.black += 2;
-                    buttonReleased = false;
-                } else if (gamepad1.a && buttonReleased) {
-                    ScanForSignal.black -= 2;
-                    buttonReleased = false;
-                } else if (!gamepad1.a && !gamepad1.y && !gamepad1.dpad_down && !gamepad1.dpad_up) {
-                    buttonReleased = true;
+                if (Robot.getCamera().scanForSignal.getBlackAverage() < 30) {
+                    telemetry.addData("Lined Up", "<font size=\"+2\" color=\"green\"> Yes </font>");
+                } else {
+                    telemetry.addData("Lined Up", "<font size=\"+2\" color=\"red\"> No </font>");
                 }
-
-                telemetry.addData("White", ScanForSignal.white);
-                telemetry.addData("Black", ScanForSignal.black);
 
                 telemetry.addData("Signal", Robot.getCamera().scanForSignal.getSignal());
                 telemetry.addData("RGB", Robot.getCamera().scanForSignal.getRGB());
                 telemetry.addData("Average", Robot.getCamera().scanForSignal.average);
 
-                Robot.outputToTelemetry(telemetry);
+                TelemetryPacket packet = new TelemetryPacket();
+                packet.addLine("Signal " + Robot.getCamera().scanForSignal.getSignal());
+                packet.addLine("RGB " + Robot.getCamera().scanForSignal.getRGB());
+                FtcDashboard.getInstance().sendTelemetryPacket(packet);
+
+//                Robot.outputToTelemetry(telemetry);
                 telemetry.update();
                 Robot.update();
 

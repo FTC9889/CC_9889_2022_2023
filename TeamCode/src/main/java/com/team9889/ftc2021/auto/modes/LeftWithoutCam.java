@@ -29,7 +29,7 @@ public class LeftWithoutCam extends AutoModeBase {
 
     @Override
     public void initialize() {
-
+        Robot.getCamera().scanForSignal.left = true;
     }
 
     @Override
@@ -94,7 +94,7 @@ public class LeftWithoutCam extends AutoModeBase {
         Robot.getLift().wantedLiftPosition = Lift.LiftPositions.NULL;
         Robot.getLift().setLiftPosition(0);
         switch (signal) {
-            case 1:
+            case 3:
 //                path.add(new Pose(-32, 10, 0, 1, 4));
 //                path.add(new Pose(-12, 16, 0, 1, 8, .5));
 //                runAction(new PurePursuit(path, 90, true));
@@ -107,7 +107,7 @@ public class LeftWithoutCam extends AutoModeBase {
                 path.add(new Pose(-36, 14, 0, 1, 8));
                 runAction(new PurePursuit(path, 0));
                 break;
-            case 3:
+            case 1:
                 path.add(new Pose(-60, 14, 0, 1, 8));
                 runAction(new PurePursuit(path));
                 break;

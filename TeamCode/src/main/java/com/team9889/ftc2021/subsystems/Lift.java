@@ -104,8 +104,14 @@ public class Lift extends Subsystem{
                 break;
 
             case LEFT_UP:
-                if (setV4BAngle((auto ? -42 : -50), .15)) {
-                    currentV4BPosition = V4BPositions.LEFT_UP;
+                if (wantedLiftPosition == LiftPositions.HIGH || auto) {
+                    if (setV4BAngle((auto ? -42 : -50), .15)) {
+                        currentV4BPosition = V4BPositions.LEFT_UP;
+                    }
+                } else {
+                    if (setV4BAngle(-50)) {
+                        currentV4BPosition = V4BPositions.LEFT_UP;
+                    }
                 }
                 break;
 
@@ -116,8 +122,14 @@ public class Lift extends Subsystem{
                 break;
 
             case RIGHT_UP:
-                if (setV4BAngle(50, .15)) {
-                    currentV4BPosition = V4BPositions.RIGHT_UP;
+                if (wantedLiftPosition == LiftPositions.HIGH || auto) {
+                    if (setV4BAngle(50, .15)) {
+                        currentV4BPosition = V4BPositions.RIGHT_UP;
+                    }
+                } else {
+                    if (setV4BAngle(50)) {
+                        currentV4BPosition = V4BPositions.RIGHT_UP;
+                    }
                 }
                 break;
 
@@ -166,19 +178,19 @@ public class Lift extends Subsystem{
                 break;
 
             case LOW:
-                if (setLiftPosition(7)) {
+                if (setLiftPosition(7 - (beaconStage * 2))) {
                     currentLiftPosition = LiftPositions.LOW;
                 }
                 break;
 
             case MEDIUM:
-                if (setLiftPosition(16.5)) {
+                if (setLiftPosition(16.5 - (beaconStage * 2))) {
                     currentLiftPosition = LiftPositions.MEDIUM;
                 }
                 break;
 
             case HIGH:
-                if (setLiftPosition(high)) {
+                if (setLiftPosition(high - (beaconStage * 2))) {
                     currentLiftPosition = LiftPositions.HIGH;
                 }
                 break;
@@ -205,17 +217,13 @@ public class Lift extends Subsystem{
                 if (grabTimer.milliseconds() > (auto ? 220 : 120) && grabTimer.milliseconds() < 300) {
                     Robot.getInstance().driverStation.grabberClosed = true;
                     closeGrabber();
-                } else if (grabTimer.milliseconds() > (auto ? 350 : 300)) {
+                } else if (grabTimer.milliseconds() > (auto ? 400 : 300)) {
                     wantedScoreState = ScoreStates.HOLDING;
                 }
                 break;
 
             case HOVER_RIGHT:
-                if (beaconStage == 2) {
-                    wantedV4BPosition = V4BPositions.RIGHT;
-                } else {
-                    wantedV4BPosition = V4BPositions.RIGHT_UP;
-                }
+                wantedV4BPosition = V4BPositions.RIGHT_UP;
                 scoreTimer.reset();
                 break;
 
@@ -248,11 +256,7 @@ public class Lift extends Subsystem{
                 break;
 
             case HOVER_LEFT:
-                if (beaconStage == 2) {
-                    wantedV4BPosition = V4BPositions.LEFT;
-                } else {
-                    wantedV4BPosition = V4BPositions.LEFT_UP;
-                }
+                wantedV4BPosition = V4BPositions.LEFT_UP;
                 scoreTimer.reset();
                 break;
 
@@ -296,13 +300,9 @@ public class Lift extends Subsystem{
                 }
 
                 if (scoreTimer.milliseconds() > 400) {
-                    if (beaconStage != 1) {
-                        wantedScoreState = ScoreStates.LOWER;
-                        beaconStage = 0;
-                    } else {
-                        wantedScoreState = ScoreStates.HOLDING;
-                        beaconStage = 2;
-                    }
+                    beaconStage = 0;
+
+                    wantedScoreState = ScoreStates.LOWER;
 
                     closeGrabber();
                     scoreTimer.reset();
@@ -405,13 +405,6 @@ public class Lift extends Subsystem{
         double position = 0.58;
         if (auto) {
             position = 0.61;
-        } else if ((beaconStage == 1 && (wantedScoreState == Lift.ScoreStates.P_HOVER_RIGHT ||
-                wantedScoreState == Lift.ScoreStates.P_HOVER_LEFT ||
-                wantedScoreState == Lift.ScoreStates.GRAB_RIGHT ||
-                wantedScoreState == Lift.ScoreStates.GRAB_LEFT)) || beaconStage == 2) {
-            position = 0.67;
-        } else if (beaconStage == 1) {
-            position = 0.5;
         }
 
         setGrabber(position);
@@ -421,9 +414,6 @@ public class Lift extends Subsystem{
     public void depositGrabber() {
         if (auto) {
             double position = 0.5;
-            if (beaconStage == 2) {
-                position = 0.7;
-            }
 
             setGrabber(position);
             grabberOpen = true;
