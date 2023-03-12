@@ -56,14 +56,14 @@ public class TestSensors extends Team9889Linear {
 
 
     boolean leftDetect() {
-        return Robot.leftLight.getVoltage() > 0.013;
+        return Robot.leftLight.getVoltage() > 0.25;
     }
 
     boolean centerDetect() {
-        return Robot.centerLight.getVoltage() > 0.045;
+        return Robot.centerLight.getVoltage() > 0.4;
     }
 
     boolean rightDetect() {
-        return Robot.rightLight.getVoltage() > 0.025;
+        return Robot.rightLight.getVoltage() > 0.4;
     }
 }

@@ -31,6 +31,7 @@ public class DetectLine extends Action {
     public void update() {
         double heading = Robot.getInstance().getMecanumDrive().position.getHeading();
 
+        if (Math.abs(Robot.getInstance().getMecanumDrive().position.getX()) > 50)
         if (red && left) {
             heading *= -1;
 
@@ -81,15 +82,15 @@ public class DetectLine extends Action {
     }
 
     boolean leftDetect() {
-        return Robot.getInstance().leftLight.getVoltage() > 0.013;
+        return Robot.getInstance().leftLight.getVoltage() > 0.02;
     }
 
     boolean centerDetect() {
-        return Robot.getInstance().centerLight.getVoltage() > 0.045;
+        return Robot.getInstance().centerLight.getVoltage() > 0.09;
     }
 
     boolean rightDetect() {
-        return Robot.getInstance().rightLight.getVoltage() > 0.025;
+        return Robot.getInstance().rightLight.getVoltage() > 0.033;
     }
 
     @Override

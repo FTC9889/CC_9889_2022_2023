@@ -64,7 +64,7 @@ public class RightMiddle extends AutoModeBase {
 //            runAction(new PurePursuit(path, new Pose(3, 3, 4), 90, 2000));
 //            path.clear();
 
-            path.add(new Pose(63, 12, 0, 0.25, 8));
+            path.add(new Pose(68, 12, 0, 0.25, 8));
             runAction(new ParallelAction(Arrays.asList(
                     new PurePursuit(path, -90, 3000, true, true),
                     new DetectLine(true, false),
