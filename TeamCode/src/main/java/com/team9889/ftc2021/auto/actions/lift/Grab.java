@@ -13,7 +13,7 @@ import com.team9889.lib.CruiseLib;
 
 public class Grab extends Action {
     double liftHeight, wait = 0;
-    ElapsedTime timer = new ElapsedTime(), driveTimer = new ElapsedTime();
+    ElapsedTime timer = new ElapsedTime(), driveTimer = new ElapsedTime(), timer2 = new ElapsedTime();
 
     int stage = 0;
     double timerOffset = 0;
@@ -44,8 +44,11 @@ public class Grab extends Action {
             stage = 1;
         } else if (stage == 1) {
             if (Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.HOLDING) {
-                Robot.getInstance().getLift().setLiftPosition(CruiseLib.limitValue(liftHeight + 5, 100, 0));
                 done = true;
+            } else if (Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.GRAB_RIGHT) {
+                if (timer2.milliseconds() > 450) {
+                    Robot.getInstance().getLift().setLiftPosition(CruiseLib.limitValue(liftHeight + 12, 100, 0));
+                }
             } else {
                 Robot.getInstance().getLift().setLiftPosition(CruiseLib.limitValue(liftHeight, 100, 0));
                 timerOffset = timer.milliseconds();
@@ -55,6 +58,10 @@ public class Grab extends Action {
                     Robot.getInstance().getLift().wantedScoreState = Lift.ScoreStates.GRAB_RIGHT;
                 }
             }
+        }
+
+        if (Robot.getInstance().getLift().wantedScoreState != Lift.ScoreStates.GRAB_RIGHT) {
+            timer2.reset();
         }
 
         if (!ActionVariables.doneDriving) {

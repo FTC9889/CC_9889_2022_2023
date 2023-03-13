@@ -280,7 +280,7 @@ public class PurePursuit extends Action {
         } else {
             count = 0;
         }
-        return count > 3;
+        return count > (stopWall ? 8 : 3);
     }
 
     @Override

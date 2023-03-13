@@ -19,6 +19,8 @@ public class Lift extends Subsystem{
 
     public static double high = 26;
 
+    double maxSpeed = 0;
+
     public boolean liftDown = true, auto, grabberOpen = false;
     public int beaconStage = 0;
     double beaconHeight = 0;
@@ -171,6 +173,7 @@ public class Lift extends Subsystem{
         // CHANGE ONLY TELEOP HEIGHTS
         switch (wantedLiftPosition) {
             case DOWN:
+                maxSpeed = 0;
                 setLiftPower(-0.2);
                 if (liftDown) {
                     currentLiftPosition = LiftPositions.DOWN;
@@ -214,10 +217,10 @@ public class Lift extends Subsystem{
             case GRAB_RIGHT:
                 wantedV4BPosition = V4BPositions.RIGHT_DOWN;
 
-                if (grabTimer.milliseconds() > (auto ? 220 : 120) && grabTimer.milliseconds() < 300) {
+                if (grabTimer.milliseconds() > (auto ? 250 : 120) && grabTimer.milliseconds() < 300) {
                     Robot.getInstance().driverStation.grabberClosed = true;
                     closeGrabber();
-                } else if (grabTimer.milliseconds() > (auto ? 400 : 300)) {
+                } else if (grabTimer.milliseconds() > (auto ? 700 : 300)) {
                     wantedScoreState = ScoreStates.HOLDING;
                 }
                 break;
@@ -329,7 +332,13 @@ public class Lift extends Subsystem{
     }
 
     public boolean setLiftPosition(double position) {
-        setLiftPower(CruiseLib.limitValue(pid.update(getLiftPosition(), position), 0, -0.3, 0, 1));
+//        if (auto) {
+//            maxSpeed += 0.01;
+//        } else {
+            maxSpeed = 1;
+//        }
+
+        setLiftPower(CruiseLib.limitValue(pid.update(getLiftPosition(), position), 0, -0.3, 0, maxSpeed));
         return Math.abs(getLiftPosition() - position) < 2;
     }
 

@@ -26,6 +26,7 @@ import java.util.Arrays;
 @Autonomous(preselectTeleOp = "Teleop")
 public class RightMiddle extends AutoModeBase {
     ElapsedTime timer = new ElapsedTime();
+    int a = 0;
 
     @Override
     public void initialize() {
@@ -64,12 +65,14 @@ public class RightMiddle extends AutoModeBase {
 //            runAction(new PurePursuit(path, new Pose(3, 3, 4), 90, 2000));
 //            path.clear();
 
-            path.add(new Pose(68, 12, 0, 0.25, 8));
+            path.add(new Pose(68, 12, 0, 0.3, 8));
             runAction(new ParallelAction(Arrays.asList(
                     new PurePursuit(path, -90, 3000, true, true),
                     new DetectLine(true, false),
                     new Grab(CruiseLib.limitValue(3.5 - (i * (13.0 / 8.0)), 10, 0)))));
             path.clear();
+
+            runAction(new Wait(250));
 
             if (Math.abs(Robot.getMecanumDrive().position.getX() - 60) < 15) {
                 Robot.getMecanumDrive().position.setX(60);
@@ -99,6 +102,8 @@ public class RightMiddle extends AutoModeBase {
                         new Score(Lift.LiftPositions.HIGH, true, 0))));
             }
             path.clear();
+
+            a = i;
         }
 
 
@@ -109,7 +114,12 @@ public class RightMiddle extends AutoModeBase {
         Robot.getLift().setLiftPosition(0);
         switch (signal) {
             case 1:
-                path.add(new Pose(10, 10, 0, 1, 8));
+                if (a == 4) {
+                    path.add(new Pose(10, 10, 0, 1, 8));
+                } else {
+                    path.add(new Pose(28, 8, 0, 1, 6));
+                    path.add(new Pose(10, 10, 0, 1, 8));
+                }
                 runAction(new PurePursuit(path, -90));
                 break;
             case 2:

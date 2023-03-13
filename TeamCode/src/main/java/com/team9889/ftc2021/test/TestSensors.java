@@ -30,12 +30,20 @@ public class TestSensors extends Team9889Linear {
             telemetry.addLine();
             telemetry.addLine();
 
-            telemetry.addLine("Light Sensors");
-            telemetry.addData("Left Light", leftDetect() + ", " + Robot.leftLight.getVoltage());
-            telemetry.addData("Center Light", centerDetect() + ", " + Robot.centerLight.getVoltage());
-            telemetry.addData("Right Light", rightDetect() + ", " + Robot.rightLight.getVoltage());
+            telemetry.addLine("Color Sensors");
+            telemetry.addData("Left Color", leftDetect() + ", blue: " + Robot.backColor.blue()
+                    + ", red: " + Robot.backColor.red());
+            telemetry.addData("Right Color", rightDetect() + ", blue: " + Robot.frontColor.blue()
+                    + ", red: " + Robot.frontColor.red());
             telemetry.addLine();
             telemetry.addLine();
+
+//            telemetry.addLine("Light Sensors");
+//            telemetry.addData("Left Light", leftDetect() + ", " + Robot.leftLight.getVoltage());
+//            telemetry.addData("Center Light", centerDetect() + ", " + Robot.centerLight.getVoltage());
+//            telemetry.addData("Right Light", rightDetect() + ", " + Robot.rightLight.getVoltage());
+//            telemetry.addLine();
+//            telemetry.addLine();
 
             telemetry.addLine("Odometry");
             telemetry.addData("Odometry 1", Robot.bRDrive.getPosition());
@@ -56,14 +64,10 @@ public class TestSensors extends Team9889Linear {
 
 
     boolean leftDetect() {
-        return Robot.leftLight.getVoltage() > 0.25;
-    }
-
-    boolean centerDetect() {
-        return Robot.centerLight.getVoltage() > 0.4;
+        return Robot.backColor.blue() > 180 || Robot.backColor.red() > 180;
     }
 
     boolean rightDetect() {
-        return Robot.rightLight.getVoltage() > 0.4;
+        return Robot.frontColor.blue() > 180 || Robot.frontColor.red() > 180;
     }
 }

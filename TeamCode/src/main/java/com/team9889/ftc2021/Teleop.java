@@ -225,7 +225,7 @@ public class Teleop extends Team9889Linear {
                 releasedDpad = true;
             }
 
-            if (gamepad1.right_trigger > 0.3 && !autoDone) {
+            if (gamepad1.right_trigger > 2 && !autoDone) {
                 if (Robot.frontColor.getDistance(DistanceUnit.INCH) < 1.4 && first) {
                     Robot.getLift().wantedScoreState = Lift.ScoreStates.GRAB_RIGHT;
                     first = false;
@@ -234,7 +234,7 @@ public class Teleop extends Team9889Linear {
                     Robot.getLift().wantedScoreState = Lift.ScoreStates.P_HOVER_RIGHT;
                     first = true;
                 }
-            } else if (gamepad1.left_trigger > 0.3 && !autoDone) {
+            } else if (gamepad1.left_trigger > 2 && !autoDone) {
                 if (Robot.backColor.getDistance(DistanceUnit.INCH) < 1.4 && first) {
                     Robot.getLift().wantedScoreState = Lift.ScoreStates.GRAB_LEFT;
                     first = false;
