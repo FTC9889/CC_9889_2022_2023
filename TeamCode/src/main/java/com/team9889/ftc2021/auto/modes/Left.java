@@ -44,8 +44,8 @@ public class Left extends AutoModeBase {
         Robot.getLift().wantedScoreState = Lift.ScoreStates.GROUND_RIGHT;
 
         path.add(new Pose(-35, 22, -180, 1, 8));
-        path.add(new Pose(-29, 7, -180, .5, 8));
-        runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, 40, 3000),
+        path.add(new Pose(-29, 6, -180, .5, 8));
+        runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, 38, 3000),
                 new SetLift(Lift.LiftPositions.HIGH, Lift.ScoreStates.HOVER_LEFT, 1000))));
 //                new Score(Lift.LiftPositions.HIGH, true, 1000))));
         path.clear();
@@ -61,11 +61,12 @@ public class Left extends AutoModeBase {
 
         for (int i = 0; i < 5 && timer.milliseconds() < 24000 && opModeIsActive(); i++) {
             path.add(new Pose(-38, 12, 0, 1, 5));
-            path.add(new Pose(-53, 12, 0, 1, 5));
+            path.add(new Pose(-50, 12, 0, .8, 5));
+            path.add(new Pose(-56, 12, 0, .6, 5));
 //            runAction(new PurePursuit(path, new Pose(3, 3, 4), 90, 2000));
 //            path.clear();
 
-            path.add(new Pose(-63, 12, 0, 0.4, 8));
+            path.add(new Pose(-65, 12, 0, 0.4, 8));
             runAction(new ParallelAction(Arrays.asList(
                     new PurePursuit(path, 90, 3000, true, true),
                     new DetectLine(true, true),
@@ -80,8 +81,8 @@ public class Left extends AutoModeBase {
 
 
             path.add(new Pose(-39, 12, -180, 1, 6));
-            path.add(new Pose(-30, 7, -180, .4, 4));
-            runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(3, 3, 4), 45, 2100),
+            path.add(new Pose(-30, 6, -180, .7, 4));
+            runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(3, 3, 4), 38, 2100),
                     new SetLift(Lift.LiftPositions.HIGH, Lift.ScoreStates.HOVER_LEFT, 200))));
             path.clear();
 

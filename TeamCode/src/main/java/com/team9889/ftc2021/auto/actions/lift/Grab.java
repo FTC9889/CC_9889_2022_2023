@@ -33,6 +33,8 @@ public class Grab extends Action {
     public void start() {
         ActionVariables.doneGrab = false;
         ActionVariables.grab = false;
+
+        Robot.getInstance().getLift().liftInAutoPos = false;
     }
 
     @Override
@@ -46,8 +48,10 @@ public class Grab extends Action {
             if (Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.HOLDING) {
                 done = true;
             } else if (Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.GRAB_RIGHT) {
-                if (timer2.milliseconds() > 450) {
-                    Robot.getInstance().getLift().setLiftPosition(CruiseLib.limitValue(liftHeight + 12, 100, 0));
+                if (timer2.milliseconds() > 300) {
+                    Robot.getInstance().getLift().liftInAutoPos =
+                            Robot.getInstance().getLift().setLiftPosition(
+                                    CruiseLib.limitValue(liftHeight + 10, 100, 0));
                 }
             } else {
                 Robot.getInstance().getLift().setLiftPosition(CruiseLib.limitValue(liftHeight, 100, 0));

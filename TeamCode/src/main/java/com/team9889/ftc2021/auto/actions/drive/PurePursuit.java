@@ -214,8 +214,8 @@ public class PurePursuit extends Action {
         double turnSpeed = CruiseLib.limitValue(relativePointAngle / 70.0,
                 0, -path.get(step).turnSpeed, 0, path.get(step).turnSpeed);
 
-        xSpeed = CruiseLib.limitValue(xSpeed, 1 - Math.abs(turnSpeed * 1.5));
-        ySpeed = CruiseLib.limitValue(ySpeed, 1 - Math.abs(turnSpeed * 1.5));
+//        xSpeed = CruiseLib.limitValue(xSpeed, 1 - Math.abs(turnSpeed * 1.5));
+//        ySpeed = CruiseLib.limitValue(ySpeed, 1 - Math.abs(turnSpeed * 1.5));
 
         xSpeed *= maxStrafeVel;
         ySpeed *= 48;
@@ -244,7 +244,7 @@ public class PurePursuit extends Action {
                 .fillRect(pose.getX() - 6.5, pose.getY() - 6.5, 13, 13);
 
         packet.fieldOverlay()
-                .setStroke("blue")
+                .setStroke(Robot.getInstance().color)
                 .strokeCircle(pose.getX(), pose.getY(), path.get(step).radius);
 
         packet.fieldOverlay()
@@ -275,12 +275,12 @@ public class PurePursuit extends Action {
         if (((abs(error.x) < tolerance.x && abs(error.y) < tolerance.y) && theta
                 && step == path.size() - 1) || (timeout != -1 && timer.milliseconds() > timeout) ||
                 (stopWall && hypot(Robot.getInstance().getMecanumDrive().xVel,
-                        Robot.getInstance().getMecanumDrive().yVel) < 2 && step == path.size() - 1)) {
+                        Robot.getInstance().getMecanumDrive().yVel) < 6 && step == path.size() - 1)) {
             count++;
         } else {
             count = 0;
         }
-        return count > (stopWall ? 8 : 3);
+        return count > 3;
     }
 
     @Override

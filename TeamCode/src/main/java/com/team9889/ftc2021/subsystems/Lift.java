@@ -23,6 +23,7 @@ public class Lift extends Subsystem{
 
     public boolean liftDown = true, auto, grabberOpen = false;
     public int beaconStage = 0;
+    public boolean liftInAutoPos = false;
     double beaconHeight = 0;
 
     double lastAngle = 10000;
@@ -217,10 +218,10 @@ public class Lift extends Subsystem{
             case GRAB_RIGHT:
                 wantedV4BPosition = V4BPositions.RIGHT_DOWN;
 
-                if (grabTimer.milliseconds() > (auto ? 250 : 120) && grabTimer.milliseconds() < 300) {
+                if (grabTimer.milliseconds() > (auto ? 150 : 120) && grabTimer.milliseconds() < 300) {
                     Robot.getInstance().driverStation.grabberClosed = true;
                     closeGrabber();
-                } else if (grabTimer.milliseconds() > (auto ? 700 : 300)) {
+                } else if (auto ? (liftInAutoPos) : (grabTimer.milliseconds() > 300)) {
                     wantedScoreState = ScoreStates.HOLDING;
                 }
                 break;

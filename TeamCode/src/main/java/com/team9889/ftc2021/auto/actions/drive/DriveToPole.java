@@ -9,6 +9,7 @@ import com.team9889.ftc2021.auto.actions.ActionVariables;
 import com.team9889.ftc2021.subsystems.Robot;
 import com.team9889.lib.CruiseLib;
 import com.team9889.lib.Pose;
+import com.team9889.lib.Pose2d;
 import com.team9889.lib.control.controllers.PID;
 
 /**
@@ -19,7 +20,9 @@ import com.team9889.lib.control.controllers.PID;
 public class DriveToPole extends Action {
     public static double wantedPoint = 135, wantedY = 120;
 
-    public PID yPID = new PID(0.008, 0, 0.025), thetaPID = new PID(0.0023, 0, 0.006);
+    public Pose2d startPose;
+
+    public PID yPID = new PID(0.01, 0, 0.025), thetaPID = new PID(0.0028, 0, 0.006);
     public PID yPIDVel = new PID(0.0025, 0, 0.4, 0), thetaPIDVel = new PID(0.0008, 0, 0.03);
 
     double curYVel = 0, curThetaVel = 0;
@@ -56,6 +59,8 @@ public class DriveToPole extends Action {
     @Override
     public void start() {
         ActionVariables.doneDriving = false;
+
+        startPose = Robot.getInstance().getMecanumDrive().position;
     }
 
     @Override
@@ -63,8 +68,14 @@ public class DriveToPole extends Action {
         ySpeed = -yPID.update(Robot.getInstance().getCamera().scanForPole.getPoint().y, wantedY);
         thetaSpeed = -thetaPID.update(Robot.getInstance().getCamera().scanForPole.getPoint().x, wantedPoint);
 
-        ySpeed = CruiseLib.limitValue(ySpeed, 0, (isInRadius(radius) ? 0 : -0.3), 0, maxSpeed);
-        thetaSpeed = CruiseLib.limitValue(thetaSpeed, 0, -maxSpeed, 0, maxSpeed);
+        Pose2d robot = Robot.getInstance().getMecanumDrive().position;
+        boolean canDrive = !isInRadius(radius) &&
+                Math.hypot(startPose.getX() - robot.getX(), startPose.getY() - robot.getY()) < 12;
+        ySpeed = CruiseLib.limitValue(ySpeed, 0, (canDrive ? -0.3 : 0), 0, maxSpeed);
+
+        thetaSpeed = CruiseLib.limitValue(thetaSpeed, 0,
+                (startPose.getHeading() - robot.getHeading() < 30 ? -maxSpeed : 0),
+                0, (startPose.getHeading() - robot.getHeading() > 30 ? maxSpeed : 0));
 
         lastTime = timer.milliseconds();
 
