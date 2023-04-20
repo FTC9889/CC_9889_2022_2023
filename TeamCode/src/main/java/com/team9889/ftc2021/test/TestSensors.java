@@ -44,7 +44,16 @@ public class TestSensors extends Team9889Linear {
             telemetry.addLine();
             telemetry.addLine();
 
-            double heading = Robot.getInstance().getMecanumDrive().position.getHeading();
+            double offset = 0;
+            double heading = Robot.getMecanumDrive().position.getHeading();
+            if (leftDetect()) {
+                offset = (12 - (Math.sin(heading) * leftToRobot.getX())) + (Math.cos(heading) * leftToRobot.getY());
+            } else if (rightDetect()) {
+                offset = (12 - (Math.sin(heading) * rightToRobot.getX())) + (Math.cos(heading) * rightToRobot.getY());
+            }
+            telemetry.addData("Offset", offset);
+
+//            double heading = Robot.getInstance().getMecanumDrive().position.getHeading();
             heading *= -1;
             Robot.getInstance().color = "black";
             if (rightDetect() && centerDetect()) {

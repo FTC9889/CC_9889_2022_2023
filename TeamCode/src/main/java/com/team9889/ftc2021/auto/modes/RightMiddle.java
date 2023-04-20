@@ -38,7 +38,7 @@ public class RightMiddle extends AutoModeBase {
     @Override
     public void run(StartPosition startPosition) {
         ArrayList<Pose> path = new ArrayList<>();
-        Robot.getMecanumDrive().position = new Pose2d(35, 60, 0);
+        Robot.getMecanumDrive().position = new Pose2d(35, 61, 0);
         Robot.getMecanumDrive().angleOffset = 0;
 
         Robot.camera.setPipeline(Robot.getCamera().scanForPole);
@@ -48,15 +48,15 @@ public class RightMiddle extends AutoModeBase {
         Robot.getLift().wantedScoreState = Lift.ScoreStates.GROUND_RIGHT;
 
         path.add(new Pose(35, 22, 180, 1, 8));
-        path.add(new Pose(29, 7, 180, .5, 8));
-        runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, -38, 3000),
+        path.add(new Pose(30, 4, 180, .5, 8));
+        runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, -57, 3000),
                 new SetLift(Lift.LiftPositions.HIGH, Lift.ScoreStates.HOVER_LEFT, 1000))));
 //                new Score(Lift.LiftPositions.HIGH, true, 1000))));
         path.clear();
 
-        runAction(new Wait(100));
+        runAction(new Wait(200));
 
-        runAction(new ParallelAction(Arrays.asList(new DriveToPole(600, new Pose(24, 0, 0)),
+        runAction(new ParallelAction(Arrays.asList(new DriveToPole(1500, new Pose(24, 0, 0), 7),
                 new Score(Lift.LiftPositions.HIGH, true, 0))));
         path.clear();
 
@@ -65,17 +65,18 @@ public class RightMiddle extends AutoModeBase {
             Robot.leds.setPower(0);
         }
 
-        for (int i = 0; i < 5 && timer.milliseconds() < 24000 && opModeIsActive(); i++) {
-            path.add(new Pose(38, 12, 0, 1, 5));
-            path.add(new Pose(50, 12, 0, .8, 5));
-            path.add(new Pose(56, 12, 0, .6, 5));
-//            runAction(new PurePursuit(path, new Pose(3, 3, 4), 90, 2000));
-//            path.clear();
 
-            path.add(new Pose(61, 12, 0, 0.4, 8));
+        for (int i = 0; i < 5 && timer.milliseconds() < 22000 && opModeIsActive(); i++) {
+//            path.add(new Pose(-40, 12, 0, .3, 3));
+            path.add(new Pose(45, 12, 0, .7, 3));
+            runAction(new PurePursuit(path, new Pose(3, 3, 4), -90, 2000));
+            path.clear();
+            path.add(new Pose(53, 12, 0, .6, 5));
+
+            path.add(new Pose(61, 12, 0, 0.4, 4));
             runAction(new ParallelAction(Arrays.asList(
                     new PurePursuit(path, -90, 3000, true, true),
-                    new DetectLine(true, false),
+                    new DetectLine(true, true),
                     new Grab(CruiseLib.limitValue(3.5 - (i * (13.0 / 8.0)), 10, 0)))));
             path.clear();
 
@@ -86,28 +87,33 @@ public class RightMiddle extends AutoModeBase {
             Robot.getMecanumDrive().position.setHeading(Robot.getMecanumDrive().getAngle().getTheda(AngleUnit.RADIANS));
 
 
-            if (i == 4 && signal == 1) {
-                path.add(new Pose(15, 12, 180, .9, 6));
-                path.add(new Pose(6, 21, 180, .6, 8));
-                runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(2, 2, 2), -132, 2400),
+            if (i == 4 && signal == 3) {
+                path.add(new Pose(15, 12, -180, .9, 6));
+                path.add(new Pose(6, 21, -180, .6, 8));
+                runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(1, 1, 2), -132, 2400),
                         new SetLift(Lift.LiftPositions.HIGH, Lift.ScoreStates.HOVER_LEFT, 200))));
                 path.clear();
 
                 runAction(new Wait(200));
 
-                runAction(new ParallelAction(Arrays.asList(new DriveToPole(300, new Pose(0, 24, 0), 7),
+                runAction(new ParallelAction(Arrays.asList(new DriveToPole(300, new Pose(0, 24, 0), 7, 130, 116),
                         new Score(Lift.LiftPositions.HIGH, true, 0))));
                 path.clear();
             } else {
-                path.add(new Pose(39, 12, 180, .9, 6));
-                path.add(new Pose(29, 18.5, 180, .6, 8));
-                runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(2, 2, 2), -135, 1800),
+//                path.add(new Pose(-45, 16, -180, .9, 6));
+//                path.add(new Pose(-29, 20, -180, .6, 2));
+                path.add(new Pose(39, 12, -180, .9, 3));
+                runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(3, 3, 3), -90, 1800))));
+                path.clear();
+
+                path.add(new Pose(28.5, 19.5, -180, .5, 3));
+                runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(1, 1, 2), -135, 1800),
                         new SetLift(Lift.LiftPositions.MEDIUM, Lift.ScoreStates.HOVER_LEFT, 200))));
                 path.clear();
 
                 runAction(new Wait(200));
 
-                runAction(new ParallelAction(Arrays.asList(new DriveToPole(300, new Pose(24, 24, 0), 6, 130, 115),
+                runAction(new ParallelAction(Arrays.asList(new DriveToPole(700, new Pose(24, 24, 0), 5, 120),
                         new Score(Lift.LiftPositions.MEDIUM, true, 0))));
                 path.clear();
             }
@@ -120,16 +126,17 @@ public class RightMiddle extends AutoModeBase {
         Robot.getLift().setLiftPosition(0);
         switch (signal) {
             case 1:
-                path.add(new Pose(12, 16, 0, 1, 8));
+//                path.add(new Pose(-12, 4, 0, 1, 8));
+                path.add(new Pose(12, 12, 0, 1, 8));
                 runAction(new PurePursuit(path, 180, 5000, true, 40));
                 break;
             case 2:
-                path.add(new Pose(36, 14, 0, 1, 8));
+                path.add(new Pose(38, 14, 0, 1, 8));
                 runAction(new PurePursuit(path, 0));
                 break;
             case 3:
-                path.add(new Pose(63, 14, 0, 1, 8));
-                runAction(new PurePursuit(path, -90));
+                path.add(new Pose(60, 14, 0, 1, 8));
+                runAction(new PurePursuit(path));
                 break;
         }
         path.clear();

@@ -87,7 +87,7 @@ public class DriveToPole extends Action {
 
     @Override
     public void update() {
-        ySpeed = -yPID.update(Robot.getInstance().getCamera().scanForPole.getPoint().y, wantedY);
+//        ySpeed = -yPID.update(Robot.getInstance().getCamera().scanForPole.getPoint().y, (80.0 + highTolerance) / 2);
         thetaSpeed = -thetaPID.update(Robot.getInstance().getCamera().scanForPole.getPoint().x, wantedPoint);
 
         Pose2d robot = Robot.getInstance().getMecanumDrive().position;

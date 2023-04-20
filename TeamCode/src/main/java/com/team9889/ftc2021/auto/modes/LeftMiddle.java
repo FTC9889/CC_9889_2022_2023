@@ -68,11 +68,11 @@ public class LeftMiddle extends AutoModeBase {
 
 
         for (int i = 0; i < 5 && timer.milliseconds() < 24000 && opModeIsActive(); i++) {
-            path.add(new Pose(-38, 12, 0, 1, 5));
-            path.add(new Pose(-50, 12, 0, .8, 5));
+//            path.add(new Pose(-40, 12, 0, .3, 3));
+            path.add(new Pose(-45, 12, 0, .7, 3));
+            runAction(new PurePursuit(path, new Pose(3, 3, 4), 90, 2000));
+            path.clear();
             path.add(new Pose(-53, 12, 0, .6, 5));
-//            runAction(new PurePursuit(path, new Pose(3, 3, 4), 90, 2000, true));
-//            path.clear();
 
             path.add(new Pose(-61, 12, 0, 0.4, 4));
             runAction(new ParallelAction(Arrays.asList(
@@ -101,9 +101,14 @@ public class LeftMiddle extends AutoModeBase {
                         new Score(Lift.LiftPositions.HIGH, true, 0))));
                 path.clear();
             } else {
-                path.add(new Pose(-39, 12, -180, .9, 6));
-                path.add(new Pose(-29, 20, -180, .6, 8));
-                runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(2, 2, 2), 137, 1800),
+//                path.add(new Pose(-45, 16, -180, .9, 6));
+//                path.add(new Pose(-29, 20, -180, .6, 2));
+                path.add(new Pose(-39, 12, -180, .9, 3));
+                runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(3, 3, 3), 90, 1800))));
+                path.clear();
+
+                path.add(new Pose(-29, 19, -180, .6, 3));
+                runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(2, 2, 2), 135, 1800),
                         new SetLift(Lift.LiftPositions.MEDIUM, Lift.ScoreStates.HOVER_LEFT, 200))));
                 path.clear();
 

@@ -53,8 +53,8 @@ public class DetectLine extends Action {
                         + (Math.cos(heading) * leftToRobot.getY()));
                 Robot.getInstance().color = "red";
             } else if (centerDetect()) {
-                    Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * centerToRobot.getX()))
-                            + (Math.cos(heading) * centerToRobot.getY()));
+//                    Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * centerToRobot.getX()))
+//                            + (Math.cos(heading) * centerToRobot.getY()));
                     Robot.getInstance().color = "red";
                 }
         } else if (red && !left) {
@@ -72,8 +72,8 @@ public class DetectLine extends Action {
                 Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * rightToRobot.getX()))
                         + (Math.cos(heading) * rightToRobot.getY()));
             } else if (centerDetect()) {
-                    Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * centerToRobot.getX()))
-                            + (Math.cos(heading) * centerToRobot.getY()));
+//                    Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * centerToRobot.getX()))
+//                            + (Math.cos(heading) * centerToRobot.getY()));
                 }
         }
     }
