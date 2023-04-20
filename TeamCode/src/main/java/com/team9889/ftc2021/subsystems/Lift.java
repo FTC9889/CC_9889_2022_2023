@@ -17,6 +17,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Lift extends Subsystem{
     public static PID pid = new PID(0.4, 0, 6);
 
+    public int autoConeCount = 0;
+
     public static double high = 26;
 
     double maxSpeed = 0;
@@ -60,6 +62,8 @@ public class Lift extends Subsystem{
         wantedLiftPosition = LiftPositions.NULL;
         wantedScoreState = ScoreStates.NULL;
         closeGrabber();
+
+        autoConeCount = 0;
     }
 
     @Override
@@ -188,13 +192,13 @@ public class Lift extends Subsystem{
                 break;
 
             case MEDIUM:
-                if (setLiftPosition(16.5 - (beaconStage * 2))) {
+                if (setLiftPosition((auto ? 16.5 : 16.5) - (beaconStage * 2))) {
                     currentLiftPosition = LiftPositions.MEDIUM;
                 }
                 break;
 
             case HIGH:
-                if (setLiftPosition(high - (beaconStage * 2))) {
+                if (setLiftPosition(high - (beaconStage))) {
                     currentLiftPosition = LiftPositions.HIGH;
                 }
                 break;
@@ -218,10 +222,10 @@ public class Lift extends Subsystem{
             case GRAB_RIGHT:
                 wantedV4BPosition = V4BPositions.RIGHT_DOWN;
 
-                if (grabTimer.milliseconds() > (auto ? 150 : 120) && grabTimer.milliseconds() < 300) {
+                if (grabTimer.milliseconds() > (auto ? 150 : 120) && grabTimer.milliseconds() < 350) {
                     Robot.getInstance().driverStation.grabberClosed = true;
                     closeGrabber();
-                } else if (auto ? (liftInAutoPos) : (grabTimer.milliseconds() > 300)) {
+                } else if (auto ? (liftInAutoPos) : (grabTimer.milliseconds() > 350)) {
                     wantedScoreState = ScoreStates.HOLDING;
                 }
                 break;
@@ -414,7 +418,7 @@ public class Lift extends Subsystem{
     public void openGrabber() {
         double position = 0.58;
         if (auto) {
-            position = 0.61;
+            position = (autoConeCount != 5 ? 0.64 : 0.59);
         }
 
         setGrabber(position);

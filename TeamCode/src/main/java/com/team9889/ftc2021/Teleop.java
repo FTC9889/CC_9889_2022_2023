@@ -24,6 +24,7 @@ import java.util.Arrays;
 @Config
 public class Teleop extends Team9889Linear {
     public static double position = 0, led = 0.5;
+    public static boolean LEDOn = false;
 
     ElapsedTime timer = new ElapsedTime();
     ElapsedTime pickupStackTimer = new ElapsedTime();
@@ -239,6 +240,13 @@ public class Teleop extends Team9889Linear {
                 } else {
                     Robot.getLift().beaconStage = 0;
                 }
+            }
+
+
+            if (LEDOn) {
+                Robot.leds.setPower(1);
+            } else {
+                Robot.leds.setPower(0);
             }
 
 

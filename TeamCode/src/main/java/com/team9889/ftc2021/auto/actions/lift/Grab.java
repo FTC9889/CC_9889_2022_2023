@@ -35,6 +35,8 @@ public class Grab extends Action {
         ActionVariables.grab = false;
 
         Robot.getInstance().getLift().liftInAutoPos = false;
+
+        Robot.getInstance().getLift().autoConeCount += 1;
     }
 
     @Override
@@ -48,7 +50,7 @@ public class Grab extends Action {
             if (Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.HOLDING) {
                 done = true;
             } else if (Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.GRAB_RIGHT) {
-                if (timer2.milliseconds() > 300) {
+                if (timer2.milliseconds() > 350) {
                     Robot.getInstance().getLift().liftInAutoPos =
                             Robot.getInstance().getLift().setLiftPosition(
                                     CruiseLib.limitValue(liftHeight + 10, 100, 0));
@@ -77,9 +79,7 @@ public class Grab extends Action {
 
     @Override
     public boolean isFinished() {
-        return Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.HOLDING &&
-//                timer.milliseconds() - timerOffset > 250;
-                done;
+        return Robot.getInstance().getLift().liftInAutoPos;
     }
 
     @Override

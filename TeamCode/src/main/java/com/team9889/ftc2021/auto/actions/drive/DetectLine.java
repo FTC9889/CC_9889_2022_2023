@@ -25,7 +25,7 @@ public class DetectLine extends Action {
         ActionVariables.doneDriving = false;
     }
 
-    Vector2d leftToRobot = new Vector2d(-38 / 25.4, 104 / 25.4), centerToRobot = new Vector2d(8 / 25.4, 104 / 25.4), rightToRobot = new Vector2d(42 / 25.4, 104 / 25.4);
+    Vector2d leftToRobot = new Vector2d(38 / 25.4, 104 / 25.4), centerToRobot = new Vector2d(8 / 25.4, 104 / 25.4), rightToRobot = new Vector2d(-42 / 25.4, 104 / 25.4);
 
     @Override
     public void update() {
@@ -33,46 +33,48 @@ public class DetectLine extends Action {
 
         if (Math.abs(Robot.getInstance().getMecanumDrive().position.getX()) > 50)
         if (red && left) {
-            heading *= -1;
+//            heading *= -1;
             Robot.getInstance().color = "black";
-            if (rightDetect() && centerDetect()) {
-                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * (rightToRobot.getX() + centerToRobot.getX()) / 2))
-                        + (Math.cos(heading) * (rightToRobot.getY() + centerToRobot.getY()) / 2));
-                Robot.getInstance().color = "red";
-            } else if (leftDetect() && centerDetect()) {
-                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * (leftToRobot.getX() + centerToRobot.getX()) / 2))
-                        + (Math.cos(heading) * (leftToRobot.getY() + centerToRobot.getY()) / 2));
-                Robot.getInstance().color = "red";
-            } else if (rightDetect()) {
+//            if (rightDetect() && centerDetect()) {
+//                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * (rightToRobot.getX() + centerToRobot.getX()) / 2))
+//                        + (Math.cos(heading) * (rightToRobot.getY() + centerToRobot.getY()) / 2));
+//                Robot.getInstance().color = "red";
+//            } else if (leftDetect() && centerDetect()) {
+//                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * (leftToRobot.getX() + centerToRobot.getX()) / 2))
+//                        + (Math.cos(heading) * (leftToRobot.getY() + centerToRobot.getY()) / 2));
+//                Robot.getInstance().color = "red";
+//            } else
+            if (rightDetect()) {
                 Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * rightToRobot.getX()))
                         + (Math.cos(heading) * rightToRobot.getY()));
-                Robot.getInstance().color = "red";
-            } else if (centerDetect()) {
-                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * centerToRobot.getX()))
-                        + (Math.cos(heading) * centerToRobot.getY()));
                 Robot.getInstance().color = "red";
             } else if (leftDetect()) {
                 Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * leftToRobot.getX()))
                         + (Math.cos(heading) * leftToRobot.getY()));
                 Robot.getInstance().color = "red";
-            }
+            } else if (centerDetect()) {
+                    Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * centerToRobot.getX()))
+                            + (Math.cos(heading) * centerToRobot.getY()));
+                    Robot.getInstance().color = "red";
+                }
         } else if (red && !left) {
-            if (leftDetect() && centerDetect()) {
-                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * (leftToRobot.getX() + centerToRobot.getX()) / 2))
-                        + (Math.cos(heading) * (leftToRobot.getY() + centerToRobot.getY()) / 2));
-            } else if (rightDetect() && centerDetect()) {
-                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * (rightToRobot.getX() + centerToRobot.getX()) / 2))
-                        + (Math.cos(heading) * (rightToRobot.getY() + centerToRobot.getY()) / 2));
-            } else if (leftDetect()) {
+//            if (leftDetect() && centerDetect()) {
+//                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * (leftToRobot.getX() + centerToRobot.getX()) / 2))
+//                        + (Math.cos(heading) * (leftToRobot.getY() + centerToRobot.getY()) / 2));
+//            } else if (rightDetect() && centerDetect()) {
+//                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * (rightToRobot.getX() + centerToRobot.getX()) / 2))
+//                        + (Math.cos(heading) * (rightToRobot.getY() + centerToRobot.getY()) / 2));
+//            } else
+                if (leftDetect()) {
                 Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * leftToRobot.getX()))
                         + (Math.cos(heading) * leftToRobot.getY()));
-            } else if (centerDetect()) {
-                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * centerToRobot.getX()))
-                        + (Math.cos(heading) * centerToRobot.getY()));
             } else if (rightDetect()) {
                 Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * rightToRobot.getX()))
                         + (Math.cos(heading) * rightToRobot.getY()));
-            }
+            } else if (centerDetect()) {
+                    Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * centerToRobot.getX()))
+                            + (Math.cos(heading) * centerToRobot.getY()));
+                }
         }
     }
 

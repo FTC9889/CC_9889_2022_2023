@@ -3,6 +3,7 @@ package com.team9889.lib.detectors;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.team9889.ftc2021.Team9889Linear;
 import com.team9889.ftc2021.subsystems.Robot;
 import com.team9889.lib.detectors.util.HSV;
 
@@ -42,8 +43,13 @@ public class ScanForPole extends OpenCvPipeline {
     private ArrayList<MatOfPoint> findContoursOutput = new ArrayList<MatOfPoint>();
     private ArrayList<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 
-    public static HSV poleHSV = new HSV(90, 100,
-            100, 255, 100, 255);
+    // With LEDs
+    public static HSV poleHSV = new HSV(60, 100,
+            100, 255, 200, 255);
+
+    // Without LEDs
+//    public static HSV poleHSV = new HSV(90, 100,
+//            100, 255, 100, 255);
 
     private Point point = new Point(1e10, 1e10);
 
@@ -57,6 +63,14 @@ public class ScanForPole extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
+        if (Team9889Linear.useLEDs) {
+            poleHSV = new HSV(60, 100,
+                    100, 255, 200, 255);
+        } else {
+            poleHSV = new HSV(90, 100,
+                    100, 255, 100, 255);
+        }
+
         // Step CV_resize0:
         Mat cvResizeSrc = input;
         Size cvResizeDsize = new Size(0, 0);

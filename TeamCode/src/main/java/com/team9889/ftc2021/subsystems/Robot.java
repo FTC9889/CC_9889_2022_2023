@@ -245,6 +245,8 @@ public class Robot {
 
     // Stop all subsystems
     public void stop(){
+        leds.setPower(0);
+
         for (Subsystem subsystem : subsystems)
             subsystem.stop();
 

@@ -15,7 +15,7 @@ import com.team9889.ftc2021.subsystems.Robot;
 public class Score extends Action {
     Lift.LiftPositions liftHeight;
     boolean left, first = true;
-    double wait = 0;
+    double wait = 400;
 
     ElapsedTime timer = new ElapsedTime(), startTimer = new ElapsedTime();
 
@@ -57,6 +57,10 @@ public class Score extends Action {
 
         if (Robot.getInstance().getLift().wantedScoreState != Lift.ScoreStates.RETRACT) {
             timer.reset();
+        }
+
+        if (!ActionVariables.doneDriving) {
+            startTimer.reset();
         }
     }
 

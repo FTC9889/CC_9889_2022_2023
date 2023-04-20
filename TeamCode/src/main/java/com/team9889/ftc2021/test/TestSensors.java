@@ -2,7 +2,9 @@ package com.team9889.ftc2021.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.team9889.ftc2021.Team9889Linear;
+import com.team9889.ftc2021.auto.actions.drive.DetectLine;
 import com.team9889.ftc2021.subsystems.Robot;
+import com.team9889.lib.control.math.cartesian.Vector2d;
 
 import java.util.Arrays;
 
@@ -12,6 +14,8 @@ import java.util.Arrays;
 
 @TeleOp(group = "Test")
 public class TestSensors extends Team9889Linear {
+    Vector2d leftToRobot = new Vector2d(-38 / 25.4, 104 / 25.4), centerToRobot = new Vector2d(-8 / 25.4, 104 / 25.4), rightToRobot = new Vector2d(42 / 25.4, 104 / 25.4);
+
     @Override
     public void initialize() {
 
@@ -39,6 +43,31 @@ public class TestSensors extends Team9889Linear {
                     + ", red: " + Robot.rightColor.red());
             telemetry.addLine();
             telemetry.addLine();
+
+            double heading = Robot.getInstance().getMecanumDrive().position.getHeading();
+            heading *= -1;
+            Robot.getInstance().color = "black";
+            if (rightDetect() && centerDetect()) {
+                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * (rightToRobot.getX() + centerToRobot.getX()) / 2))
+                        + (Math.cos(heading) * (rightToRobot.getY() + centerToRobot.getY()) / 2));
+                Robot.getInstance().color = "red";
+            } else if (leftDetect() && centerDetect()) {
+                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * (leftToRobot.getX() + centerToRobot.getX()) / 2))
+                        + (Math.cos(heading) * (leftToRobot.getY() + centerToRobot.getY()) / 2));
+                Robot.getInstance().color = "red";
+            } else if (rightDetect()) {
+                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * rightToRobot.getX()))
+                        + (Math.cos(heading) * rightToRobot.getY()));
+                Robot.getInstance().color = "red";
+            } else if (centerDetect()) {
+                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * centerToRobot.getX()))
+                        + (Math.cos(heading) * centerToRobot.getY()));
+                Robot.getInstance().color = "red";
+            } else if (leftDetect()) {
+                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * leftToRobot.getX()))
+                        + (Math.cos(heading) * leftToRobot.getY()));
+                Robot.getInstance().color = "red";
+            }
 
 //            telemetry.addLine("Light Sensors");
 //            telemetry.addData("Left Light", leftDetect() + ", " + Robot.leftLight.getVoltage());

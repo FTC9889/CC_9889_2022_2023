@@ -20,7 +20,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 @Config
 public class ScanForSignal extends OpenCvPipeline {
-    public static int height = 15, width = 15, x = 148, y = 70, blackY = 96;
+    public int height = 15, width = 15, x = 165, y = 70, blackY = 96;
     public static boolean drawRect = true;
 
     public boolean left = false;
@@ -65,20 +65,20 @@ public class ScanForSignal extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-        int offset = (left ? -24 : 0);
+        int x = this.x + (left ? -35 : 0);
 
-        Rect color = new Rect(x + offset, y, width, height);
+        Rect color = new Rect(x, y, width, height);
         rgb = calculateAverageRGBInRoi(input, color);
-        Imgproc.rectangle(input, new Rect(x + offset, y, width, height), new Scalar(255, 0, 0));
+        Imgproc.rectangle(input, new Rect(x, y, width, height), new Scalar(255, 0, 0));
 
-        Rect blackRect = new Rect(x + offset, blackY, width, height);
+        Rect blackRect = new Rect(x, blackY, width, height);
         blackRGB = calculateAverageRGBInRoi(input, blackRect);
 
         if (drawRect) {
             Imgproc.rectangle(input, new Point(0, 0), new Point(input.width(), y), rgb, -1);
             Imgproc.rectangle(input, new Point(0, y + height), new Point(input.width(), input.height()), rgb, -1);
-            Imgproc.rectangle(input, new Point(0, 0), new Point(x + offset, input.height()), rgb, -1);
-            Imgproc.rectangle(input, new Point(x + offset + width, 0), new Point(input.width(), input.height()), rgb, -1);
+            Imgproc.rectangle(input, new Point(0, 0), new Point(x, input.height()), rgb, -1);
+            Imgproc.rectangle(input, new Point(x + width, 0), new Point(input.width(), input.height()), rgb, -1);
         }
 
         return input;

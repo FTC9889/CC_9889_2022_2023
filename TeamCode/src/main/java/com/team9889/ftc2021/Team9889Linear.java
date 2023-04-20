@@ -39,12 +39,20 @@ public abstract class Team9889Linear extends LinearOpMode {
 
     public int signal = 3;
 
+    boolean left = false, ledToggle = true;
+    public static boolean useLEDs = true;
+
     public int timeToWait = 0, timeToWaitDuck = 0;
     boolean buttonReleased = true, editDetection = false;
 
     public String angleRead = "";
 
     public abstract void initialize();
+
+    public void waitForStart(boolean autonomous, boolean left) {
+        this.left = left;
+        waitForStart(autonomous);
+    }
 
     public void waitForStart(boolean autonomous) {
         Telemetry dashTelemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -108,11 +116,24 @@ public abstract class Team9889Linear extends LinearOpMode {
                     }
                 }
 
+                if (ledToggle && gamepad1.left_bumper) {
+                    useLEDs = !useLEDs;
+                    ledToggle = false;
+                } else if (!gamepad1.left_bumper) {
+                    ledToggle = true;
+                }
+
+
+
                 if (Robot.getCamera().scanForSignal.getBlackAverage() < 30) {
                     telemetry.addData("Lined Up", "<font size=\"+2\" color=\"green\"> Yes </font>");
                 } else {
                     telemetry.addData("Lined Up", "<font size=\"+2\" color=\"red\"> No </font>");
                 }
+
+                telemetry.addData("Left Test", Robot.getCamera().scanForSignal.left + ", " + Robot.getCamera().scanForSignal.x + ", " + left);
+
+                telemetry.addData("Use LEDs", useLEDs);
 
                 telemetry.addData("Signal", Robot.getCamera().scanForSignal.getSignal());
                 telemetry.addData("RGB", Robot.getCamera().scanForSignal.getRGB());

@@ -219,7 +219,7 @@ public class PurePursuit extends Action {
 
         xSpeed *= maxStrafeVel;
         ySpeed *= 48;
-        turnSpeed *= 220;
+        turnSpeed *= 180;
 
         curXVel += xPID.update(-Robot.getInstance().getMecanumDrive().xVel, xSpeed);
         curYVel += yPID.update(Robot.getInstance().getMecanumDrive().yVel, ySpeed);

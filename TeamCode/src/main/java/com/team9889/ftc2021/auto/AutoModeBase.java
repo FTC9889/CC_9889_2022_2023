@@ -45,7 +45,7 @@ public abstract class AutoModeBase extends Team9889Linear {
 
         Robot.driverStation = new DriverStation(gamepad1, gamepad2);
 
-        waitForStart(true);
+        waitForStart(true, currentAutoRunning == StartPosition.LEFT);
 
         autoTimer.reset();
 

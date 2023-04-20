@@ -57,8 +57,6 @@ public class Camera extends Subsystem{
                 } else {
                     Robot.getInstance().camera.setPipeline(scanForPole);
                 }
-
-                scanForSignal.left = false;
             }
 
             @Override
