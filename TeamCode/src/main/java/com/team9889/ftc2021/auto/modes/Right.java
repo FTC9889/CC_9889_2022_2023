@@ -128,7 +128,7 @@ public class Right extends AutoModeBase {
                 runAction(new PurePursuit(path, 0));
                 break;
             case 3:
-                path.add(new Pose(63, 14, 0, 1, 8));
+                path.add(new Pose(60, 14, 0, 1, 8));
                 runAction(new PurePursuit(path, -90));
                 break;
         }
