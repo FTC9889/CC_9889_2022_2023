@@ -72,9 +72,9 @@ public class LeftMiddle extends AutoModeBase {
             path.add(new Pose(-45, 12, 0, .7, 3));
             runAction(new PurePursuit(path, new Pose(3, 3, 4), 90, 2000));
             path.clear();
-            path.add(new Pose(-53, 12, 0, .6, 5));
+            path.add(new Pose(-53, 12, 0, .5, 5));
 
-            path.add(new Pose(-61, 12, 0, 0.4, 4));
+            path.add(new Pose(-61, 12, 0, 0.35, 4));
             runAction(new ParallelAction(Arrays.asList(
                     new PurePursuit(path, 90, 3000, true, true),
                     new DetectLine(true, true),
@@ -114,9 +114,13 @@ public class LeftMiddle extends AutoModeBase {
 
                 runAction(new Wait(200));
 
-                runAction(new ParallelAction(Arrays.asList(new DriveToPole(700, new Pose(-24, 24, 0), 5, 120),
-                        new Score(Lift.LiftPositions.MEDIUM, true, 0))));
-                path.clear();
+                runAction(new DriveToPole(700, new Pose(-24, 24, 0), 5, 120));
+
+                Robot.getLift().wantedScoreState = Lift.ScoreStates.PLACE_LEFT;
+                while (Robot.getLift().wantedScoreState != Lift.ScoreStates.RETRACT && opModeIsActive()) {
+                    Robot.update();
+                }
+                runAction(new Wait(200));
             }
         }
 

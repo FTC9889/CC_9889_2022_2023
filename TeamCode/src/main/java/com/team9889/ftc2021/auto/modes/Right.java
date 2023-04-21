@@ -76,13 +76,13 @@ public class Right extends AutoModeBase {
         for (int i = 0; i < 5 && timer.milliseconds() < 24000 && opModeIsActive(); i++) {
             path.add(new Pose(38, 12, 0, 1, 5));
             path.add(new Pose(50, 12, 0, .8, 5));
-            path.add(new Pose(53, 12, 0, .6, 5));
+            path.add(new Pose(53, 12, 0, 0.45, 5));
 //            runAction(new PurePursuit(path, new Pose(3, 3, 4), 90, 2000));
 //            path.clear();
 
-            path.add(new Pose(63, 12, 0, 0.4, 3));
+            path.add(new Pose(63, 12, 0, 0.35, 3));
             runAction(new ParallelAction(Arrays.asList(
-                    new PurePursuit(path, -90, 3000, true, true),
+                    new PurePursuit(path, -90, 5000, true, true),
                     new DetectLine(true, false),
                     new Grab(CruiseLib.limitValue(3.5 - (i * (13.0 / 8.0)), 10, 0)))));
             path.clear();
@@ -103,9 +103,13 @@ public class Right extends AutoModeBase {
 
             runAction(new Wait(200));
 
-            runAction(new ParallelAction(Arrays.asList(new DriveToPole(1500, new Pose(24, 0, 0), 7),
-                    new Score(Lift.LiftPositions.HIGH, true, 400))));
-            path.clear();
+            runAction(new DriveToPole(1500, new Pose(24, 0, 0), 7));
+
+            Robot.getLift().wantedScoreState = Lift.ScoreStates.PLACE_LEFT;
+            while (Robot.getLift().wantedScoreState != Lift.ScoreStates.RETRACT && opModeIsActive()) {
+                Robot.update();
+            }
+            runAction(new Wait(200));
         }
 
 
