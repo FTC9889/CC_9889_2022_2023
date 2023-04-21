@@ -100,7 +100,7 @@ public class RightMiddle extends AutoModeBase {
 
                 runAction(new Wait(200));
 
-                runAction(new ParallelAction(Arrays.asList(new DriveToPole(300, new Pose(0, 24, 0), 7, 130, 116),
+                runAction(new ParallelAction(Arrays.asList(new DriveToPole(300, new Pose(0, 24, 0), 7),
                         new Score(Lift.LiftPositions.HIGH, true, 0))));
                 path.clear();
             } else {
@@ -119,7 +119,7 @@ public class RightMiddle extends AutoModeBase {
 
                 runAction(new Wait(200));
 
-                runAction(new ParallelAction(Arrays.asList(new DriveToPole(400, new Pose(24, 24, 0), 5, 120),
+                runAction(new ParallelAction(Arrays.asList(new DriveToPole(400, new Pose(24, 24, 0), 5),
                         new Score(Lift.LiftPositions.MEDIUM, true, 0))));
                 path.clear();
             }

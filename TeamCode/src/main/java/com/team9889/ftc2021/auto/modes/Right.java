@@ -26,6 +26,8 @@ import com.team9889.lib.CruiseLib;
 import com.team9889.lib.Pose;
 import com.team9889.lib.Pose2d;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -56,33 +58,43 @@ public class Right extends AutoModeBase {
         Robot.getLift().wantedScoreState = Lift.ScoreStates.GROUND_RIGHT;
 
         path.add(new Pose(35, 22, 180, 1, 8));
-        path.add(new Pose(30, 4, 180, .5, 8));
+        path.add(new Pose(30, 5, 180, .7, 8));
         runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, -57, 3000),
                 new SetLift(Lift.LiftPositions.HIGH, Lift.ScoreStates.HOVER_LEFT, 1000))));
 //                new Score(Lift.LiftPositions.HIGH, true, 1000))));
         path.clear();
 
-        runAction(new Wait(200));
+        runAction(new Turn(-45));
 
-        runAction(new ParallelAction(Arrays.asList(new DriveToPole(1500, new Pose(24, 0, 0), 7),
-                new Score(Lift.LiftPositions.HIGH, true, 0))));
-        path.clear();
+        runAction(new Wait(100));
 
-        Robot.getMecanumDrive().setBumpersDown();
-        if (!useLEDs) {
-            Robot.leds.setPower(0);
+        runAction(new DriveToPole(1500, new Pose(24, 0, 0), 7));
+        Robot.getLift().wantedScoreState = Lift.ScoreStates.PLACE_LEFT;
+        while (Robot.getLift().wantedScoreState != Lift.ScoreStates.RETRACT && opModeIsActive()) {
+            Robot.update();
         }
 
+        runAction(new Wait(200));
+
+        Robot.getMecanumDrive().setBumpersDown();
         for (int i = 0; i < 5 && timer.milliseconds() < 24000 && opModeIsActive(); i++) {
-            path.add(new Pose(38, 12, 0, 1, 5));
-            path.add(new Pose(50, 12, 0, .8, 5));
-            path.add(new Pose(53, 12, 0, .6, 5));
+            if (!useLEDs) {
+                Robot.leds.setPower(0);
+            }
+
+            path.add(new Pose(45, 12, 0, 1, 4));
+            runAction(new PurePursuit(path, new Pose(3, 1, 4)));
+            path.clear();
+
+            runAction(new Turn(-90));
+
+//            path.add(new Pose(50, 12, 0, .8, 5));
 //            runAction(new PurePursuit(path, new Pose(3, 3, 4), 90, 2000));
 //            path.clear();
 
-            path.add(new Pose(63, 12, 0, 0.4, 3));
+            path.add(new Pose(62, 12, 0, 0.7, 3));
             runAction(new ParallelAction(Arrays.asList(
-                    new PurePursuit(path, -90, 3000, true, true),
+                    new PurePursuit(path, -90, 3000, true, true, true),
                     new DetectLine(true, false),
                     new Grab(CruiseLib.limitValue(3.5 - (i * (13.0 / 8.0)), 10, 0)))));
             path.clear();
@@ -91,21 +103,30 @@ public class Right extends AutoModeBase {
                 Robot.getMecanumDrive().position.setX(60);
             }
 
-//            Robot.getMecanumDrive().position.setHeading(Robot.getMecanumDrive().getAngle().getTheda(AngleUnit.RADIANS));
+            Robot.getMecanumDrive().position.setHeading(Robot.getMecanumDrive().getAngle().getTheda(AngleUnit.RADIANS));
 
 
-            path.add(new Pose(39, 12, 180, .9, 6));
-//            path.add(new Pose(-30, 6, -180, .6, 4));
-            path.add(new Pose(30, 4.5, 180, .7, 12));
-            runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(1, 1, 2), -58, 3000),
+            path.add(new Pose(40, 10, 180, 1, 6));
+            runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(2, 2, 3)),
+                    new SetLift(Lift.LiftPositions.HIGH, 200))));
+            path.clear();
+
+//            runAction(new Turn(-60));
+
+            path.add(new Pose(31, 5, 180, .75, 12));
+            runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(1, 1, 2), -45, 3000),
                     new SetLift(Lift.LiftPositions.HIGH, Lift.ScoreStates.HOVER_LEFT, 200))));
             path.clear();
 
-            runAction(new Wait(200));
+            runAction(new Wait(100));
 
-            runAction(new ParallelAction(Arrays.asList(new DriveToPole(1500, new Pose(24, 0, 0), 7),
-                    new Score(Lift.LiftPositions.HIGH, true, 400))));
-            path.clear();
+            runAction(new DriveToPole(5000, new Pose(24, 0, 0), 7));
+            Robot.getLift().wantedScoreState = Lift.ScoreStates.PLACE_LEFT;
+            while (Robot.getLift().wantedScoreState != Lift.ScoreStates.RETRACT && opModeIsActive()) {
+                Robot.update();
+            }
+
+            runAction(new Wait(200));
         }
 
 

@@ -347,6 +347,11 @@ public class Lift extends Subsystem{
         return Math.abs(getLiftPosition() - position) < 2;
     }
 
+    public boolean setLiftPosition(double position, double maxPower) {
+        setLiftPower(CruiseLib.limitValue(pid.update(getLiftPosition(), position), 0, -0.3, 0, maxPower));
+        return Math.abs(getLiftPosition() - position) < 2;
+    }
+
     public void setLiftPower(double power) {
         if (power < 0 && liftDown) {
             Robot.getInstance().leftLift.setPower(0);
@@ -418,7 +423,7 @@ public class Lift extends Subsystem{
     public void openGrabber() {
         double position = 0.58;
         if (auto) {
-            position = (autoConeCount != 5 ? 0.64 : 0.59);
+            position = (autoConeCount != 5 ? 0.7 : 0.59);
         }
 
         setGrabber(position);
