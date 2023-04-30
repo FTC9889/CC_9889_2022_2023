@@ -66,11 +66,10 @@ public class RightMiddle extends AutoModeBase {
             Robot.leds.setPower(0);
         }
 
-
         for (int i = 0; i < 5 && timer.milliseconds() < 24000 && opModeIsActive(); i++) {
 //            path.add(new Pose(-40, 12, 0, .3, 3));
-            path.add(new Pose(38, 12, 0, .7, 3));
-            runAction(new PurePursuit(path, new Pose(3, 3, 4)));
+            path.add(new Pose(45, 12, 0, .7, 3));
+            runAction(new PurePursuit(path, new Pose(3, 1, 4)));
             path.clear();
 
             runAction(new Turn(-90));

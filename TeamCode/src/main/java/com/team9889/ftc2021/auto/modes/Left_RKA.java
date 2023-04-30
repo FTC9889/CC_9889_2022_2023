@@ -17,8 +17,6 @@ import com.team9889.lib.CruiseLib;
 import com.team9889.lib.Pose;
 import com.team9889.lib.Pose2d;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -27,7 +25,7 @@ import java.util.Arrays;
  */
 
 @Autonomous(preselectTeleOp = "Teleop")
-public class Left extends AutoModeBase {
+public class Left_RKA extends AutoModeBase {
     ElapsedTime timer = new ElapsedTime();
 
     @Override
@@ -48,13 +46,25 @@ public class Left extends AutoModeBase {
         Robot.getLift().wantedScoreState = Lift.ScoreStates.GROUND_RIGHT;
 
         path.add(new Pose(-35, 22, 180, 1, 8));
-        path.add(new Pose(-30, 4, 180, .5, 8));
-        runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, 57, 3000),
+        path.add(new Pose(-34, 0, 180, .5, 8));
+        runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, 0, 3000),
                 new SetLift(Lift.LiftPositions.HIGH, Lift.ScoreStates.HOVER_LEFT, 1000))));
 //                new Score(Lift.LiftPositions.HIGH, true, 1000))));
         path.clear();
 
-        runAction(new Wait(200));
+        runAction(new Turn(90));
+
+        path.add(new Pose(-32, 0, 180, .5, 5));
+        runAction(new PurePursuit(path, 90));
+        path.clear();
+
+        runAction(new DriveToPole(1500, new Pose(24, 0, 0), 7));
+
+        while (timer.milliseconds() < 9000) {
+            path.add(new Pose(-32, 0, 180, .5, 5));
+            runAction(new PurePursuit(path, 90, 1000, true));
+            path.clear();
+        }
 
         runAction(new ParallelAction(Arrays.asList(new DriveToPole(1500, new Pose(-24, 0, 0), 7),
                 new Score(Lift.LiftPositions.HIGH, true, 0))));
@@ -66,7 +76,10 @@ public class Left extends AutoModeBase {
         }
 
         for (int i = 0; i < 5 && timer.milliseconds() < 24000 && opModeIsActive(); i++) {
-            path.add(new Pose(-38, 12, 0, 1, 5));
+            path.add(new Pose(-35, 12, 0, 1, 5));
+            runAction(new PurePursuit(path, 90));
+            path.clear();
+
             path.add(new Pose(-50, 12, 0, .8, 5));
             path.add(new Pose(-53, 12, 0, .6, 5));
 //            runAction(new PurePursuit(path, new Pose(3, 3, 4), 90, 2000));
