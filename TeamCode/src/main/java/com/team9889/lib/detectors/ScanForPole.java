@@ -164,46 +164,10 @@ public class ScanForPole extends OpenCvPipeline {
         return cvResizeOutput;
     }
 
-    /**
-     * This method is a generated getter for the output of a CV_resize.
-     * @return Mat output from CV_resize.
-     */
-    public Mat cvResizeOutput() {
-        return cvResizeOutput;
-    }
+    @Override
+    public void onViewportTapped() {
 
-    /**
-     * This method is a generated getter for the output of a Blur.
-     * @return Mat output from Blur.
-     */
-    public Mat blurOutput() {
-        return blurOutput;
     }
-
-    /**
-     * This method is a generated getter for the output of a HSV_Threshold.
-     * @return Mat output from HSV_Threshold.
-     */
-    public Mat hsvThresholdOutput() {
-        return hsvThresholdOutput;
-    }
-
-    /**
-     * This method is a generated getter for the output of a Find_Contours.
-     * @return ArrayList<MatOfPoint> output from Find_Contours.
-     */
-    public ArrayList<MatOfPoint> findContoursOutput() {
-        return findContoursOutput;
-    }
-
-    /**
-     * This method is a generated getter for the output of a Filter_Contours.
-     * @return ArrayList<MatOfPoint> output from Filter_Contours.
-     */
-    public ArrayList<MatOfPoint> filterContoursOutput() {
-        return contours;
-    }
-
 
     /**
      * Resizes an image.
@@ -214,8 +178,7 @@ public class ScanForPole extends OpenCvPipeline {
      * @param interpolation type of interpolation to use.
      * @param dst output image.
      */
-    private void cvResize(Mat src, Size dSize, double fx, double fy, int interpolation,
-                          Mat dst) {
+    private void cvResize(Mat src, Size dSize, double fx, double fy, int interpolation, Mat dst) {
         if (dSize==null) {
             dSize = new Size(0,0);
         }
@@ -264,8 +227,7 @@ public class ScanForPole extends OpenCvPipeline {
      * @param doubleRadius The radius for the blur.
      * @param output The image in which to store the output.
      */
-    private void blur(Mat input, BlurType type, double doubleRadius,
-                      Mat output) {
+    private void blur(Mat input, BlurType type, double doubleRadius, Mat output) {
         int radius = (int)(doubleRadius + 0.5);
         int kernelSize;
         switch(type){
@@ -295,15 +257,13 @@ public class ScanForPole extends OpenCvPipeline {
      * @param sat The min and max saturation
      * @param val The min and max value
      */
-    private void hsvThreshold(Mat input, double[] hue, double[] sat, double[] val,
-                              Mat out) {
+    private void hsvThreshold(Mat input, double[] hue, double[] sat, double[] val, Mat out) {
         Imgproc.cvtColor(input, out, Imgproc.COLOR_BGR2HSV);
         Core.inRange(out, new Scalar(hue[0], sat[0], val[0]),
                 new Scalar(hue[1], sat[1], val[1]), out);
     }
 
-    private void findContours(Mat input, boolean externalOnly,
-                              List<MatOfPoint> contours) {
+    private void findContours(Mat input, boolean externalOnly, List<MatOfPoint> contours) {
         Mat hierarchy = new Mat();
         contours.clear();
         int mode;
