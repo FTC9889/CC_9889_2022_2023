@@ -64,17 +64,11 @@ public class Motor {
 
     public void setPower(double power){
         if (Math.abs(power - currentPower) > .005) {
-            motor.setPower(power);
             currentPower = power;
             numHardwareUsesThisUpdate ++;
 
             Log.i("Power", "" + power);
         }
-    }
-
-    public void setPosition(double position) {
-        motor.setTargetPosition((int) (position * 145.1) - offsetPosition);
-        motor.setPower(1);
     }
 
     public int getPosition(){
@@ -92,6 +86,8 @@ public class Motor {
     }
 
     public void update() {
+        motor.setPower(currentPower);
+
         lastPosition = position;
         position = motor.getCurrentPosition();
         velocity = motor.getVelocity();

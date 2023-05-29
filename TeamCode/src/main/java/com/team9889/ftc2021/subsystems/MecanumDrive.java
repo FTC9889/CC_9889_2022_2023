@@ -16,6 +16,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import java.util.Arrays;
 
 import static java.lang.Math.PI;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 
 /**
  * Created by Eric on 9/7/2019.
@@ -36,7 +38,10 @@ public class MecanumDrive extends Subsystem {
 
     ElapsedTime timer = new ElapsedTime();
 
-    public Pose2d position = new Pose2d(0, 0, 0);
+    public Pose2d position = new Pose2d(0, 0, 0),
+            position2WheelLeft = new Pose2d(0, 0, 0),
+            position2WheelRight = new Pose2d(0, 0, 0),
+            position2WheelArc = new Pose2d(0, 0, 0);
     public double angleOffset = 0;
 
     boolean auto;
@@ -110,7 +115,11 @@ public class MecanumDrive extends Subsystem {
         }
 
         updateOdometry();
-//        update2WheelOdometry();
+        update2WheelOdometryLeft();
+        update2WheelOdometryRight();
+        update2WheelOdometryArc();
+
+        lastAngle = CruiseLib.angleWrapRad(getAngle().getTheda(AngleUnit.RADIANS));
     }
 
     @Override
@@ -122,12 +131,7 @@ public class MecanumDrive extends Subsystem {
     }
 
     public Rotation2d getAngle(){
-        try {
-            gyroAngle.setTheda(-Robot.getInstance().imu.getNormalHeading() + Math.toDegrees(angleOffset), AngleUnit.DEGREES);
-            return gyroAngle;
-        } catch (Exception e){
-            return new Rotation2d(0, AngleUnit.DEGREES);
-        }
+        return gyroAngle;
     }
 
     public void writeAngleToFile() {
@@ -142,8 +146,8 @@ public class MecanumDrive extends Subsystem {
             y = -y;
         }
 
-        double xMod = x * Math.cos(angle - angleFromAuton) - y * Math.sin(angle - angleFromAuton);
-        double yMod = x * Math.sin(angle - angleFromAuton) + y * Math.cos(angle - angleFromAuton);
+        double xMod = x * cos(angle - angleFromAuton) - y * sin(angle - angleFromAuton);
+        double yMod = x * sin(angle - angleFromAuton) + y * cos(angle - angleFromAuton);
 
         Log.v("Drive", "X:" + xMod + "Y:" + yMod + "Rotation:" + rotation);
         setPower(xMod, yMod, rotation);
@@ -153,10 +157,10 @@ public class MecanumDrive extends Subsystem {
         double r = Math.hypot(leftStickX, leftStickY);
         double robotAngle = Math.atan2(leftStickY, leftStickX) - PI / 4;
         double rightX = rightStickX;
-        final double v1 = r * Math.cos(robotAngle) + rightX;
-        final double v2 = r * Math.sin(robotAngle) - rightX;
-        final double v3 = r * Math.sin(robotAngle) + rightX;
-        final double v4 = r * Math.cos(robotAngle) - rightX;
+        final double v1 = r * cos(robotAngle) + rightX;
+        final double v2 = r * sin(robotAngle) - rightX;
+        final double v3 = r * sin(robotAngle) + rightX;
+        final double v4 = r * cos(robotAngle) - rightX;
 
         Robot.getInstance().fLDrive.setPower(v1);
         Robot.getInstance().fRDrive.setPower(v2);
@@ -178,12 +182,12 @@ public class MecanumDrive extends Subsystem {
 
     public double getDistance() {
         return (Robot.getInstance().distance.getVoltage() * 63.202 + 0.0626 + 3.25)
-                * Math.sin(-position.getHeading());
+                * sin(-position.getHeading());
     }
 
     public double getSideDistance() {
         return (Robot.getInstance().sideDistance.getVoltage() * 63.202 + 0.0626 + 3.25)
-                * Math.sin(-position.getHeading());
+                * sin(-position.getHeading());
     }
 
 
@@ -219,8 +223,8 @@ public class MecanumDrive extends Subsystem {
 
         Log.v("Adjusted Angle", angle + ", " + adjustedAngle);
 
-        robotPos.setX((xDist * Math.cos(0)) + (yDist * Math.sin(0)));
-        robotPos.setY((yDist * Math.cos(0)) + (xDist * Math.sin(0)));
+        robotPos.setX((xDist * cos(0)) + (yDist * sin(0)));
+        robotPos.setY((yDist * cos(0)) + (xDist * sin(0)));
 
         switch (corner) {
             case TOP_RIGHT:
@@ -278,7 +282,7 @@ public class MecanumDrive extends Subsystem {
 
 
     double lastIMU = 0;
-    void updateOdometry() {
+    public void updateOdometry() {
         double trackWidth = 10.03514883514424;
         double middleToCenter = 4.4499722;
 
@@ -287,7 +291,8 @@ public class MecanumDrive extends Subsystem {
         double middlePod = -Robot.getInstance().fRDrive.getDeltaPosition() / 1440.0 * ((35 / 25.4) * PI) * (25.0 / 15.0);
 
         double deltaAngle = ((leftPod - rightPod) / trackWidth);
-//        double deltaAngle = getAngle().getTheda(AngleUnit.RADIANS) - lastIMU;
+        Log.v("Delta Angle", "" + deltaAngle);
+
         double y = ((leftPod + rightPod) / 2) * yMultiplier;
         double x = (middlePod * xMultiplier) - (deltaAngle * middleToCenter);
 
@@ -298,36 +303,77 @@ public class MecanumDrive extends Subsystem {
         timer.reset();
 
 
-//        if (timer.milliseconds() > 1000) {
-//        if (timer.milliseconds() > 1) {
-//            position.setHeading(getAngle().getTheda(AngleUnit.RADIANS));
-//            lastIMU = position.getHeading();
-//            timer.reset();
-//        } else {
+        if (Math.abs(deltaAngle) < 0.1) {
+            position.setHeading(getAngle().getTheda(AngleUnit.RADIANS));
+        } else {
             position.setHeading(CruiseLib.angleWrapRad(position.getHeading() + deltaAngle));
-//        }
-        position.addX(((x * Math.cos(position.getHeading())) + (y * Math.sin(position.getHeading()))));
-        position.addY(-(y * Math.cos(position.getHeading())) + (x * Math.sin(position.getHeading())));
+        }
+        
+        position.addX(((x * cos(position.getHeading())) + (y * sin(position.getHeading()))));
+        position.addY(-(y * cos(position.getHeading())) + (x * sin(position.getHeading())));
     }
 
 
 
-    void update2WheelOdometry() {
-        double normalToCenter = 5;
-        double sidewaysToCenter = 4.5;
+    public void update2WheelOdometryLeft() {
+        double normalToCenter = 10.03514883514424 / 2.0;
+        double sidewaysToCenter = 4.4499722;
 
-        double normalPod = Robot.getInstance().fLDrive.getDeltaPosition() / 1440.0 * ((35 / 25.4) * PI) * (25.0 / 15.0);
-        double sidewaysPod = Robot.getInstance().bLDrive.getDeltaPosition() / 1440.0 * ((35 / 25.4) * PI) * (25.0 / 15.0);
+        double normalPod = Robot.getInstance().bLDrive.getDeltaPosition() / 1440.0 * ((35 / 25.4) * PI) * (25.0 / 15.0);
+        double sidewaysPod = -Robot.getInstance().fRDrive.getDeltaPosition() / 1440.0 * ((35 / 25.4) * PI) * (25.0 / 15.0);
 
 
-        double y = normalPod - ((getAngle().getTheda(AngleUnit.RADIANS) - lastAngle) * normalToCenter);
-        double x = sidewaysPod - ((getAngle().getTheda(AngleUnit.RADIANS) - lastAngle) * sidewaysToCenter);
-        lastAngle = getAngle().getTheda(AngleUnit.RADIANS);
+        double y = normalPod - (CruiseLib.angleWrapRad(getAngle().getTheda(AngleUnit.RADIANS) - lastAngle) * normalToCenter);
+        double x = sidewaysPod - (CruiseLib.angleWrapRad(getAngle().getTheda(AngleUnit.RADIANS) - lastAngle) * sidewaysToCenter);
 
-        position.setHeading(getAngle().getTheda(AngleUnit.RADIANS));
-        position.addX((x * Math.cos(position.getHeading())) + (y * Math.sin(position.getHeading())));
-        position.addY((y * Math.cos(position.getHeading())) - (x * Math.sin(position.getHeading())));
+        position2WheelLeft.setHeading(getAngle().getTheda(AngleUnit.RADIANS));
+        position2WheelLeft.addX((x * cos(position2WheelLeft.getHeading())) + (y * sin(position2WheelLeft.getHeading())));
+        position2WheelLeft.addY((-y * cos(position2WheelLeft.getHeading())) + (x * sin(position2WheelLeft.getHeading())));
     }
 
+    public void update2WheelOdometryRight() {
+        double normalToCenter = -10 / 2.0;
+        double sidewaysToCenter = 4.4499722;
 
+        double normalPod = Robot.getInstance().bRDrive.getDeltaPosition() / 1440.0 * ((35 / 25.4) * PI) * (25.0 / 15.0);
+        double sidewaysPod = -Robot.getInstance().fRDrive.getDeltaPosition() / 1440.0 * ((35 / 25.4) * PI) * (25.0 / 15.0);
+
+
+        double y = normalPod - (CruiseLib.angleWrapRad(getAngle().getTheda(AngleUnit.RADIANS) - lastAngle) * normalToCenter);
+        double x = sidewaysPod - (CruiseLib.angleWrapRad(getAngle().getTheda(AngleUnit.RADIANS) - lastAngle) * sidewaysToCenter);
+
+        position2WheelRight.setHeading(getAngle().getTheda(AngleUnit.RADIANS));
+        position2WheelRight.addX((x * cos(position2WheelRight.getHeading())) + (y * sin(position2WheelRight.getHeading())));
+        position2WheelRight.addY((-y * cos(position2WheelRight.getHeading())) + (x * sin(position2WheelRight.getHeading())));
+    }
+
+    void update2WheelOdometryArc() {
+        double normalToCenter = 10.03514883514424 / 2.0;
+        double sidewaysToCenter = 4.4499722;
+
+        double forwardPod = Robot.getInstance().fLDrive.getDeltaPosition() / 1440.0 * ((35 / 25.4) * PI) * (25.0 / 15.0);
+        double sidewaysPod = -Robot.getInstance().bLDrive.getDeltaPosition() / 1440.0 * ((35 / 25.4) * PI) * (25.0 / 15.0);
+        double angle = getAngle().getTheda(AngleUnit.RADIANS);
+        double difference = CruiseLib.angleWrapRad(angle - lastAngle);
+
+        double y = forwardPod - difference * normalToCenter;
+        double x = sidewaysPod - difference * sidewaysToCenter;
+
+        if(Math.abs(difference) > 0.001) {
+            double r0 = forwardPod / difference;
+            double r1 = sidewaysPod / difference;
+
+            double relativeDx = r0 * sin(difference) - r1 * (1 - cos(difference));
+            double relativeDy = r1 * sin(difference) + r0 * (1 - cos(difference));
+            x = relativeDx * cos(angle) - relativeDy * sin(angle);
+            y = -relativeDy * cos(angle) - relativeDx * sin(angle);
+        } else {
+            x = (x * cos(position2WheelArc.getHeading())) + (y * sin(position2WheelArc.getHeading()));
+            y = (-y * cos(position2WheelArc.getHeading())) + (x * sin(position2WheelArc.getHeading()));
+        }
+
+        position2WheelArc.setHeading(angle);
+        position2WheelArc.addX(x);
+        position2WheelArc.addY(y);
+    }
 }

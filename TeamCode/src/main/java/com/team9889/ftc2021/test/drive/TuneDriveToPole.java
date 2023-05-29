@@ -8,8 +8,11 @@ import com.team9889.ftc2021.auto.actions.drive.DriveToPole;
 import com.team9889.ftc2021.auto.actions.drive.PurePursuit;
 import com.team9889.ftc2021.auto.actions.utl.Wait;
 import com.team9889.ftc2021.subsystems.Lift;
+import com.team9889.ftc2021.subsystems.Robot;
 import com.team9889.lib.Pose;
 import com.team9889.lib.Pose2d;
+
+import org.openftc.easyopencv.PipelineRecordingParameters;
 
 import java.util.ArrayList;
 
@@ -19,7 +22,7 @@ import java.util.ArrayList;
 
 @Autonomous
 @Config
-@Disabled
+//@Disabled
 public class TuneDriveToPole extends AutoModeBase{
     public static double speed = 1, radius = 8;
 
@@ -31,7 +34,7 @@ public class TuneDriveToPole extends AutoModeBase{
 
         Robot.getLift().wantedLiftPosition = Lift.LiftPositions.HIGH;
         Robot.getLift().wantedScoreState = Lift.ScoreStates.HOVER_LEFT;
-        runAction(new Wait(1000));
+        runAction(new Wait(3000));
 
         runAction(new DriveToPole(5000));
     }

@@ -163,7 +163,8 @@ public class PurePursuit extends Action {
         maxSpeed = path.get(step).maxSpeed;
         double xSpeed = 1, ySpeed = 1;
 
-        if ((point.x == path.get(path.size() - 1).x && point.y == path.get(path.size() - 1).y && !error) || overshot) {
+//        if ((point.x == path.get(path.size() - 1).x && point.y == path.get(path.size() - 1).y && !error) || overshot) {
+        if ((Math.hypot(point.x - pose.getX(), point.y - pose.getY()) < point.radius && step == path.size() - 1 && !error) || overshot) {
             double x = CruiseLib.limitValue(((point.x - pose.getX()) / path.get(step).radius), 0, -1, 0, 1);
             x *= CruiseLib.limitValue((abs(point.x - pose.getX()) / divider), 0, -1, 0, 1);
             x = CruiseLib.limitValue(-x, -0.15, -maxSpeed, 0.15, maxSpeed);
@@ -177,7 +178,7 @@ public class PurePursuit extends Action {
 
             overshot = true;
         } else {
-            double relativeDist = Math.sqrt(Math.pow(point.x - pose.getX(), 2) + Math.pow(point.y - pose.getY(), 2));
+            double relativeDist = Math.hypot(point.x - pose.getX(), point.y - pose.getY());
 
             double speed = Range.clip((abs(relativeDist) / path.get(step).radius), 0, 1);
             speed *= Range.clip((abs(relativeDist) / ((divider / 10) * path.get(step).radius)), 0, 1);
@@ -188,10 +189,36 @@ public class PurePursuit extends Action {
         }
 
 
+
+        TelemetryPacket packet = new TelemetryPacket();
+        for (int i = 0; i < path.size() - 1; i++) {
+            packet.fieldOverlay()
+                    .setStroke("red")
+                    .strokeLine(path.get(i).x, path.get(i).y, path.get(i + 1).x, path.get(i + 1).y);
+        }
+
+        packet.fieldOverlay()
+                .setFill("green")
+                .fillRect(pose.getX() - 6.5, pose.getY() - 6.5, 13, 13);
+
+        packet.fieldOverlay()
+                .setStroke(Robot.getInstance().color)
+                .strokeCircle(pose.getX(), pose.getY(), path.get(step).radius);
+
+        packet.fieldOverlay()
+                .setStroke("black")
+                .strokeLine(pose.getX(), pose.getY(), point.x, point.y);
+
+
+
+
         //Turn
         double relativePointAngle;
 
-        if ((point.x == path.get(path.size() - 1).x && point.y == path.get(path.size() - 1).y && !error) || overshot) {
+        point = RobotToLine(path.get(step - 1), path.get(step), pose, path.get(step).radius + 3);
+
+//        if ((point.x == path.get(path.size() - 1).x && point.y == path.get(path.size() - 1).y && !error) || overshot) {
+        if ((Math.hypot(point.x - pose.getX(), point.y - pose.getY()) < point.radius && step == path.size() - 1 && !error) || overshot) {
             double angleToPoint;
             if (endTheta == 1000) {
                  angleToPoint = toDegrees(atan2(path.get(path.size() - 1).x - path.get(path.size() - 2).x,
@@ -232,23 +259,9 @@ public class PurePursuit extends Action {
         Robot.getInstance().getMecanumDrive().setPower(curXVel, curYVel, curThetaVel);
 
         error = false;
-        TelemetryPacket packet = new TelemetryPacket();
-        for (int i = 0; i < path.size() - 1; i++) {
-            packet.fieldOverlay()
-                    .setStroke("red")
-                    .strokeLine(path.get(i).x, path.get(i).y, path.get(i + 1).x, path.get(i + 1).y);
-        }
 
         packet.fieldOverlay()
-                .setFill("green")
-                .fillRect(pose.getX() - 6.5, pose.getY() - 6.5, 13, 13);
-
-        packet.fieldOverlay()
-                .setStroke(Robot.getInstance().color)
-                .strokeCircle(pose.getX(), pose.getY(), path.get(step).radius);
-
-        packet.fieldOverlay()
-                .setStroke("black")
+                .setStroke("white")
                 .strokeLine(pose.getX(), pose.getY(), point.x, point.y);
 
         packet.put("Wanted Vel", xSpeed);

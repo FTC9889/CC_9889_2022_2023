@@ -1,13 +1,17 @@
 package com.team9889.lib.hardware;
 
 import android.graphics.Color;
+import android.os.Build;
 
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
+import androidx.annotation.RequiresApi;
 
 /**
  * Created by joshua9889 on 2/16/2018.
@@ -20,6 +24,11 @@ public class RevColorDistance{
     private DistanceSensor sensorDistance = null;
     private HardwareMap hardwareMap = null;
     private String id = null;
+
+    int color = 0;
+    double dist = 0;
+
+    ElapsedTime timer = new ElapsedTime();
 
     public RevColorDistance(String id, HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
@@ -38,28 +47,31 @@ public class RevColorDistance{
         }
     }
 
+    public void update() {
+        color = sensorColor.argb();
+    }
+
     public double getIN(){
-        if(sensorDistance != null)
-            return sensorDistance.getDistance(DistanceUnit.INCH);
-        else
+        if(sensorDistance != null) {
+            if (timer.milliseconds() > 20) {
+                timer.reset();
+                dist = sensorDistance.getDistance(DistanceUnit.INCH);
+            }
+
+            return dist;
+        } else
             return 0;
     }
 
     public double red(){
-        return sensorColor.red();
+        return (color>>16)&0xFF;
     }
 
     public double green(){
-        return sensorColor.green();
+        return (color>>8)&0xFF;
     }
 
     public double blue(){
-        return sensorColor.blue();
-    }
-
-    public float[] hsv() {
-        float[] hsvOutput = new float[3];
-        Color.RGBToHSV((int)red()*100, (int)green()*100, (int)blue()*100, hsvOutput);
-        return hsvOutput;
+        return (color)&0xFF;
     }
 }

@@ -5,6 +5,7 @@ import android.util.Log;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
@@ -59,6 +60,8 @@ public abstract class Team9889Linear extends LinearOpMode {
         Robot.init(hardwareMap, autonomous);
         Robot.telemetry = telemetry;
         Robot.update();
+
+        PhotonCore.enable();
 
         initialize();
 

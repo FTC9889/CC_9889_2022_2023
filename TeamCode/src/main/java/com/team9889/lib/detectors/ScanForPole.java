@@ -22,6 +22,7 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 import org.openftc.easyopencv.OpenCvPipeline;
+import org.openftc.easyopencv.PipelineRecordingParameters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -162,6 +163,30 @@ public class ScanForPole extends OpenCvPipeline {
 //        cvResize(cvResizeOutput, cvResizeDsize, 3, 3, cvResizeInterpolation, cvResizeOutput);
 
         return cvResizeOutput;
+    }
+
+
+    boolean toggleRecording = false;
+    @Override
+    public void onViewportTapped()
+    {
+        toggleRecording = !toggleRecording;
+
+        if(toggleRecording)
+        {
+            /*
+             * This is all you need to do to start recording.
+             */
+
+        }
+        else
+        {
+            /*
+             * Note: if you don't stop recording by yourself, it will be automatically
+             * stopped for you at the end of your OpMode
+             */
+            Robot.getInstance().camera.stopRecordingPipeline();
+        }
     }
 
     /**

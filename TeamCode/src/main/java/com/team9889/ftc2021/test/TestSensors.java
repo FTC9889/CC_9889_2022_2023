@@ -55,28 +55,28 @@ public class TestSensors extends Team9889Linear {
 
 //            double heading = Robot.getInstance().getMecanumDrive().position.getHeading();
             heading *= -1;
-            Robot.getInstance().color = "black";
-            if (rightDetect() && centerDetect()) {
-                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * (rightToRobot.getX() + centerToRobot.getX()) / 2))
-                        + (Math.cos(heading) * (rightToRobot.getY() + centerToRobot.getY()) / 2));
-                Robot.getInstance().color = "red";
-            } else if (leftDetect() && centerDetect()) {
-                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * (leftToRobot.getX() + centerToRobot.getX()) / 2))
-                        + (Math.cos(heading) * (leftToRobot.getY() + centerToRobot.getY()) / 2));
-                Robot.getInstance().color = "red";
-            } else if (rightDetect()) {
-                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * rightToRobot.getX()))
-                        + (Math.cos(heading) * rightToRobot.getY()));
-                Robot.getInstance().color = "red";
-            } else if (centerDetect()) {
-                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * centerToRobot.getX()))
-                        + (Math.cos(heading) * centerToRobot.getY()));
-                Robot.getInstance().color = "red";
-            } else if (leftDetect()) {
-                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * leftToRobot.getX()))
-                        + (Math.cos(heading) * leftToRobot.getY()));
-                Robot.getInstance().color = "red";
-            }
+//            Robot.getInstance().color = "black";
+//            if (rightDetect() && centerDetect()) {
+//                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * (rightToRobot.getX() + centerToRobot.getX()) / 2))
+//                        + (Math.cos(heading) * (rightToRobot.getY() + centerToRobot.getY()) / 2));
+//                Robot.getInstance().color = "red";
+//            } else if (leftDetect() && centerDetect()) {
+//                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * (leftToRobot.getX() + centerToRobot.getX()) / 2))
+//                        + (Math.cos(heading) * (leftToRobot.getY() + centerToRobot.getY()) / 2));
+//                Robot.getInstance().color = "red";
+//            } else if (rightDetect()) {
+//                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * rightToRobot.getX()))
+//                        + (Math.cos(heading) * rightToRobot.getY()));
+//                Robot.getInstance().color = "red";
+//            } else if (centerDetect()) {
+//                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * centerToRobot.getX()))
+//                        + (Math.cos(heading) * centerToRobot.getY()));
+//                Robot.getInstance().color = "red";
+//            } else if (leftDetect()) {
+//                Robot.getInstance().getMecanumDrive().position.setY((12 - (Math.sin(heading) * leftToRobot.getX()))
+//                        + (Math.cos(heading) * leftToRobot.getY()));
+//                Robot.getInstance().color = "red";
+//            }
 
 //            telemetry.addLine("Light Sensors");
 //            telemetry.addData("Left Light", leftDetect() + ", " + Robot.leftLight.getVoltage());
@@ -103,6 +103,10 @@ public class TestSensors extends Team9889Linear {
     }
 
 
+    boolean farLeftDetect() {
+        return Robot.farLeftColor.blue() > 60 || Robot.farLeftColor.red() > 60;
+    }
+
     boolean leftDetect() {
         return Robot.leftColor.blue() > 60 || Robot.leftColor.red() > 60;
     }
@@ -113,5 +117,9 @@ public class TestSensors extends Team9889Linear {
 
     boolean rightDetect() {
         return Robot.rightColor.blue() > 180 || Robot.rightColor.red() > 180;
+    }
+
+    boolean farRightDetect() {
+        return Robot.farRightColor.blue() > 180 || Robot.farRightColor.red() > 180;
     }
 }

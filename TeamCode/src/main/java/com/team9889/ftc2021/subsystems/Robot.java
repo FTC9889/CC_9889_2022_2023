@@ -17,14 +17,17 @@ import com.qualcomm.robotcore.util.RobotLog;
 import com.team9889.ftc2021.Constants;
 import com.team9889.ftc2021.DriverStation;
 import com.team9889.ftc2021.auto.actions.ActionVariables;
+import com.team9889.lib.CircularBuffer;
 import com.team9889.lib.android.FileReader;
 import com.team9889.lib.android.FileWriter;
 import com.team9889.lib.hardware.CCServo;
 import com.team9889.lib.hardware.Motor;
+import com.team9889.lib.hardware.RevColorDistance;
 import com.team9889.lib.hardware.RevIMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
@@ -57,11 +60,12 @@ public class Robot {
     public Servo grabber;
 
     public AnalogInput v4bPot, distance, sideDistance;
-    public RevColorSensorV3 centerColor;
-    public ColorRangeSensor leftColor, rightColor;
+    public RevColorDistance farLeftColor, leftColor, centerColor, rightColor, farRightColor;
     public TouchSensor liftLimit;
 
     public Motor leds;
+
+    Thread I2CThread;
 
     List<LynxModule> hubs;
     LynxModule.BulkData bulkData;
@@ -78,6 +82,8 @@ public class Robot {
     public double result = Double.POSITIVE_INFINITY;
 
     public Telemetry telemetry;
+
+    CircularBuffer avgLoopTime = new CircularBuffer(50);
 
     public FileWriter writer;
     public FileReader reader;
@@ -161,9 +167,12 @@ public class Robot {
 //        v4bPot = hardwareMap.get(AnalogInput.class, Constants.LiftConstants.kV4BPot);
         distance = hardwareMap.get(AnalogInput.class, Constants.LiftConstants.kDistance);
         sideDistance = hardwareMap.get(AnalogInput.class, Constants.LiftConstants.kSideDistance);
-        centerColor = hardwareMap.get(RevColorSensorV3.class, Constants.LiftConstants.kCenterColor);
-        leftColor = hardwareMap.get(ColorRangeSensor.class, Constants.LiftConstants.kLeftColor);
-        rightColor = hardwareMap.get(ColorRangeSensor.class, Constants.LiftConstants.kRightColor);
+
+        centerColor = new RevColorDistance(Constants.LiftConstants.kCenterColor, hardwareMap);
+        farLeftColor = new RevColorDistance(Constants.LiftConstants.kFarLeftColor, hardwareMap);
+        leftColor = new RevColorDistance(Constants.LiftConstants.kLeftColor, hardwareMap);
+        rightColor = new RevColorDistance(Constants.LiftConstants.kRightColor, hardwareMap);
+        farRightColor = new RevColorDistance(Constants.LiftConstants.kFarRightColor, hardwareMap);
 
         liftLimit = hardwareMap.get(TouchSensor.class, Constants.LiftConstants.kLiftLimit);
 
@@ -184,6 +193,8 @@ public class Robot {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
+        I2CThread = new Thread(I2CRunnable);
+        I2CThread.start();
 
         robotTimer.reset();
         loopTime.reset();
@@ -209,16 +220,22 @@ public class Robot {
             Log.v("Exception@robot.update", "" + e);
         }
 
-        FtcDashboard.getInstance().startCameraStream(Robot.getInstance().camera, 15);
-
         leftV4B.update(loopTime.milliseconds());
         rightV4B.update(loopTime.milliseconds());
 
-        Log.v("Loop Time", "" + loopTime.milliseconds());
+        farLeftColor.update();
+        leftColor.update();
+        centerColor.update();
+        rightColor.update();
+        farRightColor.update();
 
-        if (loopTime.milliseconds() > 30) {
-            Log.v("LoopWarning", "" + loopTime.milliseconds());
-        }
+//        I2CThread.run();
+
+        Log.v("Loop Time", "" + loopTime.milliseconds());
+        Log.v("Update Hertz", "" + 1000 / loopTime.milliseconds());
+
+        avgLoopTime.addValue(loopTime.milliseconds());
+        Log.v("Loop Time Average", "" + avgLoopTime.getAverage());
 
         loopTime.reset();
     }
@@ -246,6 +263,7 @@ public class Robot {
     // Stop all subsystems
     public void stop(){
         leds.setPower(0);
+        I2CThread.interrupt();
 
         for (Subsystem subsystem : subsystems)
             subsystem.stop();
@@ -271,4 +289,17 @@ public class Robot {
 
     public String color = "black";
 
+    Runnable I2CRunnable = new Runnable() {
+        @Override
+        public void run() {
+            while (true) {
+//                leftColor.update();
+//                centerColor.update();
+//                rightColor.update();
+
+                getMecanumDrive().gyroAngle.setTheda(-imu.getNormalHeading()
+                        + Math.toDegrees(getMecanumDrive().angleOffset), AngleUnit.DEGREES);
+            }
+        }
+    };
 }

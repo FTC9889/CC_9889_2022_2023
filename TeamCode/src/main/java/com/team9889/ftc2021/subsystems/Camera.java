@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Point;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.PipelineRecordingParameters;
 
 /**
  * Created by MannoMation on 10/27/2018.
@@ -52,11 +53,11 @@ public class Camera extends Subsystem{
             public void onOpened() {
                 Robot.getInstance().camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 
-                if (auto) {
-                    Robot.getInstance().camera.setPipeline(scanForSignal);
-                } else {
+//                if (auto) {
+//                    Robot.getInstance().camera.setPipeline(scanForSignal);
+//                } else {
                     Robot.getInstance().camera.setPipeline(scanForPole);
-                }
+//                }
             }
 
             @Override
@@ -81,6 +82,8 @@ public class Camera extends Subsystem{
 
     @Override
     public void stop() {
+        Robot.getInstance().camera.stopRecordingPipeline();
+
         Robot.getInstance().camera.stopStreaming();
     }
 }
