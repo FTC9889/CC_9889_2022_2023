@@ -2,8 +2,10 @@ package com.team9889.ftc2021.auto.actions.drive;
 
 import android.util.Log;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.team9889.ftc2021.auto.actions.Action;
+import com.team9889.ftc2021.auto.actions.ActionVariables;
 import com.team9889.ftc2021.subsystems.Robot;
 import com.team9889.lib.CruiseLib;
 import com.team9889.lib.Pose2d;
@@ -12,47 +14,57 @@ import com.team9889.lib.control.math.cartesian.Vector2d;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
+import static java.lang.Math.hypot;
 import static java.lang.Math.toDegrees;
 
 /**
  * Created by edm11 on 5/6/2023.
  */
-class DriveOnLine extends Action {
+public class DriveOnLine extends Action {
     Vector2d leftToRobot = new Vector2d(38 / 25.4, 104 / 25.4), centerToRobot = new Vector2d(8 / 25.4, 104 / 25.4), rightToRobot = new Vector2d(-42 / 25.4, 104 / 25.4);
 
     public static PID xPID = new PID(0.0025, 0, 0.4, 0),
             yPID = new PID(0.0025, 0, 0.4, 0),
             thetaPID = new PID(0.0008, 0, 0.03);
 
-    double curXVel = 0, curYVel = 0, curThetaVel = 0;
+    double curXVel = 0, curYVel = 0, curThetaVel = 0, timeout = 10000;
+    ElapsedTime timer = new ElapsedTime();
 
-    boolean left = false;
+    boolean left;
 
     public DriveOnLine(boolean left) {
         this.left = left;
     }
 
+    public DriveOnLine(boolean left, double timeout) {
+        this.left = left;
+        this.timeout = timeout;
+    }
+
     @Override
     public void start() {
-
+        timer.reset();
     }
 
     @Override
     public void update() {
         Pose2d pose = Robot.getInstance().getMecanumDrive().position;
-        updateLinePos(pose.getHeading());
+//        updateLinePos(pose.getHeading());
 
         double relativeXDist = 61 - pose.getX();
-        double xSpeed = CruiseLib.limitValue((abs(relativeXDist) / 16), -0.1, -1, 0.1, 1);
+        double ySpeed = CruiseLib.limitValue((abs(relativeXDist) / 10), -0.1, -1, 0.1, 1);
 
 
         double relativeYDist = 12 - pose.getY();
-        double ySpeed = CruiseLib.limitValue((abs(relativeYDist) / 8), -0.1, -1, 0.1, 1);
+        double xSpeed = CruiseLib.limitValue((abs(relativeYDist) / 10), -0.1, -1, 0.1, 1);
 
 
-        double relativePointAngle = -CruiseLib.angleWrap(90 * (left ? 1 : -1) + toDegrees(pose.getHeading()));
+        double relativePointAngle = CruiseLib.angleWrap(90 * (left ? 1 : -1) + toDegrees(pose.getHeading()));
         double turnSpeed = CruiseLib.limitValue(relativePointAngle / 70.0, 1, 0);
 
+        xSpeed *= 12;
+        ySpeed *= 8;
+        turnSpeed *= 180;
 
         curXVel += xPID.update(-Robot.getInstance().getMecanumDrive().xVel, xSpeed);
         curYVel += yPID.update(Robot.getInstance().getMecanumDrive().yVel, ySpeed);
@@ -67,12 +79,16 @@ class DriveOnLine extends Action {
 
     @Override
     public boolean isFinished() {
-        return false;
+        return timer.milliseconds() > timeout ||
+                (hypot(Robot.getInstance().getMecanumDrive().xVel,
+                Robot.getInstance().getMecanumDrive().yVel) < 6 && timer.milliseconds() > 500);
+//        return timer.milliseconds() > timeout;
     }
 
     @Override
     public void done() {
-
+        Robot.getInstance().getMecanumDrive().setPower(0, 0, 0);
+        ActionVariables.doneDriving = true;
     }
 
     void updateLinePos(double heading) {

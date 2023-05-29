@@ -43,7 +43,7 @@ public class RevColorDistance{
             if(sensorDistance==null)
                 sensorDistance = hardwareMap.get(DistanceSensor.class, id);
 
-            RobotLog.d("===== RevColorDistance " + id + " - Initialed =====");
+            RobotLog.d("===== RevColorDistance " + id + " - Initiated =====");
         }
     }
 

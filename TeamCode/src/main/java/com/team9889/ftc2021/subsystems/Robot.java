@@ -220,17 +220,17 @@ public class Robot {
             Log.v("Exception@robot.update", "" + e);
         }
 
+        // Update Servos
         leftV4B.update(loopTime.milliseconds());
         rightV4B.update(loopTime.milliseconds());
 
-        farLeftColor.update();
-        leftColor.update();
-        centerColor.update();
-        rightColor.update();
-        farRightColor.update();
+//        farLeftColor.update();
+//        leftColor.update();
+//        centerColor.update();
+//        rightColor.update();
+//        farRightColor.update();
 
-//        I2CThread.run();
-
+        // Loop Time Data
         Log.v("Loop Time", "" + loopTime.milliseconds());
         Log.v("Update Hertz", "" + 1000 / loopTime.milliseconds());
 
@@ -297,8 +297,10 @@ public class Robot {
 //                centerColor.update();
 //                rightColor.update();
 
-                getMecanumDrive().gyroAngle.setTheda(-imu.getNormalHeading()
-                        + Math.toDegrees(getMecanumDrive().angleOffset), AngleUnit.DEGREES);
+                if (Math.abs(-imu.getNormalHeading() + Math.toDegrees(getMecanumDrive().angleOffset)) > 0.5) {
+                    getMecanumDrive().gyroAngle.setTheda(-imu.getNormalHeading()
+                            + Math.toDegrees(getMecanumDrive().angleOffset), AngleUnit.DEGREES);
+                }
             }
         }
     };

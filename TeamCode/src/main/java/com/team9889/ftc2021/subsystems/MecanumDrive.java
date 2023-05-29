@@ -115,9 +115,6 @@ public class MecanumDrive extends Subsystem {
         }
 
         updateOdometry();
-        update2WheelOdometryLeft();
-        update2WheelOdometryRight();
-        update2WheelOdometryArc();
 
         lastAngle = CruiseLib.angleWrapRad(getAngle().getTheda(AngleUnit.RADIANS));
     }
@@ -308,7 +305,7 @@ public class MecanumDrive extends Subsystem {
         } else {
             position.setHeading(CruiseLib.angleWrapRad(position.getHeading() + deltaAngle));
         }
-        
+
         position.addX(((x * cos(position.getHeading())) + (y * sin(position.getHeading()))));
         position.addY(-(y * cos(position.getHeading())) + (x * sin(position.getHeading())));
     }

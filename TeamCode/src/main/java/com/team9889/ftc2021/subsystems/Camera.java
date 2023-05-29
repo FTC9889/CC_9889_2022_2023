@@ -53,11 +53,11 @@ public class Camera extends Subsystem{
             public void onOpened() {
                 Robot.getInstance().camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 
-//                if (auto) {
-//                    Robot.getInstance().camera.setPipeline(scanForSignal);
-//                } else {
+                if (auto) {
+                    Robot.getInstance().camera.setPipeline(scanForSignal);
+                } else {
                     Robot.getInstance().camera.setPipeline(scanForPole);
-//                }
+                }
             }
 
             @Override

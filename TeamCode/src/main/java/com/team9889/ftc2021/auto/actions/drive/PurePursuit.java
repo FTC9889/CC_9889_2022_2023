@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.Range;
 import com.team9889.ftc2021.auto.actions.Action;
 import com.team9889.ftc2021.auto.actions.ActionVariables;
 import com.team9889.ftc2021.subsystems.Robot;
+import com.team9889.lib.CircularBuffer;
 import com.team9889.lib.CruiseLib;
 import com.team9889.lib.Pose;
 import com.team9889.lib.Pose2d;
@@ -44,6 +45,8 @@ public class PurePursuit extends Action {
     ArrayList<Pose> path;
     Pose tolerance = new Pose(2, 2, 3);
     int step = 1;
+
+    CircularBuffer speed = new CircularBuffer(20);
 
     boolean overshot = false, error = false, stopWall = false;
 
@@ -178,7 +181,7 @@ public class PurePursuit extends Action {
 
             overshot = true;
         } else {
-            double relativeDist = Math.hypot(point.x - pose.getX(), point.y - pose.getY());
+            double relativeDist = Math.sqrt(Math.pow(point.x - pose.getX(), 2) + Math.pow(point.y - pose.getY(), 2));
 
             double speed = Range.clip((abs(relativeDist) / path.get(step).radius), 0, 1);
             speed *= Range.clip((abs(relativeDist) / ((divider / 10) * path.get(step).radius)), 0, 1);
@@ -214,8 +217,6 @@ public class PurePursuit extends Action {
 
         //Turn
         double relativePointAngle;
-
-        point = RobotToLine(path.get(step - 1), path.get(step), pose, path.get(step).radius + 3);
 
 //        if ((point.x == path.get(path.size() - 1).x && point.y == path.get(path.size() - 1).y && !error) || overshot) {
         if ((Math.hypot(point.x - pose.getX(), point.y - pose.getY()) < point.radius && step == path.size() - 1 && !error) || overshot) {
@@ -256,13 +257,23 @@ public class PurePursuit extends Action {
         curYVel = CruiseLib.limitValue(curYVel, 1);
         curThetaVel = CruiseLib.limitValue(curThetaVel, 1);
 
+        if (abs(curYVel - speed.getAverage()) > 0.3) {
+            Log.v("DRIVE_HELP", curYVel + ", " + speed.getAverage());
+        } else {
+            speed.addValue(curYVel);
+        }
+
         Robot.getInstance().getMecanumDrive().setPower(curXVel, curYVel, curThetaVel);
 
         error = false;
 
         packet.fieldOverlay()
                 .setStroke("white")
-                .strokeLine(pose.getX(), pose.getY(), point.x, point.y);
+                .strokeLine(pose.getX(), pose.getY(), point.x, point.y)
+                .setFill("pink")
+                .strokeLine(pose.getX(), pose.getY(),
+                        pose.getX() + (5 * Math.cos(pose.getHeading())),
+                        pose.getY() + (5 * Math.sin(pose.getHeading())));
 
         packet.put("Wanted Vel", xSpeed);
         packet.put("Current Vel", -Robot.getInstance().getMecanumDrive().xVel);
