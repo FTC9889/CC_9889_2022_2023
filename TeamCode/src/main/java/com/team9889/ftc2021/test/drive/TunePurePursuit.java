@@ -19,26 +19,27 @@ import java.util.ArrayList;
 
 @Autonomous
 @Config
-@Disabled
 public class TunePurePursuit extends AutoModeBase{
-    public static double speed = 1, radius = 8;
+    public static double speed = 1, radius = 12;
 
     @Override
     public void run(AutoModeBase.StartPosition startPosition) {
         ArrayList<Pose> path1 = new ArrayList<>(), path2 = new ArrayList<>();
         waitForStart(true);
 
-        Robot.getMecanumDrive().position = new Pose2d(0, 0, -Math.PI / 2);
+        Robot.getMecanumDrive().setBumpersUp();
+
+        Robot.getMecanumDrive().position = new Pose2d(0, 0, 0);
 
         while (opModeIsActive()) {
-            path1.add(new Pose(0, 48, 90, speed, radius));
-            runAction(new PurePursuit(path1, -90, 4000));
+            path1.add(new Pose(48, 0, -90, speed, radius));
+            runAction(new PurePursuit(path1, 0, 4000));
             path1.clear();
 
             runAction(new Wait(1000));
 
-            path1.add(new Pose(0.1, 0, -90, speed, radius));
-            runAction(new PurePursuit(path1, -90, 4000));
+            path1.add(new Pose(0, 0, 90, speed, radius));
+            runAction(new PurePursuit(path1, 0, 4000));
             path1.clear();
 
             runAction(new Wait(1000));

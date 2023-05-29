@@ -193,8 +193,8 @@ public class Robot {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        I2CThread = new Thread(I2CRunnable);
-        I2CThread.start();
+//        I2CThread = new Thread(I2CRunnable);
+//        I2CThread.start();
 
         robotTimer.reset();
         loopTime.reset();
@@ -220,6 +220,9 @@ public class Robot {
             Log.v("Exception@robot.update", "" + e);
         }
 
+        getMecanumDrive().gyroAngle.setTheda(-imu.getNormalHeading()
+                + Math.toDegrees(getMecanumDrive().angleOffset), AngleUnit.DEGREES);
+
         // Update Servos
         leftV4B.update(loopTime.milliseconds());
         rightV4B.update(loopTime.milliseconds());
@@ -236,6 +239,10 @@ public class Robot {
 
         avgLoopTime.addValue(loopTime.milliseconds());
         Log.v("Loop Time Average", "" + avgLoopTime.getAverage());
+
+        while(loopTime.milliseconds() < 15) {
+
+        }
 
         loopTime.reset();
     }
@@ -263,7 +270,7 @@ public class Robot {
     // Stop all subsystems
     public void stop(){
         leds.setPower(0);
-        I2CThread.interrupt();
+//        I2CThread.interrupt();
 
         for (Subsystem subsystem : subsystems)
             subsystem.stop();

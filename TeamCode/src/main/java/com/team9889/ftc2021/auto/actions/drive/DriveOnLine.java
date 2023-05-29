@@ -24,8 +24,8 @@ public class DriveOnLine extends Action {
     Vector2d leftToRobot = new Vector2d(38 / 25.4, 104 / 25.4), centerToRobot = new Vector2d(8 / 25.4, 104 / 25.4), rightToRobot = new Vector2d(-42 / 25.4, 104 / 25.4);
 
     public static PID xPID = new PID(0.0025, 0, 0.4, 0),
-            yPID = new PID(0.0025, 0, 0.4, 0),
-            thetaPID = new PID(0.0008, 0, 0.03);
+            yPID = new PID(0.0015, 0, 0.05, 0),
+            thetaPID = new PID(0.0003, 0, 0.005);
 
     double curXVel = 0, curYVel = 0, curThetaVel = 0, timeout = 10000;
     ElapsedTime timer = new ElapsedTime();
@@ -60,11 +60,11 @@ public class DriveOnLine extends Action {
 
 
         double relativePointAngle = CruiseLib.angleWrap(90 * (left ? 1 : -1) + toDegrees(pose.getHeading()));
-        double turnSpeed = CruiseLib.limitValue(relativePointAngle / 70.0, 1, 0);
+        double turnSpeed = CruiseLib.limitValue(relativePointAngle / 70.0, 0, -1, 0, 1);
 
-        xSpeed *= 12;
-        ySpeed *= 8;
-        turnSpeed *= 180;
+        xSpeed *= 20;
+        ySpeed *= 14;
+        turnSpeed *= 90;
 
         curXVel += xPID.update(-Robot.getInstance().getMecanumDrive().xVel, xSpeed);
         curYVel += yPID.update(Robot.getInstance().getMecanumDrive().yVel, ySpeed);
@@ -81,7 +81,7 @@ public class DriveOnLine extends Action {
     public boolean isFinished() {
         return timer.milliseconds() > timeout ||
                 (hypot(Robot.getInstance().getMecanumDrive().xVel,
-                Robot.getInstance().getMecanumDrive().yVel) < 6 && timer.milliseconds() > 500);
+                Robot.getInstance().getMecanumDrive().yVel) < 6 && timer.milliseconds() > 1000);
 //        return timer.milliseconds() > timeout;
     }
 

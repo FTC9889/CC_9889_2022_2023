@@ -34,8 +34,8 @@ public class PurePursuit extends Action {
     public static double divider = 6;
 
     public static PID xPID = new PID(0.0025, 0, 0.4, 0),
-            yPID = new PID(0.0025, 0, 0.4, 0),
-            thetaPID = new PID(0.0008, 0, 0.03);
+            yPID = new PID(0.0015, 0, 0.05, 0),
+            thetaPID = new PID(0.0003, 0, 0.005);
 
     double curXVel = 0, curYVel = 0, curThetaVel = 0;
 
@@ -239,7 +239,7 @@ public class PurePursuit extends Action {
             Log.v("Angle", angleToPoint + ", " + relativePointAngle + ", " + toDegrees(pose.getHeading()));
         }
 
-        double turnSpeed = CruiseLib.limitValue(relativePointAngle / 70.0,
+        double turnSpeed = CruiseLib.limitValue(relativePointAngle / 50.0,
                 0, -path.get(step).turnSpeed, 0, path.get(step).turnSpeed);
 
 //        xSpeed = CruiseLib.limitValue(xSpeed, 1 - Math.abs(turnSpeed * 1.5));
@@ -276,7 +276,7 @@ public class PurePursuit extends Action {
                         pose.getY() + (5 * Math.sin(pose.getHeading())));
 
         packet.put("Wanted Vel", xSpeed);
-        packet.put("Current Vel", -Robot.getInstance().getMecanumDrive().xVel);
+        packet.put("Current Vel", Robot.getInstance().getMecanumDrive().xVel);
         packet.put("Power", curXVel * 100);
 
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
