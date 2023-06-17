@@ -47,13 +47,12 @@ public class Grab extends Action {
 
             stage = 1;
         } else if (stage == 1) {
-            if (Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.HOLDING) {
-                done = true;
-            } else if (Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.GRAB_RIGHT) {
-                if (timer2.milliseconds() > 350) {
+            if (Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.GRAB_RIGHT ||
+                    Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.HOLDING) {
+                if (timer2.milliseconds() > (Robot.getInstance().getLift().autoConeCount > 2 ? 450 : 350)) {
                     Robot.getInstance().getLift().liftInAutoPos =
                             Robot.getInstance().getLift().setLiftPosition(
-                                    CruiseLib.limitValue(liftHeight + 7, 100, 0));
+                                    CruiseLib.limitValue(liftHeight + 4, 100, 0));
                 }
             } else {
                 Robot.getInstance().getLift().setLiftPosition(CruiseLib.limitValue(liftHeight, 100, 0));
@@ -66,7 +65,8 @@ public class Grab extends Action {
             }
         }
 
-        if (Robot.getInstance().getLift().wantedScoreState != Lift.ScoreStates.GRAB_RIGHT) {
+        if (Robot.getInstance().getLift().wantedScoreState != Lift.ScoreStates.GRAB_RIGHT &&
+                Robot.getInstance().getLift().wantedScoreState != Lift.ScoreStates.HOLDING) {
             timer2.reset();
         }
 

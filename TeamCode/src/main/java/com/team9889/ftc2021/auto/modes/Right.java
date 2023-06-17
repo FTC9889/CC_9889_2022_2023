@@ -62,7 +62,7 @@ public class Right extends AutoModeBase {
         Robot.getMecanumDrive().setBumpersUp();
 
         path.add(new Pose(35, 22, 180, 1, 8));
-        path.add(new Pose(30, 6, 180, .5, 12));
+        path.add(new Pose(30.5, 6, 180, .5, 12));
         runAction(new ParallelAction(Arrays.asList(
                 new PurePursuit(path, new Pose(1, 1, 1), -42, 3000),
                 new SetLift(Lift.LiftPositions.HIGH, Lift.ScoreStates.HOVER_LEFT, 800))));
@@ -76,11 +76,7 @@ public class Right extends AutoModeBase {
                 new Score(Lift.LiftPositions.HIGH, true, 0))));
         path.clear();
 
-        if (!useLEDs) {
-            Robot.leds.setPower(0);
-        }
-
-        for (int i = 0; i < 5 && timer.milliseconds() < 25500 && opModeIsActive(); i++) {
+        for (int i = 0; i < 5 && timer.milliseconds() < 24500 && opModeIsActive(); i++) {
 //            Robot.getLift().wantedLiftPosition = Lift.LiftPositions.NULL;
 //            Robot.getLift().wantedScoreState = Lift.ScoreStates.GROUND_LEFT;
 
@@ -88,7 +84,7 @@ public class Right extends AutoModeBase {
             path.add(new Pose(52, 12, 0, 1, 5));
             runAction(new ParallelAction(Arrays.asList(
                     new PurePursuit(path, new Pose(3, 3, 5), -90, 5000, true, true),
-                    new SetLiftHeight(0 - (i * (13.0 / 8.0)), 300))));
+                    new SetLiftHeight(3.5 - (i * (13.0 / 8.0)), 300))));
             path.clear();
 
             Robot.getMecanumDrive().setBumpersDown();

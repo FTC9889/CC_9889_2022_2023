@@ -123,6 +123,11 @@ public abstract class Team9889Linear extends LinearOpMode {
                 }
 
 
+                if (Robot.isRed) {
+                    telemetry.addData("Alliance", "<font size=\"+2\" color=\"red\"> RED </font>");
+                } else {
+                    telemetry.addData("Alliance", "<font size=\"+2\" color=\"blue\"> BLUE </font>");
+                }
 
                 if (Robot.getCamera().scanForSignal.getBlackAverage() < 30) {
                     telemetry.addData("Lined Up", "<font size=\"+2\" color=\"green\"> Yes </font>");

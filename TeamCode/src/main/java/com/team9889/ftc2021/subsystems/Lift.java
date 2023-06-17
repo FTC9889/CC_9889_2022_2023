@@ -225,7 +225,8 @@ public class Lift extends Subsystem{
                 if (grabTimer.milliseconds() > (auto ? 150 : 120) && grabTimer.milliseconds() < 350) {
                     Robot.getInstance().driverStation.grabberClosed = true;
                     closeGrabber();
-                } else if (auto ? (liftInAutoPos) : (grabTimer.milliseconds() > 350)) {
+//                } else if (auto ? (liftInAutoPos) : (grabTimer.milliseconds() > 350)) {
+                } else if (grabTimer.milliseconds() > 350) {
                     wantedScoreState = ScoreStates.HOLDING;
                 }
                 break;

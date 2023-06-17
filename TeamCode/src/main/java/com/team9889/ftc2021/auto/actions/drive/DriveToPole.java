@@ -20,7 +20,7 @@ import org.opencv.core.Point;
 
 @Config
 public class DriveToPole extends Action {
-    public static double wantedPoint = 160, wantedY = 122;
+    public static double wantedPoint = 160, wantedY = 116;
 
     int highTolerance = 110;
 

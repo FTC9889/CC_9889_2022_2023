@@ -46,6 +46,6 @@ public class SetLiftHeight extends Action {
 
     @Override
     public void done() {
-
+        Robot.getInstance().getLift().setLiftPower(0.05);
     }
 }
