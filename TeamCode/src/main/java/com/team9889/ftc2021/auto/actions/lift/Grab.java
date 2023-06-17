@@ -50,7 +50,7 @@ public class Grab extends Action {
             if (Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.HOLDING) {
                 done = true;
             } else if (Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.GRAB_RIGHT) {
-                if (timer2.milliseconds() > 300) {
+                if (timer2.milliseconds() > 350) {
                     Robot.getInstance().getLift().liftInAutoPos =
                             Robot.getInstance().getLift().setLiftPosition(
                                     CruiseLib.limitValue(liftHeight + 7, 100, 0));
@@ -60,7 +60,7 @@ public class Grab extends Action {
                 timerOffset = timer.milliseconds();
 
 //                if (driveTimer.milliseconds() > 200) {
-                if (ActionVariables.doneDriving){
+                if (ActionVariables.doneDriving && (timer.milliseconds() > 200 || liftHeight <= 0)){
                     Robot.getInstance().getLift().wantedScoreState = Lift.ScoreStates.GRAB_RIGHT;
                 }
             }

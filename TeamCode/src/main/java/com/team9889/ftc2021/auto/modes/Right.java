@@ -62,9 +62,9 @@ public class Right extends AutoModeBase {
         Robot.getMecanumDrive().setBumpersUp();
 
         path.add(new Pose(35, 22, 180, 1, 8));
-        path.add(new Pose(30, 5.5, 180, .7, 12));
+        path.add(new Pose(30, 6, 180, .5, 12));
         runAction(new ParallelAction(Arrays.asList(
-                new PurePursuit(path, new Pose(1, 1, 2), -49, 3000),
+                new PurePursuit(path, new Pose(1, 1, 1), -42, 3000),
                 new SetLift(Lift.LiftPositions.HIGH, Lift.ScoreStates.HOVER_LEFT, 800))));
 //                new Score(Lift.LiftPositions.HIGH, true, 1000))));
         path.clear();
@@ -88,7 +88,7 @@ public class Right extends AutoModeBase {
             path.add(new Pose(52, 12, 0, 1, 5));
             runAction(new ParallelAction(Arrays.asList(
                     new PurePursuit(path, new Pose(3, 3, 5), -90, 5000, true, true),
-                    new SetLiftHeight(3.5 - (i * (13.0 / 8.0)), 300))));
+                    new SetLiftHeight(0 - (i * (13.0 / 8.0)), 300))));
             path.clear();
 
             Robot.getMecanumDrive().setBumpersDown();
@@ -99,16 +99,16 @@ public class Right extends AutoModeBase {
 
             runAction(new Grab(CruiseLib.limitValue(3.5 - (i * (13.0 / 8.0)), 10, 0)));
 
-            if (Math.abs(Robot.getMecanumDrive().position.getX() + 60) < 15) {
-                Robot.getMecanumDrive().position.setX(60);
-            }
+//            if (Math.abs(Robot.getMecanumDrive().position.getX()) - 60 < 15) {
+//                Robot.getMecanumDrive().position.setX(60);
+//            }
 
             Robot.getMecanumDrive().setBumpersUp();
 
-            path.add(new Pose(39, 12, 180, 1, 6));
+            path.add(new Pose(39, 12, 180, 1, 4));
 //            path.add(new Pose(-30, 6, -180, .6, 4));
-            path.add(new Pose(30, 4.5, 180, .7, 12));
-            runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(1, 1, 2), -50, 3000),
+            path.add(new Pose(31, 6, 180, .7, 6));
+            runAction(new ParallelAction(Arrays.asList(new PurePursuit(path, new Pose(1, 1, 1), -46, 3000),
                     new SetLift(Lift.LiftPositions.HIGH, Lift.ScoreStates.HOVER_LEFT, 200))));
             path.clear();
 
@@ -133,7 +133,7 @@ public class Right extends AutoModeBase {
 //                runAction(new PurePursuit(path, 90, true));
 
                 path.add(new Pose(33, 12, 0, 1, 4));
-                path.add(new Pose(10, 16, 0, 1, 8));
+                path.add(new Pose(12, 14, 0, 1, 8));
                 runAction(new PurePursuit(path, 0, 5000, true, 40));
                 break;
             case 2:

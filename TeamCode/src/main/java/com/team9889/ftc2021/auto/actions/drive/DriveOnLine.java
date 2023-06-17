@@ -27,7 +27,8 @@ public class DriveOnLine extends Action {
             yPID = new PID(0.0015, 0, 0.05, 0),
             thetaPID = new PID(0.0003, 0, 0.005);
 
-
+    boolean center = false;
+    int centerCount = 0;
 
     double curXVel = 0, curYVel = 0, curThetaVel = 0, timeout = 10000;
     ElapsedTime timer = new ElapsedTime();
@@ -59,25 +60,36 @@ public class DriveOnLine extends Action {
         double relativeYDist = 12 - pose.getY();
         double xSpeed = CruiseLib.limitValue((abs(relativeYDist) / 10), 0, -1, 0, 1);
 
-        double relativeXDist = 61 - pose.getX();
+        double relativeXDist = ((left ? -1 : 1) * 61) - pose.getX();
         double ySpeed = CruiseLib.limitValue((abs(relativeXDist) / 10), 0, -1, 0, 1);
 
-        if (farLeftDetect()) {
-            xSpeed = -0.2;
-            ySpeed = CruiseLib.limitValue((abs(relativeXDist) / 10), 0, -0.4, 0, 0.4);
-            Log.v("ColorDetect", "Far Left");
-        } else if (leftDetect()) {
-            xSpeed = -0.1;
-            ySpeed = CruiseLib.limitValue((abs(relativeXDist) / 10), 0, -0.6, 0, 0.6);
-            Log.v("ColorDetect", "Left");
-        } else if (rightDetect()) {
-            xSpeed = 0.1;
-            ySpeed = CruiseLib.limitValue((abs(relativeXDist) / 10), 0, -0.6, 0, 0.6);
-            Log.v("ColorDetect", "Right");
-        } else if (farRightDetect()) {
-            xSpeed = 0.2;
-            ySpeed = CruiseLib.limitValue((abs(relativeXDist) / 10), 0, -0.4, 0, 0.4);
-            Log.v("ColorDetect", "Far Right");
+        if (centerDetect() || center) {
+            xSpeed = 0;
+
+            centerCount++;
+            if (centerCount >= 0) {
+                center = true;
+            }
+        } else {
+            if (leftDetect()) {
+                xSpeed = -0.1;
+                ySpeed = CruiseLib.limitValue((abs(relativeXDist) / 10), 0, -0.6, 0, 0.6);
+                Log.v("ColorDetect", "Left");
+            } else if (rightDetect()) {
+                xSpeed = 0.1;
+                ySpeed = CruiseLib.limitValue((abs(relativeXDist) / 10), 0, -0.6, 0, 0.6);
+                Log.v("ColorDetect", "Right");
+            } else if (farLeftDetect()) {
+                xSpeed = -0.2;
+                ySpeed = CruiseLib.limitValue((abs(relativeXDist) / 10), 0, -0.4, 0, 0.4);
+                Log.v("ColorDetect", "Far Left");
+            } else if (farRightDetect()) {
+                xSpeed = 0.2;
+                ySpeed = CruiseLib.limitValue((abs(relativeXDist) / 10), 0, -0.4, 0, 0.4);
+                Log.v("ColorDetect", "Far Right");
+            }
+
+            centerCount = 0;
         }
 
         double relativePointAngle = CruiseLib.angleWrap(90 * (left ? -1 : 1) + toDegrees(pose.getHeading()));
@@ -136,22 +148,37 @@ public class DriveOnLine extends Action {
     }
 
     boolean farLeftDetect() {
-        return Robot.getInstance().farLeftColor.blue() > 1000 || Robot.getInstance().farLeftColor.red() > 250;
+        if (Robot.getInstance().isRed)
+            return Robot.getInstance().farLeftColor.red() > 250;
+        else
+            return Robot.getInstance().farLeftColor.blue() > 1000;
     }
 
     boolean leftDetect() {
-        return Robot.getInstance().leftColor.blue() > 1000 || Robot.getInstance().leftColor.red() > 250;
+        if (Robot.getInstance().isRed)
+            return Robot.getInstance().leftColor.red() > 250;
+        else
+            return Robot.getInstance().leftColor.blue() > 1000;
     }
 
     boolean centerDetect() {
-        return Robot.getInstance().centerColor.blue() > 1000 || Robot.getInstance().centerColor.red() > 400;
+        if (Robot.getInstance().isRed)
+            return Robot.getInstance().centerColor.red() > 400;
+        else
+            return Robot.getInstance().centerColor.blue() > 1000;
     }
 
     boolean rightDetect() {
-        return Robot.getInstance().rightColor.blue() > 1000 || Robot.getInstance().rightColor.red() > 250;
+        if (Robot.getInstance().isRed)
+            return Robot.getInstance().rightColor.red() > 250;
+        else
+            return Robot.getInstance().rightColor.blue() > 1000;
     }
 
     boolean farRightDetect() {
-        return Robot.getInstance().farRightColor.blue() > 1000 || Robot.getInstance().farRightColor.red() > 250;
+        if (Robot.getInstance().isRed)
+            return Robot.getInstance().farRightColor.red() > 250;
+        else
+            return Robot.getInstance().farRightColor.blue() > 1000;
     }
 }

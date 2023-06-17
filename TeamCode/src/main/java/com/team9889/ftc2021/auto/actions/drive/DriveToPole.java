@@ -83,6 +83,8 @@ public class DriveToPole extends Action {
         ActionVariables.doneDriving = false;
 
         startPose = Robot.getInstance().getMecanumDrive().position;
+
+        curYVel = -0.2;
     }
 
     @Override
@@ -95,14 +97,14 @@ public class DriveToPole extends Action {
                 Math.hypot(startPose.getX() - robot.getX(), startPose.getY() - robot.getY()) < 12 &&
                 Math.abs(thetaPID.getError()) < 30;
 
-        ySpeed = CruiseLib.limitValue(ySpeed, 0, (canDrive ? -0.2 : 0), 0, 0.2);
+        ySpeed = CruiseLib.limitValue(ySpeed, 0, (canDrive ? -0.3 : 0), 0, 0.2);
 
         thetaSpeed = CruiseLib.limitValue(thetaSpeed, 0, -maxSpeed, 0, maxSpeed);
 
         lastTime = timer.milliseconds();
 
         ySpeed *= 54;
-        thetaSpeed *= 250;
+        thetaSpeed *= 300;
 
         curYVel += yPIDVel.update(Robot.getInstance().getMecanumDrive().yVel, ySpeed);
         curThetaVel += thetaPIDVel.update(Robot.getInstance().getMecanumDrive().thetaVel, thetaSpeed);

@@ -35,7 +35,7 @@ public class TestSensors extends Team9889Linear {
             telemetry.addLine();
 
             telemetry.addLine("Color Sensors");
-            telemetry.addData("Far Left Color", leftDetect() + ", blue: " + Robot.farLeftColor.blue()
+            telemetry.addData("Far Left Color", farLeftDetect() + ", blue: " + Robot.farLeftColor.blue()
                     + ", red: " + Robot.farLeftColor.red());
             telemetry.addData("Left Color", leftDetect() + ", blue: " + Robot.leftColor.blue()
                     + ", red: " + Robot.leftColor.red());
@@ -43,7 +43,7 @@ public class TestSensors extends Team9889Linear {
                     + ", red: " + Robot.centerColor.red());
             telemetry.addData("Right Color", rightDetect() + ", blue: " + Robot.rightColor.blue()
                     + ", red: " + Robot.rightColor.red());
-            telemetry.addData("Far Right Color", rightDetect() + ", blue: " + Robot.farRightColor.blue()
+            telemetry.addData("Far Right Color", farRightDetect() + ", blue: " + Robot.farRightColor.blue()
                     + ", red: " + Robot.farRightColor.red());
             telemetry.addLine();
             telemetry.addLine();

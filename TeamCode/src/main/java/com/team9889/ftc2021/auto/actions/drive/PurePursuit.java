@@ -356,8 +356,8 @@ public class PurePursuit extends Action {
                 follow = point2;
             }
 
-            if (((follow.x - point1.x) / (point2.x - point1.x)) -
-                    ((follow.y - point1.y) / (point2.y - point1.y)) < 1) {
+            if (Math.abs(((follow.x - point1.x) / (point2.x - point1.x)) -
+                    ((follow.y - point1.y) / (point2.y - point1.y))) < 1) {
                 return follow;
             } else {
                 return new Pose(10000, 10000, 10000);

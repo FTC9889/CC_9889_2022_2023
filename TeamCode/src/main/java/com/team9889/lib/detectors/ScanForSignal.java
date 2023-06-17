@@ -20,7 +20,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 @Config
 public class ScanForSignal extends OpenCvPipeline {
-    public int height = 15, width = 15, x = 165, y = 70, blackY = 96;
+    public int height = 15, width = 10, x = 172, y = 90, blackY = 96;
     public static boolean drawRect = true;
 
     public boolean left = false;

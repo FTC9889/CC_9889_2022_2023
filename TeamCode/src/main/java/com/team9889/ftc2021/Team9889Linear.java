@@ -116,11 +116,10 @@ public abstract class Team9889Linear extends LinearOpMode {
                     }
                 }
 
-                if (ledToggle && gamepad1.left_bumper) {
-                    useLEDs = !useLEDs;
-                    ledToggle = false;
-                } else if (!gamepad1.left_bumper) {
-                    ledToggle = true;
+                if (gamepad1.b) {
+                    Robot.isRed = true;
+                } else if (gamepad1.x) {
+                    Robot.isRed = false;
                 }
 
 

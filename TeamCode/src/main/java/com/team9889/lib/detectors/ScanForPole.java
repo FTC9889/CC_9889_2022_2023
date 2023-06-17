@@ -46,7 +46,7 @@ public class ScanForPole extends OpenCvPipeline {
 
     // With LEDs
     public static HSV poleHSV = new HSV(60, 130,
-            100, 255, 200, 255);
+            100, 255, 150, 255);
 
     // Without LEDs
 //    public static HSV poleHSV = new HSV(90, 100,
