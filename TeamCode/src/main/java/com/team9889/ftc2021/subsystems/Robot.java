@@ -21,6 +21,7 @@ import com.team9889.lib.android.FileReader;
 import com.team9889.lib.android.FileWriter;
 import com.team9889.lib.hardware.CCServo;
 import com.team9889.lib.hardware.Motor;
+import com.team9889.lib.hardware.RevColorDistance;
 import com.team9889.lib.hardware.RevIMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -58,7 +59,7 @@ public class Robot {
 
     public AnalogInput v4bPot, distance, sideDistance;
     public RevColorSensorV3 centerColor;
-    public ColorRangeSensor leftColor, rightColor;
+    public RevColorDistance farLeftColor, leftColor, rightColor, farRightColor;
     public TouchSensor liftLimit;
 
     public Motor leds;
@@ -161,9 +162,12 @@ public class Robot {
 //        v4bPot = hardwareMap.get(AnalogInput.class, Constants.LiftConstants.kV4BPot);
         distance = hardwareMap.get(AnalogInput.class, Constants.LiftConstants.kDistance);
         sideDistance = hardwareMap.get(AnalogInput.class, Constants.LiftConstants.kSideDistance);
+
         centerColor = hardwareMap.get(RevColorSensorV3.class, Constants.LiftConstants.kCenterColor);
-        leftColor = hardwareMap.get(ColorRangeSensor.class, Constants.LiftConstants.kLeftColor);
-        rightColor = hardwareMap.get(ColorRangeSensor.class, Constants.LiftConstants.kRightColor);
+        farLeftColor = new RevColorDistance(Constants.LiftConstants.kFarLeftColor, hardwareMap);
+        leftColor = new RevColorDistance(Constants.LiftConstants.kLeftColor, hardwareMap);
+        rightColor = new RevColorDistance(Constants.LiftConstants.kRightColor, hardwareMap);
+        farRightColor = new RevColorDistance(Constants.LiftConstants.kFarRightColor, hardwareMap);
 
         liftLimit = hardwareMap.get(TouchSensor.class, Constants.LiftConstants.kLiftLimit);
 

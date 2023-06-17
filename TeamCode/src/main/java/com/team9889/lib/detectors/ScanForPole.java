@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.team9889.ftc2021.Team9889Linear;
+import com.team9889.ftc2021.auto.actions.drive.DriveToPole;
 import com.team9889.ftc2021.subsystems.Robot;
 import com.team9889.lib.detectors.util.HSV;
 
@@ -44,7 +45,7 @@ public class ScanForPole extends OpenCvPipeline {
     private ArrayList<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 
     // With LEDs
-    public static HSV poleHSV = new HSV(60, 100,
+    public static HSV poleHSV = new HSV(60, 130,
             100, 255, 200, 255);
 
     // Without LEDs
@@ -63,13 +64,13 @@ public class ScanForPole extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-        if (Team9889Linear.useLEDs) {
-            poleHSV = new HSV(60, 100,
-                    100, 255, 200, 255);
-        } else {
-            poleHSV = new HSV(90, 100,
-                    100, 255, 100, 255);
-        }
+//        if (Team9889Linear.useLEDs) {
+//            poleHSV = new HSV(60, 100,
+//                    100, 255, 200, 255);
+//        } else {
+//            poleHSV = new HSV(90, 100,
+//                    100, 255, 100, 255);
+//        }
 
         // Step CV_resize0:
         Mat cvResizeSrc = input;
@@ -124,6 +125,10 @@ public class ScanForPole extends OpenCvPipeline {
                 index = i;
             }
         }
+
+        Imgproc.rectangle(cvResizeOutput,
+                new Rect((int)DriveToPole.wantedPoint - 20, (int)DriveToPole.wantedY - 20, 40, 40),
+                new Scalar(255, 0, 0));
 
         if (contours.size() > 0) {
             RotatedRect rect = Imgproc.minAreaRect(new MatOfPoint2f(contours.get(index).toArray()));

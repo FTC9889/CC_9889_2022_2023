@@ -117,6 +117,15 @@ public class PurePursuit extends Action {
         this.overshot = fieldCentric;
     }
 
+    public PurePursuit(ArrayList<Pose> path, Pose tolerance, double endTheta, double timeout, boolean fieldCentric, boolean stopWall) {
+        this.path = path;
+        this.tolerance = tolerance;
+        this.timeout = timeout;
+        this.endTheta = endTheta;
+        this.overshot = fieldCentric;
+        this.stopWall = stopWall;
+    }
+
     @Override
     public void start() {
 //        if (!Robot.getInstance().isRed) {
@@ -188,6 +197,25 @@ public class PurePursuit extends Action {
         }
 
 
+
+        TelemetryPacket packet = new TelemetryPacket();
+        for (int i = 0; i < path.size() - 1; i++) {
+            packet.fieldOverlay()
+                    .setStroke("red")
+                    .strokeLine(path.get(i).x, path.get(i).y, path.get(i + 1).x, path.get(i + 1).y);
+        }
+        packet.fieldOverlay()
+                .setFill("green")
+                .fillRect(pose.getX() - 6.5, pose.getY() - 6.5, 13, 13);
+        packet.fieldOverlay()
+                .setStroke(Robot.getInstance().color)
+                .strokeCircle(pose.getX(), pose.getY(), path.get(step).radius);
+        packet.fieldOverlay()
+                .setStroke("black")
+                .strokeLine(pose.getX(), pose.getY(), point.x, point.y);
+
+
+
         //Turn
         double relativePointAngle;
 
@@ -232,24 +260,13 @@ public class PurePursuit extends Action {
         Robot.getInstance().getMecanumDrive().setPower(curXVel, curYVel, curThetaVel);
 
         error = false;
-        TelemetryPacket packet = new TelemetryPacket();
-        for (int i = 0; i < path.size() - 1; i++) {
-            packet.fieldOverlay()
-                    .setStroke("red")
-                    .strokeLine(path.get(i).x, path.get(i).y, path.get(i + 1).x, path.get(i + 1).y);
-        }
-
         packet.fieldOverlay()
-                .setFill("green")
-                .fillRect(pose.getX() - 6.5, pose.getY() - 6.5, 13, 13);
-
-        packet.fieldOverlay()
-                .setStroke(Robot.getInstance().color)
-                .strokeCircle(pose.getX(), pose.getY(), path.get(step).radius);
-
-        packet.fieldOverlay()
-                .setStroke("black")
-                .strokeLine(pose.getX(), pose.getY(), point.x, point.y);
+                .setStroke("white")
+                .strokeLine(pose.getX(), pose.getY(), point.x, point.y)
+                .setFill("pink")
+                .strokeLine(pose.getX(), pose.getY(),
+                        pose.getX() + (5 * Math.cos(pose.getHeading())),
+                        pose.getY() + (5 * Math.sin(pose.getHeading())));
 
         packet.put("Wanted Vel", xSpeed);
         packet.put("Current Vel", -Robot.getInstance().getMecanumDrive().xVel);
@@ -339,7 +356,12 @@ public class PurePursuit extends Action {
                 follow = point2;
             }
 
-            return follow;
+            if (((follow.x - point1.x) / (point2.x - point1.x)) -
+                    ((follow.y - point1.y) / (point2.y - point1.y)) < 1) {
+                return follow;
+            } else {
+                return new Pose(10000, 10000, 10000);
+            }
         } else {
             return new Pose(10000, 10000, 10000);
         }

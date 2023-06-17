@@ -20,13 +20,13 @@ import org.opencv.core.Point;
 
 @Config
 public class DriveToPole extends Action {
-    public static double wantedPoint = 130, wantedY = 112;
+    public static double wantedPoint = 160, wantedY = 122;
 
     int highTolerance = 110;
 
     public Pose2d startPose;
 
-    public PID yPID = new PID(0.005, 0, 0.0025), thetaPID = new PID(0.0016, 0, 0.01);
+    public PID yPID = new PID(0.005, 0, 0.0025), thetaPID = new PID(0.0025, 0, 0.01);
 //    public PID yPID = new PID(0.006, 0, 0.025), thetaPID = new PID(0.0028, 0, 0.012);
     public PID yPIDVel = new PID(0.0025, 0, 0.4, 0), thetaPIDVel = new PID(0.0008, 0, 0.03);
 
@@ -95,15 +95,14 @@ public class DriveToPole extends Action {
                 Math.hypot(startPose.getX() - robot.getX(), startPose.getY() - robot.getY()) < 12 &&
                 Math.abs(thetaPID.getError()) < 30;
 
-        ySpeed = CruiseLib.limitValue(ySpeed, 0, (canDrive ? -0.3 : 0), 0, 0.1);
+        ySpeed = CruiseLib.limitValue(ySpeed, 0, (canDrive ? -0.2 : 0), 0, 0.2);
 
-        thetaSpeed = CruiseLib.limitValue(thetaSpeed, 0,
-                -maxSpeed, 0, maxSpeed);
+        thetaSpeed = CruiseLib.limitValue(thetaSpeed, 0, -maxSpeed, 0, maxSpeed);
 
         lastTime = timer.milliseconds();
 
-        ySpeed *= 48;
-        thetaSpeed *= 220;
+        ySpeed *= 54;
+        thetaSpeed *= 250;
 
         curYVel += yPIDVel.update(Robot.getInstance().getMecanumDrive().yVel, ySpeed);
         curThetaVel += thetaPIDVel.update(Robot.getInstance().getMecanumDrive().thetaVel, thetaSpeed);
@@ -136,9 +135,10 @@ public class DriveToPole extends Action {
     public boolean isFinished() {
         Point point = Robot.getInstance().getCamera().scanForPole.getPoint();
         return timer.milliseconds() > timeout ||
-                (((point.y > 80 && point.y < highTolerance) || isInRadius(radius)) && (point.x > 115 && point.x < 160));
-//                ((Math.abs(yPID.getError()) < 6 || isInRadius(radius))
-//                        && Math.abs(thetaPID.getError()) < 20);
+                (((point.y > wantedY - 10 && point.y < wantedY + 10) || isInRadius(radius)) &&
+                        (point.x > wantedPoint - 40 && point.x < wantedPoint + 40))
+                || (curYVel > 0.2 &&
+                Math.hypot(Robot.getInstance().getMecanumDrive().xVel, Robot.getInstance().getMecanumDrive().yVel) < 4);
     }
 
     @Override

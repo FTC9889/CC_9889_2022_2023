@@ -298,14 +298,13 @@ public class MecanumDrive extends Subsystem {
         timer.reset();
 
 
-//        if (timer.milliseconds() > 1000) {
-//        if (timer.milliseconds() > 1) {
-//            position.setHeading(getAngle().getTheda(AngleUnit.RADIANS));
-//            lastIMU = position.getHeading();
-//            timer.reset();
-//        } else {
+
+        if (Math.abs(deltaAngle) < 0.1) {
+            position.setHeading(getAngle().getTheda(AngleUnit.RADIANS));
+        } else {
             position.setHeading(CruiseLib.angleWrapRad(position.getHeading() + deltaAngle));
-//        }
+        }
+
         position.addX(((x * Math.cos(position.getHeading())) + (y * Math.sin(position.getHeading()))));
         position.addY(-(y * Math.cos(position.getHeading())) + (x * Math.sin(position.getHeading())));
     }

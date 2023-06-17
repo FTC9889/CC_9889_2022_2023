@@ -67,8 +67,10 @@ public class Constants {
         public final static String kDistance = "distance";
         public final static String kSideDistance = "side_distance";
         public final static String kCenterColor = "center_color";
+        public final static String kFarLeftColor = "far_left_color";
         public final static String kLeftColor = "left_color";
         public final static String kRightColor = "right_color";
+        public final static String kFarRightColor = "far_right_color";
         public final static String kLiftLimit = "lift_limit";
     }
 }

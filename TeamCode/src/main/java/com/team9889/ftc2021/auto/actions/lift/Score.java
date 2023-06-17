@@ -66,7 +66,8 @@ public class Score extends Action {
 
     @Override
     public boolean isFinished() {
-        return timer.milliseconds() > 200;
+//        return timer.milliseconds() > 25;
+        return Robot.getInstance().getLift().wantedScoreState == Lift.ScoreStates.RETRACT;
     }
 
     @Override

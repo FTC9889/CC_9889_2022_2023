@@ -271,7 +271,7 @@ public class Lift extends Subsystem{
             case PLACE_LEFT:
                 wantedV4BPosition = V4BPositions.LEFT_DROP;
 
-                if (scoreTimer.milliseconds() > 120) {
+                if (scoreTimer.milliseconds() > (auto ? 0 : 120)) {
                     wantedScoreState = ScoreStates.DROP;
                     beaconHeight = getLiftPosition();
 
@@ -293,7 +293,7 @@ public class Lift extends Subsystem{
                     Robot.getInstance().driverStation.grabberClosed = false;
                     depositGrabber();
 
-                    if (scoreTimer.milliseconds() > 250) {
+                    if (scoreTimer.milliseconds() > (auto ? 125 : 250)) {
                         wantedScoreState = ScoreStates.RETRACT;
                         scoreTimer.reset();
                     }

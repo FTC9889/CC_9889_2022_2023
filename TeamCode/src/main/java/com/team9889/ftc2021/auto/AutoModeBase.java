@@ -48,6 +48,7 @@ public abstract class AutoModeBase extends Team9889Linear {
         waitForStart(true, currentAutoRunning == StartPosition.LEFT);
 
         autoTimer.reset();
+        Robot.robotTimer.reset();
 
         // If the opmode is still running, run auto
         if (opModeIsActive() && !isStopRequested()) {

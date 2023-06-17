@@ -35,12 +35,16 @@ public class TestSensors extends Team9889Linear {
             telemetry.addLine();
 
             telemetry.addLine("Color Sensors");
+            telemetry.addData("Far Left Color", leftDetect() + ", blue: " + Robot.farLeftColor.blue()
+                    + ", red: " + Robot.farLeftColor.red());
             telemetry.addData("Left Color", leftDetect() + ", blue: " + Robot.leftColor.blue()
                     + ", red: " + Robot.leftColor.red());
             telemetry.addData("Center Color", centerDetect() + ", blue: " + Robot.centerColor.blue()
                     + ", red: " + Robot.centerColor.red());
             telemetry.addData("Right Color", rightDetect() + ", blue: " + Robot.rightColor.blue()
                     + ", red: " + Robot.rightColor.red());
+            telemetry.addData("Far Right Color", rightDetect() + ", blue: " + Robot.farRightColor.blue()
+                    + ", red: " + Robot.farRightColor.red());
             telemetry.addLine();
             telemetry.addLine();
 
@@ -102,16 +106,23 @@ public class TestSensors extends Team9889Linear {
         }
     }
 
+    boolean farLeftDetect() {
+        return Robot.farLeftColor.blue() > 60 || Robot.farLeftColor.red() > 250;
+    }
 
     boolean leftDetect() {
-        return Robot.leftColor.blue() > 60 || Robot.leftColor.red() > 60;
+        return Robot.leftColor.blue() > 60 || Robot.leftColor.red() > 250;
     }
 
     boolean centerDetect() {
-        return Robot.centerColor.blue() > 400 || Robot.centerColor.red() > 240;
+        return Robot.centerColor.blue() > 400 || Robot.centerColor.red() > 400;
     }
 
     boolean rightDetect() {
-        return Robot.rightColor.blue() > 180 || Robot.rightColor.red() > 180;
+        return Robot.rightColor.blue() > 180 || Robot.rightColor.red() > 250;
+    }
+
+    boolean farRightDetect() {
+        return Robot.farRightColor.blue() > 180 || Robot.farRightColor.red() > 250;
     }
 }
