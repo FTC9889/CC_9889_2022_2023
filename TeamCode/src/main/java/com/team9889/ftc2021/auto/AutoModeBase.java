@@ -22,11 +22,12 @@ public abstract class AutoModeBase extends Team9889Linear {
     public enum StartPosition {
         RIGHT, LEFT;
 
-        private static String redString = "Red";
-        private static String blueString = "Blue";
+        private static int RIGHT_Num = 1;
+        private static int LEFT_Num = -1;
 
-        private static int RED_Num = 1;
-        private static int BLUE_Num = -1;
+        public static int getNum(StartPosition side){
+            return side == RIGHT ? RIGHT_Num : LEFT_Num;
+        }
     }
 
     // Checks for a saved file to see what auto we are running?

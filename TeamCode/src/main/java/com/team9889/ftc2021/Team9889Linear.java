@@ -4,17 +4,16 @@ import android.util.Log;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
+import com.team9889.ftc2021.auto.AutoSettings;
 import com.team9889.ftc2021.auto.actions.Action;
 import com.team9889.ftc2021.subsystems.Lift;
 import com.team9889.ftc2021.subsystems.Robot;
-import com.team9889.lib.detectors.ScanForSignal;
+import com.team9889.lib.CruiseLib;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;
@@ -39,13 +38,9 @@ public abstract class Team9889Linear extends LinearOpMode {
 
     public int signal = 3;
 
-    boolean left = false, ledToggle = true;
-    public static boolean useLEDs = true;
-
-    public int timeToWait = 0, timeToWaitDuck = 0;
-    boolean buttonReleased = true, editDetection = false;
-
-    public String angleRead = "";
+    boolean left = false;
+    public AutoSettings autoSettings = new AutoSettings();
+    public boolean custom = false;
 
     public abstract void initialize();
 
@@ -79,7 +74,7 @@ public abstract class Team9889Linear extends LinearOpMode {
             }
         }
 
-        telemetry.setMsTransmissionInterval(autonomous ? 1000:250);
+        telemetry.setMsTransmissionInterval(autonomous ? 200:250);
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
 
 //        telemetry = dashboard.getTelemetry();
@@ -88,72 +83,11 @@ public abstract class Team9889Linear extends LinearOpMode {
         if(autonomous){
             // Autonomous Init Loop code
             while(isInInitLoop()){
-                telemetry.addData("Waiting for Start","");
-                if (Robot.getCamera().scanForSignal.getRGB().val[0] == 0 &&
-                        Robot.getCamera().scanForSignal.getRGB().val[1] == 0 &&
-                        Robot.getCamera().scanForSignal.getRGB().val[2] == 0) {
-                    telemetry.addData("⚠️<font size=\"+2\" color=\"red\"> DO NOT RUN: CAMERA NOT INITIALIZED </font>   ⚠️", "");
-                }
-//                if (Robot.isRed) {
-//                    telemetry.addData("", "\uD83D\uDFE5 Red Auto \uD83D\uDFE5");
-//                } else {
-//                    telemetry.addData("", "\uD83D\uDD35 Blue Auto \uD83D\uDD35");
-//                }
-
-                if (gamepad1.right_bumper) {
-                    Robot.getLift().wantedV4BPosition = Lift.V4BPositions.INIT;
-                    Robot.getLift().openGrabber();
-                    matchTime.reset();
-                } else {
-                    if (matchTime.milliseconds() < 1000) {
-                        Robot.getLift().wantedV4BPosition = Lift.V4BPositions.LEFT_DOWN;
-                    } else {
-                        Robot.getLift().wantedV4BPosition = Lift.V4BPositions.INIT;
-                    }
-
-                    if (matchTime.milliseconds() > 300) {
-                        Robot.getLift().closeGrabber();
-                    }
-                }
-
-                if (gamepad1.b) {
-                    Robot.isRed = true;
-                } else if (gamepad1.x) {
-                    Robot.isRed = false;
-                }
-
-
-                if (Robot.isRed) {
-                    telemetry.addData("Alliance", "<font size=\"+2\" color=\"red\"> RED </font>");
-                } else {
-                    telemetry.addData("Alliance", "<font size=\"+2\" color=\"blue\"> BLUE </font>");
-                }
-
-                if (Robot.getCamera().scanForSignal.getBlackAverage() < 30) {
-                    telemetry.addData("Lined Up", "<font size=\"+2\" color=\"green\"> Yes </font>");
-                } else {
-                    telemetry.addData("Lined Up", "<font size=\"+2\" color=\"red\"> No </font>");
-                }
-
-                telemetry.addData("Left Test", Robot.getCamera().scanForSignal.left + ", " + Robot.getCamera().scanForSignal.x + ", " + left);
-
-                telemetry.addData("Use LEDs", useLEDs);
-
-                telemetry.addData("Signal", Robot.getCamera().scanForSignal.getSignal());
-                telemetry.addData("RGB", Robot.getCamera().scanForSignal.getRGB());
-                telemetry.addData("Average", Robot.getCamera().scanForSignal.average);
-
-                TelemetryPacket packet = new TelemetryPacket();
-                packet.addLine("Signal " + Robot.getCamera().scanForSignal.getSignal());
-                packet.addLine("RGB " + Robot.getCamera().scanForSignal.getRGB());
-                FtcDashboard.getInstance().sendTelemetryPacket(packet);
-
-//                Robot.outputToTelemetry(telemetry);
-                telemetry.update();
-                Robot.update();
+                initTelemetryUpdate();
 
                 signal = Robot.getCamera().scanForSignal.getSignal();
-//                FtcDashboard.getInstance().startCameraStream(Robot.camera, 15);
+
+                Robot.update();
             }
         } else {
             // Teleop Init Loop code
@@ -228,5 +162,199 @@ public abstract class Team9889Linear extends LinearOpMode {
         File file = AppUtil.getInstance().getSettingsFile(fileName + ".txt");
         String contents = ReadWriteFile.readFile(file);
         return contents;
+    }
+
+
+
+
+    //0 = normal, 1 = custom auto
+    boolean normalMode = true;
+    int cursor = 0;
+    boolean buttonPressed = false;
+    boolean resetButton = true;
+    private void initTelemetryUpdate() {
+        resetButton = true;
+        if (gamepad1.back && custom) {
+            if (!buttonPressed) {
+                normalMode = !normalMode;
+            }
+
+            resetButton = false;
+        }
+
+        if (normalMode) {
+            if (gamepad1.right_bumper) {
+                Robot.getLift().wantedV4BPosition = Lift.V4BPositions.INIT;
+                Robot.getLift().openGrabber();
+                matchTime.reset();
+            } else {
+                if (matchTime.milliseconds() < 1000) {
+                    Robot.getLift().wantedV4BPosition = Lift.V4BPositions.LEFT_DOWN;
+                } else {
+                    Robot.getLift().wantedV4BPosition = Lift.V4BPositions.INIT;
+                }
+
+                if (matchTime.milliseconds() > 300) {
+                    Robot.getLift().closeGrabber();
+                }
+            }
+
+            if (gamepad1.b) {
+                Robot.isRed = true;
+            } else if (gamepad1.x) {
+                Robot.isRed = false;
+            }
+
+            telemetry.addData("Waiting for Start","");
+            if (Robot.getCamera().scanForSignal.getRGB().val[0] == 0 &&
+                    Robot.getCamera().scanForSignal.getRGB().val[1] == 0 &&
+                    Robot.getCamera().scanForSignal.getRGB().val[2] == 0) {
+                telemetry.addData("⚠️<font size=\"+2\" color=\"red\"> DO NOT RUN: CAMERA NOT INITIALIZED </font>   ⚠️", "");
+            }
+
+            if (Robot.isRed) {
+                telemetry.addData("Alliance", "<font size=\"+2\" color=\"red\"> RED </font>");
+            } else {
+                telemetry.addData("Alliance", "<font size=\"+2\" color=\"blue\"> BLUE </font>");
+            }
+
+            telemetry.addData("Signal", Robot.getCamera().scanForSignal.getSignal());
+            telemetry.addData("RGB", Robot.getCamera().scanForSignal.getRGB());
+            telemetry.addData("Average", Robot.getCamera().scanForSignal.average);
+
+            telemetry.addData("Custom", custom);
+
+        } else {
+            if (gamepad1.dpad_up) {
+                if (!buttonPressed) {
+                    cursor = (int) CruiseLib.limitValue(cursor - 1, 8, 0);
+                }
+                resetButton = false;
+            }
+
+            if (gamepad1.dpad_down) {
+                if (!buttonPressed) {
+                    cursor = (int) CruiseLib.limitValue(cursor + 1, 8, 0);
+                }
+
+                resetButton = false;
+            }
+
+
+            if (gamepad1.dpad_left) {
+                if (!buttonPressed) {
+                    switch (cursor) {
+                        case 0:
+                            autoSettings.wait -= 100;
+                            break;
+
+                        case 1:
+                            autoSettings.preloaded = (int) CruiseLib.limitValue(autoSettings.preloaded - 1, 3, 0);
+                            break;
+
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+                        case 6:
+                            autoSettings.cycles[cursor - 2] = (int) CruiseLib.limitValue(autoSettings.cycles[cursor - 2] - 1, 3, 0);
+                            break;
+
+                        case 7:
+                            autoSettings.waitAfterScore -= 50;
+                            break;
+
+                        case 8:
+                            autoSettings.left = !autoSettings.left;
+                            break;
+                    }
+                }
+
+                resetButton = false;
+            }
+
+            if (gamepad1.dpad_right) {
+                if (!buttonPressed) {
+                    switch (cursor) {
+                        case 0:
+                            autoSettings.wait += 100;
+                            break;
+
+                        case 1:
+                            autoSettings.preloaded = (int) CruiseLib.limitValue(autoSettings.preloaded + 1, 3, 0);
+                            break;
+
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+                        case 6:
+                            autoSettings.cycles[cursor - 2] = (int) CruiseLib.limitValue(autoSettings.cycles[cursor - 2] + 1, 3, 0);
+                            break;
+
+                        case 7:
+                            autoSettings.waitAfterScore += 50;
+                            break;
+
+                        case 8:
+                            autoSettings.left = !autoSettings.left;
+                            break;
+                    }
+                }
+
+                resetButton = false;
+            }
+
+            if (gamepad1.a) {
+                if (!buttonPressed) {
+                    autoSettings.left = !autoSettings.left;
+                }
+                resetButton = false;
+            }
+
+
+
+            telemetry.addData((cursor == 0 ? "-" : "") + "Wait", autoSettings.wait);
+
+            cycleTelemetry((cursor == 1 ? "-" : "") + "Preloaded", autoSettings.preloaded);
+
+            for (int i = 0; i < 5; i++) {
+                cycleTelemetry((cursor == (i + 2) ? "-" : "") + "Cycle " + i, autoSettings.cycles[i]);
+            }
+
+            telemetry.addData((cursor == 7 ? "-" : "") + "Wait After Score", autoSettings.waitAfterScore);
+
+            telemetry.addData((cursor == 8 ? "-" : "") + "Side", (autoSettings.left ? "Left" : "Right"));
+            Robot.getCamera().scanForSignal.left = autoSettings.left;
+        }
+
+        if (resetButton) {
+            buttonPressed = false;
+        } else {
+            buttonPressed = true;
+        }
+
+        telemetry.update();
+    }
+
+    private void cycleTelemetry(String name, int scoreNum) {
+        switch (scoreNum) {
+            case 0:
+                telemetry.addData(name, "Center High");
+                break;
+
+            case 1:
+                telemetry.addData(name, "Center High Defensive");
+                break;
+
+            case 2:
+                telemetry.addData(name, "Medium");
+                break;
+
+            case 3:
+                telemetry.addData(name, "Safe High");
+                break;
+        }
+
     }
 }

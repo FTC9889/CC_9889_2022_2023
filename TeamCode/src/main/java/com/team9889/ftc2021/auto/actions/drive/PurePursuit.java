@@ -109,6 +109,14 @@ public class PurePursuit extends Action {
         this.endTheta = endTheta;
     }
 
+    public PurePursuit(ArrayList<Pose> path, Pose tolerance, double endTheta, double timeout, double maxStrafeVel) {
+        this.path = path;
+        this.timeout = timeout;
+        this.tolerance = tolerance;
+        this.endTheta = endTheta;
+        this.maxStrafeVel = maxStrafeVel;
+    }
+
     public PurePursuit(ArrayList<Pose> path, Pose tolerance, double endTheta, double timeout, boolean fieldCentric) {
         this.path = path;
         this.timeout = timeout;

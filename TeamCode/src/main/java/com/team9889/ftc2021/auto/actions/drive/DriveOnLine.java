@@ -114,7 +114,7 @@ public class DriveOnLine extends Action {
     public boolean isFinished() {
         return timer.milliseconds() > timeout ||
                 (hypot(Robot.getInstance().getMecanumDrive().xVel,
-                        Robot.getInstance().getMecanumDrive().yVel) < 6 && timer.milliseconds() > 200);
+                        Robot.getInstance().getMecanumDrive().yVel) < 6 && timer.milliseconds() > 400);
 //        return timer.milliseconds() > timeout;
     }
 
@@ -151,14 +151,14 @@ public class DriveOnLine extends Action {
         if (Robot.getInstance().isRed)
             return Robot.getInstance().farLeftColor.red() > 250;
         else
-            return Robot.getInstance().farLeftColor.blue() > 1000;
+            return Robot.getInstance().farLeftColor.blue() > 350;
     }
 
     boolean leftDetect() {
         if (Robot.getInstance().isRed)
             return Robot.getInstance().leftColor.red() > 250;
         else
-            return Robot.getInstance().leftColor.blue() > 1000;
+            return Robot.getInstance().leftColor.blue() > 350;
     }
 
     boolean centerDetect() {
@@ -172,13 +172,13 @@ public class DriveOnLine extends Action {
         if (Robot.getInstance().isRed)
             return Robot.getInstance().rightColor.red() > 250;
         else
-            return Robot.getInstance().rightColor.blue() > 1000;
+            return Robot.getInstance().rightColor.blue() > 350;
     }
 
     boolean farRightDetect() {
         if (Robot.getInstance().isRed)
             return Robot.getInstance().farRightColor.red() > 250;
         else
-            return Robot.getInstance().farRightColor.blue() > 1000;
+            return Robot.getInstance().farRightColor.blue() > 350;
     }
 }

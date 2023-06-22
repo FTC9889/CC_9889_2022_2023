@@ -93,7 +93,7 @@ public class Lift extends Subsystem{
                 break;
 
             case LEFT_GROUND:
-                if (setV4BAngle((auto ? -100 : -120))) {
+                if (setV4BAngle((auto ? -110 : -120))) {
                     currentV4BPosition = V4BPositions.LEFT_DOWN;
                 }
                 break;
@@ -303,7 +303,7 @@ public class Lift extends Subsystem{
             case RETRACT:
                 wantedV4BPosition = V4BPositions.UP;
 
-                if (scoreTimer.milliseconds() > 100) {
+                if (scoreTimer.milliseconds() > 180) {
                     Robot.getInstance().driverStation.grabberClosed = true;
                     closeGrabber();
                 }
