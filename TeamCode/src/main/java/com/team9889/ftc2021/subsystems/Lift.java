@@ -17,6 +17,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Lift extends Subsystem{
     public static PID pid = new PID(0.4, 0, 6);
 
+    public static double v4bOffset = 9;
+
     public int autoConeCount = 0;
 
     public static double high = 26;
@@ -365,27 +367,35 @@ public class Lift extends Subsystem{
 
     public boolean setV4BAngle(double angle) {
 //        angle -= 13;
-        angle = angle - 4;
+        if (auto)
+            angle = angle - 4;
+        else
+            angle = angle - v4bOffset;
+
         double adjustedAngle = (angle / 270) + 0.5;
-        Robot.getInstance().leftV4B.setPosition(adjustedAngle);
         Robot.getInstance().rightV4B.setPosition(adjustedAngle);
+        Robot.getInstance().leftV4B.setPosition(adjustedAngle - (2.0 / 270.0));
         lastAngle = angle;
 
         return Math.abs(getV4BAngle() - angle) < 5;
     }
 
     public boolean setV4BAngle(double angle, double time) {
-//        angle -= 13;
+//        angle -= 20;
         if (lastAngle != angle) {
-            angle = angle - 4;
+            if (auto)
+                angle = angle - 4;
+            else
+                angle = angle - v4bOffset;
+
             double adjustedAngle = (angle / 270) + 0.5;
 
             if (auto) {
-                Robot.getInstance().leftV4B.setPosition(adjustedAngle);
                 Robot.getInstance().rightV4B.setPosition(adjustedAngle);
+                Robot.getInstance().leftV4B.setPosition(adjustedAngle - (2.0 / 270.0));
             } else {
-                Robot.getInstance().leftV4B.setPosition(adjustedAngle, time);
                 Robot.getInstance().rightV4B.setPosition(adjustedAngle, time);
+                Robot.getInstance().leftV4B.setPosition(adjustedAngle - (2.0 / 270.0), time);
             }
 
             lastAngle = angle;

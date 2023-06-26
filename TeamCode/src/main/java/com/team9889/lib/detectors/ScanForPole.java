@@ -34,6 +34,7 @@ import java.util.List;
 @Config
 public class ScanForPole extends OpenCvPipeline {
     public static int area = 0, maxArea = 10000000, minRation = 0, maxRation = 1;
+    public static boolean hsvMask = false, dimLighting = false;
 
     public double width;
 
@@ -49,7 +50,7 @@ public class ScanForPole extends OpenCvPipeline {
             100, 255, 150, 255);
 
     // Without LEDs
-//    public static HSV poleHSV = new HSV(90, 100,
+//    public static HSV dimPoleHSV = new HSV(90, 100,
 //            100, 255, 100, 255);
 
     private Point point = new Point(1e10, 1e10);
@@ -84,7 +85,11 @@ public class ScanForPole extends OpenCvPipeline {
 
         // Step HSV_Threshold0:
         Mat hsvThresholdInput = cvResizeOutput;
-        hsvThreshold(hsvThresholdInput, poleHSV.getH(), poleHSV.getS(), poleHSV.getV(), hsvThresholdOutput);
+//        if (dimLighting) {
+//            hsvThreshold(hsvThresholdInput, dimPoleHSV.getH(), dimPoleHSV.getS(), dimPoleHSV.getV(), hsvThresholdOutput);
+//        } else {
+            hsvThreshold(hsvThresholdInput, poleHSV.getH(), poleHSV.getS(), poleHSV.getV(), hsvThresholdOutput);
+//        }
 
         // Step Find_Contours0:
         Mat findContoursInput = hsvThresholdOutput;
@@ -166,7 +171,11 @@ public class ScanForPole extends OpenCvPipeline {
 
 //        cvResize(cvResizeOutput, cvResizeDsize, 3, 3, cvResizeInterpolation, cvResizeOutput);
 
-        return cvResizeOutput;
+        if (hsvMask) {
+            return hsvThresholdOutput;
+        } else {
+            return cvResizeOutput;
+        }
     }
 
     /**
