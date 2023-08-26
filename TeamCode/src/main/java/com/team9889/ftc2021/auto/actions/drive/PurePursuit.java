@@ -38,6 +38,8 @@ public class PurePursuit extends Action {
 
     double curXVel = 0, curYVel = 0, curThetaVel = 0;
 
+    boolean slowDownY = false;
+
     double maxSpeed = 0, timeout = -1, endTheta = 1000, maxStrafeVel = 24;
     ElapsedTime timer = new ElapsedTime();
 
@@ -74,6 +76,15 @@ public class PurePursuit extends Action {
         this.endTheta = endTheta;
         this.overshot = fieldCentric;
         this.stopWall = stopWall;
+    }
+
+    public PurePursuit(ArrayList<Pose> path, double endTheta, double timeout, boolean fieldCentric, boolean stopWall, boolean slowDownY) {
+        this.path = path;
+        this.timeout = timeout;
+        this.endTheta = endTheta;
+        this.overshot = fieldCentric;
+        this.stopWall = stopWall;
+        this.slowDownY = slowDownY;
     }
 
     public PurePursuit(ArrayList<Pose> path, double endTheta, double timeout, boolean fieldCentric) {
@@ -194,7 +205,8 @@ public class PurePursuit extends Action {
 
             overshot = true;
         } else {
-            double relativeDist = Math.sqrt(Math.pow(point.x - pose.getX(), 2) + Math.pow(point.y - pose.getY(), 2));
+            double relativeDist = Math.sqrt((Math.pow(point.x - pose.getX(), 2) * (slowDownY ? 0.25 : 1)) +
+                    Math.pow(point.y - pose.getY(), 2));
 
             double speed = Range.clip((abs(relativeDist) / path.get(step).radius), 0, 1);
             speed *= Range.clip((abs(relativeDist) / ((divider / 10) * path.get(step).radius)), 0, 1);
