@@ -55,7 +55,7 @@ public class Grab extends Action {
                                     CruiseLib.limitValue(liftHeight + 4, 100, 0));
                 }
             } else {
-                Robot.getInstance().getLift().setLiftPosition(CruiseLib.limitValue(liftHeight, 100, 0), .3);
+                Robot.getInstance().getLift().setLiftPosition(CruiseLib.limitValue(liftHeight, 100, 0));
                 timerOffset = timer.milliseconds();
 
 //                if (driveTimer.milliseconds() > 200) {
